@@ -1,4 +1,4 @@
-package hackru2015s.rudirect;
+package hackru2015s.ru_direct;
 
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;

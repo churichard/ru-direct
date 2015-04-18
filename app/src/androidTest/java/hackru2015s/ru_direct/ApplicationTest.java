@@ -1,4 +1,4 @@
-package hackru2015s.rudirect;
+package hackru2015s.ru_direct;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;
