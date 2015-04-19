@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ScrollView
+        android:id="@+id/scroll"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/A"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="A"
+                android:clickable="true" />
+
+            <Button
+                android:id="@+id/B"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="B"
+                android:clickable="true" />
+
+            <Button
+                android:id="@+id/C"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="C"
+                android:clickable="true" />
+
+            <Button
+                android:id="@+id/F"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="EE"
+                android:clickable="true" />
+
+            <Button
+                android:id="@+id/button5"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="F"
+                android:clickable="true" />
+
+            <Button
+                android:id="@+id/H"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="H"
+                android:clickable="true" />
+
+            <Button
+                android:id="@+id/lx"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="LX"
+                android:clickable="true" />
+
+            <Button
+                android:id="@+id/rexb"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="RexB"
+                android:clickable="true" />
+
+            <Button
+                android:id="@+id/rexl"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="RexL"
+                android:clickable="true" />
+
+            <Button
+                android:id="@+id/w1"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="Weekend 1"
+                android:clickable="true" />
+
+            <Button
+                android:id="@+id/w2"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="Weekend 2"
+                android:clickable="true" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>

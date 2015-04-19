@@ -15,112 +15,27 @@
         android:text="Refresh"
         android:layout_centerHorizontal="true" />
 
-    <ScrollView
-        android:layout_height="wrap_content"
+    <TextView
+        android:id="@+id/textView"
         android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_below="@id/refresh"
-        android:id="@+id/scrollView">
-
-        <TextView
-            android:id="@+id/bus"
-            android:text="Loading..."
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/title"
-            android:layout_marginTop="20sp"
-            android:editable="false"
-            android:layout_centerHorizontal="true"
-            android:textSize="25sp" />
-
-    </ScrollView>
+        android:layout_marginTop="20sp"
+        android:editable="false"
+        android:layout_centerHorizontal="true"
+        android:textSize="25sp" />
 
     <ScrollView
-        android:id="@+id/scroll"
+        android:id="@+id/scrollView2"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/scrollView">
+        android:layout_below="@id/textView">
 
         <LinearLayout
+            android:id="@+id/linearLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-
-            <Button
-                android:id="@+id/A"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:text="A"
-                android:clickable="true" />
-
-            <Button
-                android:id="@+id/B"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:text="B"
-                android:clickable="true" />
-
-            <Button
-                android:id="@+id/C"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:text="C"
-                android:clickable="true" />
-
-            <Button
-                android:id="@+id/F"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:text="EE"
-                android:clickable="true" />
-
-            <Button
-                android:id="@+id/button5"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:text="F"
-                android:clickable="true" />
-
-            <Button
-                android:id="@+id/H"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:text="H"
-                android:clickable="true" />
-
-            <Button
-                android:id="@+id/lx"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:text="LX"
-                android:clickable="true" />
-
-            <Button
-                android:id="@+id/rexb"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:text="RexB"
-                android:clickable="true" />
-
-            <Button
-                android:id="@+id/rexl"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:text="RexL"
-                android:clickable="true" />
-
-            <Button
-                android:id="@+id/w1"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:text="Weekend 1"
-                android:clickable="true" />
-
-            <Button
-                android:id="@+id/w2"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:text="Weekend 2"
-                android:clickable="true" />
 
         </LinearLayout>
 

@@ -8,6 +8,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import org.apache.http.HttpEntity;
@@ -17,11 +18,14 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -32,9 +36,26 @@ public class MainActivity extends ActionBarActivity {
         }
 
         protected void onPostExecute(String result) {
-            Log.d("Bus Json", result);
-            TextView buses = (TextView) findViewById(R.id.bus);
-            buses.setText(result);
+            ArrayList<String> activeBuses = new ArrayList<String>();
+            try {
+                JSONObject jObject = new JSONObject(result);
+                String busArray = jObject.getString("routes");
+                JSONArray jArray = new JSONArray(busArray);
+                for (int i = 0; i < jArray.length(); i++) {
+                    JSONObject busObject = jArray.getJSONObject(i);
+                    activeBuses.add(busObject.getString("title"));
+                }
+            } catch(Exception e) {
+                e.printStackTrace();
+            }
+
+            TextView buses = (TextView) findViewById(R.id.textView);
+            buses.setText("");
+            for (int i = 0; i < activeBuses.size(); i++) {
+                buses.setText(buses.getText() + activeBuses.get(i) + " ");
+//                LinearLayout ll = (LinearLayout) findViewById(R.id.linearLayout);
+//                ll.addView();
+            }
         }
     }
 
