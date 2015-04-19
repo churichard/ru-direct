@@ -2,6 +2,7 @@
     <string name="app_name">ru-direct</string>
 
     <string name="title">RU Direct</string>
+    <string name="refresh">Refresh</string>
     <string name="going">Where are you going?</string>
     <string name="coming">Where are you?</string>
     <string name="action_settings">Settings</string>

@@ -7,8 +7,10 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import org.apache.http.HttpEntity;
@@ -49,16 +51,11 @@ public class MainActivity extends ActionBarActivity {
                 e.printStackTrace();
             }
 
-            for (int i = 0; i < activeBuses.size(); i++) {
-                // Setup linear layout
-                String bus = activeBuses.get(i);
-                LinearLayout ll = (LinearLayout) findViewById(R.id.linearLayout);
-                ll.removeAllViews();
-                Button button = new Button(getApplicationContext());
-                button.setText(bus);
-                button.setClickable(true);
-                ll.addView(button);
-            }
+            // Setup list view
+            ListView LV = (ListView) findViewById(R.id.busList);
+            ArrayAdapter<String> adapter = new ArrayAdapter<String>(getApplicationContext(),
+                    android.R.layout.simple_expandable_list_item_1, activeBuses.toArray(new String[activeBuses.size()]));
+            LV.setAdapter(adapter);
         }
     }
 
@@ -66,6 +63,7 @@ public class MainActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        setTitle("RU Direct");
 
         new GetJsonTask().execute();
 
