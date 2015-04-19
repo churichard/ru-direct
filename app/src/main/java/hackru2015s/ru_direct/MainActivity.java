@@ -49,12 +49,15 @@ public class MainActivity extends ActionBarActivity {
                 e.printStackTrace();
             }
 
-            TextView buses = (TextView) findViewById(R.id.textView);
-            buses.setText("");
             for (int i = 0; i < activeBuses.size(); i++) {
-                buses.setText(buses.getText() + activeBuses.get(i) + " ");
-//                LinearLayout ll = (LinearLayout) findViewById(R.id.linearLayout);
-//                ll.addView();
+                // Setup linear layout
+                String bus = activeBuses.get(i);
+                LinearLayout ll = (LinearLayout) findViewById(R.id.linearLayout);
+                ll.removeAllViews();
+                Button button = new Button(getApplicationContext());
+                button.setText(bus);
+                button.setClickable(true);
+                ll.addView(button);
             }
         }
     }
