@@ -113,7 +113,7 @@ public class MainActivity extends ActionBarActivity {
                         allTimes += " minutes";
                     }
                     else {
-                        allTimes = "No predictions available";
+                        allTimes = "Offline";
                     }
                     busStopTimes.add(allTimes);
                 }

@@ -51,7 +51,7 @@ public class BusTimesActivity extends ListActivity {
                         allTimes += " minutes";
                     }
                     else {
-                        allTimes = "No predictions available";
+                        allTimes = "Offline";
                     }
                     busStopTimes.add(allTimes);
                 }
