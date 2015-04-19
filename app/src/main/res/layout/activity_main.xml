@@ -1,112 +1,129 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin" >
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    tools:context=".MainActivity">
 
-    <TextView
-        android:id="@+id/Active"
-        android:layout_width="wrap_content"
+    <Button
         android:layout_height="wrap_content"
-        android:text="Active Buses"
-        android:textSize="20sp"
+        android:layout_width="wrap_content"
+        android:id="@+id/refresh"
+        android:text="Refresh"
         android:layout_centerHorizontal="true" />
+
+    <ScrollView
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_below="@id/refresh"
+        android:id="@+id/scrollView">
+
+        <TextView
+            android:id="@+id/bus"
+            android:text="Loading..."
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/title"
+            android:layout_marginTop="20sp"
+            android:editable="false"
+            android:layout_centerHorizontal="true"
+            android:textSize="25sp" />
+
+    </ScrollView>
 
     <ScrollView
         android:id="@+id/scroll"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/Active" >
+        android:layout_below="@id/scrollView">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            >
+            android:orientation="vertical">
+
             <Button
                 android:id="@+id/A"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:text="A"
                 android:clickable="true" />
+
             <Button
                 android:id="@+id/B"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:text="B"
-                android:clickable="true"
-                />
+                android:clickable="true" />
+
             <Button
                 android:id="@+id/C"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:text="C"
-                android:clickable="true"
-                />
+                android:clickable="true" />
+
             <Button
                 android:id="@+id/F"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:text="EE"
-                android:clickable="true"
-                />
+                android:clickable="true" />
+
             <Button
                 android:id="@+id/button5"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:text="F"
-                android:clickable="true"
-                />
+                android:clickable="true" />
+
             <Button
                 android:id="@+id/H"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:text="H"
-                android:clickable="true"
-                />
+                android:clickable="true" />
+
             <Button
                 android:id="@+id/lx"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:text="LX"
-                android:clickable="true"
-                />
+                android:clickable="true" />
+
             <Button
                 android:id="@+id/rexb"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:text="RexB"
-                android:clickable="true"
-                />
+                android:clickable="true" />
+
             <Button
                 android:id="@+id/rexl"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:text="RexL"
-                android:clickable="true"
-                />
+                android:clickable="true" />
+
             <Button
                 android:id="@+id/w1"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:text="Weekend 1"
-                android:clickable="true"
-                />
+                android:clickable="true" />
+
             <Button
                 android:id="@+id/w2"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:text="Weekend 2"
-                android:clickable="true"
-                />
-
+                android:clickable="true" />
 
         </LinearLayout>
 
     </ScrollView>
-
 
 </RelativeLayout>

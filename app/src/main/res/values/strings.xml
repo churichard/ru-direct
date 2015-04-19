@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">ru-direct</string>
 
-    <string name="hello_world">Hello world!</string>
+    <string name="title">RU Direct</string>
+    <string name="going">Where are you going?</string>
+    <string name="coming">Where are you?</string>
     <string name="action_settings">Settings</string>
 </resources>
