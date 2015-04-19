@@ -22,6 +22,10 @@
             android:name=".BusTimesActivity"
             android:label="@string/title_activity_bus_times" >
         </activity>
+        <activity
+            android:name=".AllBusesActivity"
+            android:label="@string/title_activity_all_buses" >
+        </activity>
     </application>
 
 </manifest>

@@ -35,6 +35,8 @@ public class MainActivity extends ActionBarActivity {
     public final static String BUS_NAME = "Bus Name";
     public final static String BUS_STOP_TITLES_MESSAGE = "Bus Stop Titles";
     public final static String BUS_STOP_TIMES_MESSAGE = "Bus Stop Times";
+    public final static String ACTIVE_BUSES_MESSAGE = "Active Buses";
+    public final static String ACTIVE_BUS_TAGS = "Active Bus Tags";
     ArrayList<String> activeBusTitles;
     ArrayList<String> activeBusTags;
     ListView LV;
@@ -141,6 +143,18 @@ public class MainActivity extends ActionBarActivity {
         refresh.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 new SetupListViewTask().execute();
+            }
+        });
+
+        // Setup all buses button
+        final Button allBuses = (Button) findViewById(R.id.allBuses);
+        allBuses.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                // Start new activity to display all buses
+                Intent intent = new Intent(MainActivity.this, AllBusesActivity.class);
+                intent.putExtra(ACTIVE_BUSES_MESSAGE, activeBusTitles.toArray(new String[activeBusTitles.size()]));
+                intent.putExtra(ACTIVE_BUS_TAGS, activeBusTags.toArray(new String[activeBusTags.size()]));
+                MainActivity.this.startActivity(intent);
             }
         });
     }
