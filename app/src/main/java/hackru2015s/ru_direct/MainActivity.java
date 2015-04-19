@@ -7,11 +7,11 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.TextView;
+import android.widget.AdapterView.OnItemClickListener;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -31,31 +31,79 @@ import java.util.ArrayList;
 
 
 public class MainActivity extends ActionBarActivity {
+    ArrayList<String> activeBusTitles;
+    ArrayList<String> activeBusTags;
+    ListView LV;
 
-    private class GetJsonTask extends AsyncTask<Void, Void, String> {
+    private class SetupListViewTask extends AsyncTask<Void, Void, String> {
         protected String doInBackground(Void... voids) {
             return getJSON("http://runextbus.herokuapp.com/active");
         }
 
         protected void onPostExecute(String result) {
-            ArrayList<String> activeBuses = new ArrayList<String>();
+            activeBusTitles = new ArrayList<String>();
+            activeBusTags = new ArrayList<String>();
+
+            // Get active bus tags and titles
             try {
                 JSONObject jObject = new JSONObject(result);
                 String busArray = jObject.getString("routes");
                 JSONArray jArray = new JSONArray(busArray);
                 for (int i = 0; i < jArray.length(); i++) {
                     JSONObject busObject = jArray.getJSONObject(i);
-                    activeBuses.add(busObject.getString("title"));
+                    activeBusTitles.add(busObject.getString("title"));
+                    activeBusTags.add(busObject.getString("tag"));
                 }
             } catch(Exception e) {
                 e.printStackTrace();
             }
 
             // Setup list view
-            ListView LV = (ListView) findViewById(R.id.busList);
+            LV = (ListView) findViewById(R.id.busList);
             ArrayAdapter<String> adapter = new ArrayAdapter<String>(getApplicationContext(),
-                    R.layout.list_black_text, R.id.list_content, activeBuses.toArray(new String[activeBuses.size()]));
+                    R.layout.list_black_text, R.id.list_content, activeBusTitles.toArray(new String[activeBusTitles.size()]));
             LV.setAdapter(adapter);
+
+            // Setup item click listener
+            LV.setOnItemClickListener(new OnItemClickListener() {
+                public void onItemClick(AdapterView<?> myAdapter, View myView, int myItemInt, long mylng) {
+                    String bus = (String) (LV.getItemAtPosition(myItemInt));
+                    String busTag = activeBusTags.get(activeBusTitles.indexOf(bus));
+                    new SetupBusPredictions().execute(busTag);
+                }
+            });
+        }
+    }
+
+    private class SetupBusPredictions extends AsyncTask<String, Void, String> {
+        protected String doInBackground(String... strings) {
+            return getJSON("http://runextbus.herokuapp.com/route/" + strings[0]);
+        }
+
+        protected void onPostExecute(String result) {
+            ArrayList<String> busStopTitles = new ArrayList<String>();
+            ArrayList<String> busStopTimes = new ArrayList<String>();
+            String allTimes = "";
+            try {
+                JSONArray jArray = new JSONArray(result);
+                for (int i = 0; i < jArray.length(); i++) {
+                    JSONObject stopObject = jArray.getJSONObject(i);
+                    busStopTitles.add(stopObject.getString("title"));
+                    JSONArray predictions = stopObject.getJSONArray("predictions");
+                    for (int j = 0; j < predictions.length(); j++) {
+                        JSONObject times = predictions.getJSONObject(j);
+                        allTimes += times.getString("minutes");
+                        if (j != predictions.length() - 1) {
+                            allTimes += ", ";
+                        }
+                    }
+                    busStopTimes.add(allTimes);
+                }
+            } catch(Exception e) {
+                e.printStackTrace();
+            }
+            Log.d("JSON Test", busStopTitles.toString());
+            Log.d("JSON Test", busStopTimes.toString());
         }
     }
 
@@ -65,12 +113,14 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
         setTitle("RU Direct");
 
-        new GetJsonTask().execute();
+        // Setup the list view
+        new SetupListViewTask().execute();
 
+        // Setup refresh button
         final Button refresh = (Button) findViewById(R.id.refresh);
         refresh.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                new GetJsonTask().execute();
+                new SetupListViewTask().execute();
             }
         });
     }
