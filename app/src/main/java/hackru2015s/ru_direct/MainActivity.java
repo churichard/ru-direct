@@ -1,5 +1,6 @@
 package hackru2015s.ru_direct;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -31,6 +32,9 @@ import java.util.ArrayList;
 
 
 public class MainActivity extends ActionBarActivity {
+    public final static String BUS_NAME = "Bus Name";
+    public final static String BUS_STOP_TITLES_MESSAGE = "Bus Stop Titles";
+    public final static String BUS_STOP_TIMES_MESSAGE = "Bus Stop Times";
     ArrayList<String> activeBusTitles;
     ArrayList<String> activeBusTags;
     ListView LV;
@@ -76,17 +80,20 @@ public class MainActivity extends ActionBarActivity {
     }
 
     private class SetupBusPredictions extends AsyncTask<String, Void, String> {
+        private String busName;
+
         protected String doInBackground(String... strings) {
-            return getJSON("http://runextbus.herokuapp.com/route/" + strings[0]);
+            busName = strings[0];
+            return getJSON("http://runextbus.herokuapp.com/route/" + busName);
         }
 
         protected void onPostExecute(String result) {
             ArrayList<String> busStopTitles = new ArrayList<String>();
             ArrayList<String> busStopTimes = new ArrayList<String>();
-            String allTimes = "";
             try {
                 JSONArray jArray = new JSONArray(result);
                 for (int i = 0; i < jArray.length(); i++) {
+                    String allTimes = "";
                     JSONObject stopObject = jArray.getJSONObject(i);
                     busStopTitles.add(stopObject.getString("title"));
                     JSONArray predictions = stopObject.getJSONArray("predictions");
@@ -102,8 +109,12 @@ public class MainActivity extends ActionBarActivity {
             } catch(Exception e) {
                 e.printStackTrace();
             }
-            Log.d("JSON Test", busStopTitles.toString());
-            Log.d("JSON Test", busStopTimes.toString());
+            // Start new activity to display bus times
+            Intent intent = new Intent(MainActivity.this, BusTimesActivity.class);
+            intent.putExtra(BUS_NAME, busName);
+            intent.putExtra(BUS_STOP_TITLES_MESSAGE, busStopTitles.toArray(new String[busStopTitles.size()]));
+            intent.putExtra(BUS_STOP_TIMES_MESSAGE, busStopTimes.toArray(new String[busStopTimes.size()]));
+            MainActivity.this.startActivity(intent);
         }
     }
 
@@ -148,7 +159,7 @@ public class MainActivity extends ActionBarActivity {
     }
 
     // Gets JSON from an address
-    public String getJSON(String address){
+    public static String getJSON(String address){
         StringBuilder builder = new StringBuilder();
         HttpClient client = new DefaultHttpClient();
         HttpGet httpGet = new HttpGet(address);
