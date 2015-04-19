@@ -54,7 +54,7 @@ public class MainActivity extends ActionBarActivity {
             // Setup list view
             ListView LV = (ListView) findViewById(R.id.busList);
             ArrayAdapter<String> adapter = new ArrayAdapter<String>(getApplicationContext(),
-                    android.R.layout.simple_expandable_list_item_1, activeBuses.toArray(new String[activeBuses.size()]));
+                    R.layout.list_black_text, R.id.list_content, activeBuses.toArray(new String[activeBuses.size()]));
             LV.setAdapter(adapter);
         }
     }
