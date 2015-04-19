@@ -2,17 +2,17 @@ package hackru2015s.ru_direct;
 
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.AdapterView.OnItemClickListener;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -58,7 +58,7 @@ public class MainActivity extends ActionBarActivity {
                     activeBusTitles.add(busObject.getString("title"));
                     activeBusTags.add(busObject.getString("tag"));
                 }
-            } catch(Exception e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
 
@@ -96,17 +96,26 @@ public class MainActivity extends ActionBarActivity {
                     String allTimes = "";
                     JSONObject stopObject = jArray.getJSONObject(i);
                     busStopTitles.add(stopObject.getString("title"));
-                    JSONArray predictions = stopObject.getJSONArray("predictions");
-                    for (int j = 0; j < predictions.length(); j++) {
-                        JSONObject times = predictions.getJSONObject(j);
-                        allTimes += times.getString("minutes");
-                        if (j != predictions.length() - 1) {
-                            allTimes += ", ";
+                    if (stopObject.getString("predictions") != "null") {
+                        JSONArray predictions = stopObject.getJSONArray("predictions");
+                        for (int j = 0; j < predictions.length(); j++) {
+                            JSONObject times = predictions.getJSONObject(j);
+                            String min = times.getString("minutes");
+                            if (min.equals("0"))
+                                min = "<1";
+                            allTimes += min;
+                            if (j != predictions.length() - 1) {
+                                allTimes += ", ";
+                            }
                         }
+                        allTimes += " minutes";
+                    }
+                    else {
+                        allTimes = "No predictions available";
                     }
                     busStopTimes.add(allTimes);
                 }
-            } catch(Exception e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
             // Start new activity to display bus times
@@ -159,28 +168,28 @@ public class MainActivity extends ActionBarActivity {
     }
 
     // Gets JSON from an address
-    public static String getJSON(String address){
+    public static String getJSON(String address) {
         StringBuilder builder = new StringBuilder();
         HttpClient client = new DefaultHttpClient();
         HttpGet httpGet = new HttpGet(address);
-        try{
+        try {
             HttpResponse response = client.execute(httpGet);
             StatusLine statusLine = response.getStatusLine();
             int statusCode = statusLine.getStatusCode();
-            if(statusCode == 200){
+            if (statusCode == 200) {
                 HttpEntity entity = response.getEntity();
                 InputStream content = entity.getContent();
                 BufferedReader reader = new BufferedReader(new InputStreamReader(content));
                 String line;
-                while((line = reader.readLine()) != null){
+                while ((line = reader.readLine()) != null) {
                     builder.append(line);
                 }
             } else {
                 Log.e(MainActivity.class.toString(), "Failed to get JSON object");
             }
-        }catch(ClientProtocolException e){
+        } catch (ClientProtocolException e) {
             e.printStackTrace();
-        } catch (IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return builder.toString();

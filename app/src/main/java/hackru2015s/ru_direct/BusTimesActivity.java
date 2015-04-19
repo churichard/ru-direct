@@ -4,6 +4,7 @@ import android.app.ListActivity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,8 +21,11 @@ import java.util.ArrayList;
 public class BusTimesActivity extends ListActivity {
 
     private class SetupBusPredictions extends AsyncTask<String, Void, String> {
+        private String busName;
+
         protected String doInBackground(String... strings) {
-            return MainActivity.getJSON("http://runextbus.herokuapp.com/route/" + strings[0]);
+            busName = strings[0];
+            return MainActivity.getJSON("http://runextbus.herokuapp.com/route/" + busName);
         }
 
         protected void onPostExecute(String result) {
@@ -33,17 +37,26 @@ public class BusTimesActivity extends ListActivity {
                     String allTimes = "";
                     JSONObject stopObject = jArray.getJSONObject(i);
                     busStopTitles.add(stopObject.getString("title"));
-                    JSONArray predictions = stopObject.getJSONArray("predictions");
-                    for (int j = 0; j < predictions.length(); j++) {
-                        JSONObject times = predictions.getJSONObject(j);
-                        allTimes += times.getString("minutes");
-                        if (j != predictions.length() - 1) {
-                            allTimes += ", ";
+                    if (stopObject.getString("predictions") != "null") {
+                        JSONArray predictions = stopObject.getJSONArray("predictions");
+                        for (int j = 0; j < predictions.length(); j++) {
+                            JSONObject times = predictions.getJSONObject(j);
+                            String min = times.getString("minutes");
+                            if (min.equals("0"))
+                                min = "<1";
+                            allTimes += min;
+                            if (j != predictions.length() - 1) {
+                                allTimes += ", ";
+                            }
                         }
+                        allTimes += " minutes";
+                    }
+                    else {
+                        allTimes = "No predictions available";
                     }
                     busStopTimes.add(allTimes);
                 }
-            } catch(Exception e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
             String[] titles = busStopTitles.toArray(new String[busStopTitles.size()]);
@@ -78,7 +91,12 @@ public class BusTimesActivity extends ListActivity {
         String[] buses = new String[titles.length];
 
         for (int i = 0; i < buses.length; i++) {
-            buses[i] = titles[i] + "\n" + times[i] + " minutes";
+            if (titles == null || times == null) {
+                buses[i] = "No predictions available";
+            }
+            else {
+                buses[i] = titles[i] + "\n" + times[i];
+            }
         }
 
         ListView busTimesList = (ListView) findViewById(android.R.id.list);
