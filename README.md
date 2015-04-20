@@ -1,2 +1,21 @@
-# ru-direct
-Rutgers app for bus directions
+# RU Direct
+
+## Description
+RU Direct is a mobile app that provides a clean, simple, and easy to use interface for finding out which Rutgers buses are active, what routes they travel on, and when they will be arriving at each of the stops. We found that the current Rutgers University bus app is too clunky for everyday use, as it is slow and comes bundled with many extraneous features. In contrast, our app provides a fast and intuitive way for students to check when buses will be arriving at what stops, which saves precious seconds and dramatically improves the experience of using Rutgers' bus system.
+
+## Things to Do
+- Use NextBus API directly instead of using Sugabus
+- Color code the text inside the app
+- Put the refresh button in the action bar
+- Pressing on an item multiple times opens it up multiple times
+- Make the app look better
+- Publish the app on the Play Store and release it to the public
+- Add directions from one bus stop to another
+- Add in maps of the bus routes
+- Potentially an iOS version?
+
+## Contributors
+RU Direct was built by Richard Chu, James Paik, Kenny Li, and Andy Le at HackRU Spring 2015.
+
+## License
+RU Direct is licensed underneath the MIT License. It is free and open source, and always will be.
