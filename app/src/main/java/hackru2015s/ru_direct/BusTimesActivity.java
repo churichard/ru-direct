@@ -19,6 +19,8 @@ import java.util.ArrayList;
 
 public class BusTimesActivity extends ListActivity {
 
+    String busName;
+
     private class SetupBusPredictions extends AsyncTask<String, Void, String> {
         private String busName;
 
@@ -71,7 +73,7 @@ public class BusTimesActivity extends ListActivity {
         setContentView(R.layout.activity_bus_times);
 
         Intent intent = getIntent();
-        final String busName = intent.getStringExtra(MainActivity.BUS_NAME);
+        busName = intent.getStringExtra(MainActivity.BUS_NAME);
         String[] busStopTitles = intent.getStringArrayExtra(MainActivity.BUS_STOP_TITLES_MESSAGE);
         String[] busStopTimes = intent.getStringArrayExtra(MainActivity.BUS_STOP_TIMES_MESSAGE);
 
@@ -100,8 +102,11 @@ public class BusTimesActivity extends ListActivity {
 
         ListView busTimesList = (ListView) findViewById(android.R.id.list);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getApplicationContext(),
-                R.layout.list_black_text, R.id.list_content, buses);
-        busTimesList.setAdapter(adapter);
+                 R.layout.list_black_text, R.id.list_content, buses);
+         busTimesList.setAdapter(adapter);
+
+
+
     }
 
     @Override
@@ -119,7 +124,8 @@ public class BusTimesActivity extends ListActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.refresh) {
+            new SetupBusPredictions().execute(busName);
             return true;
         }
 
