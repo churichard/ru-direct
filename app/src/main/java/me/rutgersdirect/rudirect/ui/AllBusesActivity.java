@@ -10,14 +10,15 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import hackru2015s.ru_direct.R;
-import me.rutgersdirect.rudirect.BusArrays;
+import java.util.HashMap;
+
+import me.rutgersdirect.rudirect.R;
 import me.rutgersdirect.rudirect.BusConstants;
 import me.rutgersdirect.rudirect.helper.SetupBusStopsAndTimes;
 
-
 public class AllBusesActivity extends ActionBarActivity {
     private ListView listView;
+    private HashMap<String, String> activeBusTitlesAndTags;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,8 +27,7 @@ public class AllBusesActivity extends ActionBarActivity {
 
         // Get active bus tags and titles
         Intent intent = getIntent();
-        BusArrays.ActiveBusTags = intent.getStringArrayExtra(BusConstants.ACTIVE_BUS_TAGS);
-        BusArrays.ActiveBusTitles = intent.getStringArrayExtra(BusConstants.ACTIVE_BUSES_MESSAGE);
+        activeBusTitlesAndTags = (HashMap<String, String>) intent.getSerializableExtra(BusConstants.ACTIVE_BUSES);
 
         // Setup list view of all buses
         listView = (ListView) findViewById(R.id.allBusesList);

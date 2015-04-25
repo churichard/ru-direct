@@ -13,14 +13,16 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 
-import hackru2015s.ru_direct.R;
-import me.rutgersdirect.rudirect.BusArrays;
+import java.util.HashMap;
+
+import me.rutgersdirect.rudirect.R;
 import me.rutgersdirect.rudirect.BusConstants;
-import me.rutgersdirect.rudirect.helper.SetupBusStopsAndTimes;
 import me.rutgersdirect.rudirect.api.NextBusAPI;
+import me.rutgersdirect.rudirect.helper.SetupBusStopsAndTimes;
 
 public class MainActivity extends ActionBarActivity {
     private ListView listView;
+    private HashMap<String, String> activeBusTitlesAndTags;
 
     private class SetupListViewTask extends AsyncTask<Void, Void, String> {
         protected String doInBackground(Void... voids) {
@@ -28,21 +30,19 @@ public class MainActivity extends ActionBarActivity {
         }
 
         protected void onPostExecute(String result) {
-            String[][] tagsAndTitles = NextBusAPI.getActiveBusTagsAndTitles(result);
-            BusArrays.ActiveBusTags = tagsAndTitles[0];
-            BusArrays.ActiveBusTitles = tagsAndTitles[1];
+            activeBusTitlesAndTags = NextBusAPI.getActiveBusTagsAndTitles(result);
 
             // Setup list view
             listView = (ListView) findViewById(R.id.busList);
             ArrayAdapter<String> adapter = new ArrayAdapter<>(getApplicationContext(),
-                    R.layout.list_black_text, R.id.list_content, tagsAndTitles[1]);
+                    R.layout.list_black_text, R.id.list_content, activeBusTitlesAndTags.keySet().toArray(new String[0]));
             listView.setAdapter(adapter);
 
             // Setup item click listener
             listView.setOnItemClickListener(new OnItemClickListener() {
                 public void onItemClick(AdapterView<?> myAdapter, View myView, int myItemInt, long mylng) {
                     String bus = (String) (listView.getItemAtPosition(myItemInt));
-                    String busTag = BusArrays.ActiveBusTags[(java.util.Arrays.asList(BusArrays.ActiveBusTitles).indexOf(bus))];
+                    String busTag = activeBusTitlesAndTags.get(bus);
                     new SetupBusStopsAndTimes().execute(busTag, MainActivity.this);
                 }
             });
@@ -72,8 +72,7 @@ public class MainActivity extends ActionBarActivity {
             public void onClick(View v) {
                 // Start new activity to display all buses
                 Intent intent = new Intent(MainActivity.this, AllBusesActivity.class);
-                intent.putExtra(BusConstants.ACTIVE_BUSES_MESSAGE, BusArrays.ActiveBusTitles);
-                intent.putExtra(BusConstants.ACTIVE_BUS_TAGS, BusArrays.ActiveBusTags);
+                intent.putExtra(BusConstants.ACTIVE_BUSES, activeBusTitlesAndTags);
                 MainActivity.this.startActivity(intent);
             }
         });

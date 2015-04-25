@@ -7,7 +7,9 @@ import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -15,10 +17,30 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import me.rutgersdirect.rudirect.ui.MainActivity;
 
 public class NextBusAPI {
+
+    // Gets XML from an address
+    public static String getXML(String url) {
+        String xml = null;
+
+        try {
+            DefaultHttpClient httpClient = new DefaultHttpClient();
+            HttpPost httpPost = new HttpPost(url);
+
+            HttpResponse httpResponse = httpClient.execute(httpPost);
+            HttpEntity httpEntity = httpResponse.getEntity();
+            xml = EntityUtils.toString(httpEntity);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        // return XML
+        return xml;
+    }
 
     // Gets JSON from an address
     public static String getJSON(String address) {
@@ -85,9 +107,8 @@ public class NextBusAPI {
     }
 
     // Get active bus tags and titles
-    public static String[][] getActiveBusTagsAndTitles(String json) {
-        ArrayList<String> activeBusTags = new ArrayList<>();
-        ArrayList<String> activeBusTitles = new ArrayList<>();
+    public static HashMap<String, String> getActiveBusTagsAndTitles(String json) {
+        HashMap<String, String> activeBusTitlesAndTags = new HashMap<>();
 
         try {
             JSONObject jObject = new JSONObject(json);
@@ -95,14 +116,11 @@ public class NextBusAPI {
             JSONArray jArray = new JSONArray(busArray);
             for (int i = 0; i < jArray.length(); i++) {
                 JSONObject busObject = jArray.getJSONObject(i);
-                activeBusTags.add(busObject.getString("tag"));
-                activeBusTitles.add(busObject.getString("title"));
+                activeBusTitlesAndTags.put(busObject.getString("title"), busObject.getString("tag"));
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        String[][] tagsAndTitles = {activeBusTags.toArray(new String[activeBusTags.size()]),
-                activeBusTitles.toArray(new String[activeBusTitles.size()])};
-        return tagsAndTitles;
+        return activeBusTitlesAndTags;
     }
 }

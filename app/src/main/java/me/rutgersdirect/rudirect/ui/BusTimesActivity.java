@@ -11,7 +11,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 
-import hackru2015s.ru_direct.R;
+import me.rutgersdirect.rudirect.R;
 import me.rutgersdirect.rudirect.BusConstants;
 import me.rutgersdirect.rudirect.api.NextBusAPI;
 
@@ -83,6 +83,7 @@ public class BusTimesActivity extends ListActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
+        //noinspection SimplifiableIfStatement
         if (id == R.id.refresh) {
             new SetupBusTitlesAndTimes().execute(busName);
             return true;

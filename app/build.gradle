@@ -1,13 +1,13 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 21
+    compileSdkVersion 22
     buildToolsVersion "20.0.0"
 
     defaultConfig {
-        applicationId "hackru2015s.ru_direct"
-        minSdkVersion 18
-        targetSdkVersion 21
+        applicationId "me.rutgersdirect.rudirect"
+        minSdkVersion 15
+        targetSdkVersion 22
         versionCode 1
         versionName "1.0"
     }
