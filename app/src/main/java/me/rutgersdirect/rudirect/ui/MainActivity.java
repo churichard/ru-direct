@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -15,37 +16,45 @@ import android.widget.ListView;
 
 import java.util.HashMap;
 
-import me.rutgersdirect.rudirect.R;
 import me.rutgersdirect.rudirect.BusConstants;
+import me.rutgersdirect.rudirect.R;
 import me.rutgersdirect.rudirect.api.NextBusAPI;
-import me.rutgersdirect.rudirect.helper.SetupBusStopsAndTimes;
+import me.rutgersdirect.rudirect.helper.ShowBusStopsHelper;
 
 public class MainActivity extends ActionBarActivity {
     private ListView listView;
-    private HashMap<String, String> activeBusTitlesAndTags;
 
-    private class SetupListViewTask extends AsyncTask<Void, Void, String> {
-        protected String doInBackground(Void... voids) {
-            return NextBusAPI.getJSON("http://runextbus.herokuapp.com/active");
+    private class SetupListViewTask extends AsyncTask<Void, Void, String[]> {
+        protected String[] doInBackground(Void... voids) {
+            return NextBusAPI.getActiveBusTags();
         }
 
-        protected void onPostExecute(String result) {
-            activeBusTitlesAndTags = NextBusAPI.getActiveBusTagsAndTitles(result);
+        protected void onPostExecute(String[] activeBusTags) {
+            // Fill active bus array with active bus names
+            String[] activeBuses = {"No active buses"};
+            if (activeBusTags.length != 0) {
+                activeBuses = new String[activeBusTags.length];
+                for (int i = 0; i < activeBusTags.length; i++) {
+                    activeBuses[i] = BusConstants.TAGS_TO_BUSES.get(activeBusTags[i]);
+                }
+            }
 
             // Setup list view
             listView = (ListView) findViewById(R.id.busList);
             ArrayAdapter<String> adapter = new ArrayAdapter<>(getApplicationContext(),
-                    R.layout.list_black_text, R.id.list_content, activeBusTitlesAndTags.keySet().toArray(new String[0]));
+                    R.layout.list_black_text, R.id.list_content, activeBuses);
             listView.setAdapter(adapter);
 
             // Setup item click listener
-            listView.setOnItemClickListener(new OnItemClickListener() {
-                public void onItemClick(AdapterView<?> myAdapter, View myView, int myItemInt, long mylng) {
-                    String bus = (String) (listView.getItemAtPosition(myItemInt));
-                    String busTag = activeBusTitlesAndTags.get(bus);
-                    new SetupBusStopsAndTimes().execute(busTag, MainActivity.this);
-                }
-            });
+            if (activeBusTags.length != 0) {
+                listView.setOnItemClickListener(new OnItemClickListener() {
+                    public void onItemClick(AdapterView<?> myAdapter, View myView, int myItemInt, long mylng) {
+                        String bus = (String) (listView.getItemAtPosition(myItemInt));
+                        String busTag = BusConstants.BUSES_TO_TAGS.get(bus);
+                        new ShowBusStopsHelper().execute(busTag, MainActivity.this);
+                    }
+                });
+            }
         }
     }
 
@@ -54,6 +63,14 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setTitle("RU Direct");
+
+        // Initialize mapping from tags to buses and buses to tags
+        BusConstants.TAGS_TO_BUSES = new HashMap<>();
+        BusConstants.BUSES_TO_TAGS = new HashMap<>();
+        for (int i = 0; i < BusConstants.allBusNames.length; i++) {
+            BusConstants.TAGS_TO_BUSES.put(BusConstants.allBusTags[i], BusConstants.allBusNames[i]);
+            BusConstants.BUSES_TO_TAGS.put(BusConstants.allBusNames[i], BusConstants.allBusTags[i]);
+        }
 
         // Setup the list view
         new SetupListViewTask().execute();
@@ -67,12 +84,11 @@ public class MainActivity extends ActionBarActivity {
         });
 
         // Setup all buses button
-        final Button allBuses = (Button) findViewById(R.id.allBuses);
-        allBuses.setOnClickListener(new View.OnClickListener() {
+        Button allBusesButton = (Button) findViewById(R.id.allBuses);
+        allBusesButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 // Start new activity to display all buses
                 Intent intent = new Intent(MainActivity.this, AllBusesActivity.class);
-                intent.putExtra(BusConstants.ACTIVE_BUSES, activeBusTitlesAndTags);
                 MainActivity.this.startActivity(intent);
             }
         });

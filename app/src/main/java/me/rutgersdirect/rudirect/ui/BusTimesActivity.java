@@ -16,7 +16,7 @@ import me.rutgersdirect.rudirect.BusConstants;
 import me.rutgersdirect.rudirect.api.NextBusAPI;
 
 public class BusTimesActivity extends ListActivity {
-    private String busName;
+    private String busTag;
 
     private class SetupBusTitlesAndTimes extends AsyncTask<String, Void, String> {
         protected String doInBackground(String... strings) {
@@ -36,7 +36,7 @@ public class BusTimesActivity extends ListActivity {
         setContentView(R.layout.activity_bus_times);
 
         Intent intent = getIntent();
-        busName = intent.getStringExtra(BusConstants.BUS_NAME_MESSAGE);
+        busTag = intent.getStringExtra(BusConstants.BUS_TAG_MESSAGE);
         String[] busStopTitles = intent.getStringArrayExtra(BusConstants.BUS_STOP_TITLES_MESSAGE);
         String[] busStopTimes = intent.getStringArrayExtra(BusConstants.BUS_STOP_TIMES_MESSAGE);
 
@@ -46,7 +46,7 @@ public class BusTimesActivity extends ListActivity {
         Button refresh = (Button) findViewById(R.id.refreshTimes);
         refresh.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                new SetupBusTitlesAndTimes().execute(busName);
+                new SetupBusTitlesAndTimes().execute(busTag);
             }
         });
     }
@@ -85,7 +85,7 @@ public class BusTimesActivity extends ListActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.refresh) {
-            new SetupBusTitlesAndTimes().execute(busName);
+            new SetupBusTitlesAndTimes().execute(busTag);
             return true;
         }
 

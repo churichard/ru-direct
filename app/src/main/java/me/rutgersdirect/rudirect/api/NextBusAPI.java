@@ -7,9 +7,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -18,28 +16,31 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
+import me.rutgersdirect.rudirect.BusConstants;
+import me.rutgersdirect.rudirect.helper.XMLHelper;
+import me.rutgersdirect.rudirect.model.Vehicle;
 import me.rutgersdirect.rudirect.ui.MainActivity;
 
 public class NextBusAPI {
 
-    // Gets XML from an address
-    public static String getXML(String url) {
-        String xml = null;
-
+    // Returns a list of the active buses
+    public static String[] getActiveBusTags() {
+        List vehicles;
+        ArrayList<String> routeTags = new ArrayList<>();
         try {
-            DefaultHttpClient httpClient = new DefaultHttpClient();
-            HttpPost httpPost = new HttpPost(url);
-
-            HttpResponse httpResponse = httpClient.execute(httpPost);
-            HttpEntity httpEntity = httpResponse.getEntity();
-            xml = EntityUtils.toString(httpEntity);
-        } catch (Exception e) {
+            vehicles = XMLHelper.parse(BusConstants.ACTIVE_BUSES_LINK, "vehicle");
+            for (Object v : vehicles) {
+                String rTag = ((Vehicle) v).routeTag;
+                if (!routeTags.contains(rTag)) {
+                    routeTags.add(rTag);
+                }
+            }
+        } catch(Exception e) {
             e.printStackTrace();
         }
-
-        // return XML
-        return xml;
+        return routeTags.toArray(new String[routeTags.size()]);
     }
 
     // Gets JSON from an address
