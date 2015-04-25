@@ -3,7 +3,8 @@ package me.rutgersdirect.rudirect;
 import java.util.HashMap;
 
 public class BusConstants {
-    public static final String ACTIVE_BUSES_LINK = "http://webservices.nextbus.com/service/publicXMLFeed?a=rutgers&command=vehicleLocations";
+    public static final String VEHICLE_LOCATIONS_LINK = "http://webservices.nextbus.com/service/publicXMLFeed?a=rutgers&command=vehicleLocations";
+    public static final String ALL_ROUTES_LINK = "http://webservices.nextbus.com/service/publicXMLFeed?a=rutgers&command=routeConfig";
     public static final String BUS_TAG_MESSAGE = "Bus Tag";
     public static final String BUS_STOP_TITLES_MESSAGE = "Bus Stop Titles";
     public static final String BUS_STOP_TIMES_MESSAGE = "Bus Stop Times";

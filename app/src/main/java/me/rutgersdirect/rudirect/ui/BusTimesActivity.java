@@ -2,7 +2,6 @@ package me.rutgersdirect.rudirect.ui;
 
 import android.app.ListActivity;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -13,23 +12,10 @@ import android.widget.ListView;
 
 import me.rutgersdirect.rudirect.R;
 import me.rutgersdirect.rudirect.BusConstants;
-import me.rutgersdirect.rudirect.api.NextBusAPI;
 import me.rutgersdirect.rudirect.helper.ShowBusStopsAndTimesHelper;
 
 public class BusTimesActivity extends ListActivity {
     private String busTag;
-
-//    private class SetupBusTitlesAndTimes extends AsyncTask<String, Void, String[][]> {
-//        protected String[][] doInBackground(String... strings) {
-//            String tag = strings[0];
-//            String[][] busStopTitlesAndTimes = {NextBusAPI.getBusStopTitles(tag), NextBusAPI.getBusStopTimes(tag)};
-//            return busStopTitlesAndTimes;
-//        }
-//
-//        protected void onPostExecute(String[][] titlesAndTimes) {
-//            setListView(titlesAndTimes[0], titlesAndTimes[1]);
-//        }
-//    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,12 +39,12 @@ public class BusTimesActivity extends ListActivity {
         });
     }
 
-    public void setListView(String[] titles, String[] times) {
+    public void setListView(Object[] titles, Object[] times) {
         String[] buses = new String[titles.length];
 
         for (int i = 0; i < buses.length; i++) {
             if (times == null) {
-                buses[i] = "No predictions available";
+                buses[i] = (String) titles[i];
             }
             else {
                 buses[i] = titles[i] + "\n" + times[i];

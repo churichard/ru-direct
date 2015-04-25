@@ -8,20 +8,18 @@ import me.rutgersdirect.rudirect.BusConstants;
 import me.rutgersdirect.rudirect.api.NextBusAPI;
 import me.rutgersdirect.rudirect.ui.BusTimesActivity;
 
-public class ShowBusStopsAndTimesHelper extends AsyncTask<Object, Void, String> {
+public class ShowBusStopsAndTimesHelper extends AsyncTask<Object, Void, Object[][]> {
     private String tag;
     private Activity activity;
 
-    protected String doInBackground(Object... objects) {
+    protected Object[][] doInBackground(Object... objects) {
         tag = (String) objects[0];
         activity = (Activity) objects[1];
-        return NextBusAPI.getJSON("http://runextbus.herokuapp.com/route/" + tag);
-//        String[][] busStopTitlesAndTimes = {NextBusAPI.getBusStopTitles(tag), NextBusAPI.getBusStopTimes(tag)};
-//        return busStopTitlesAndTimes; j
+        Object[][] busStopTitlesAndTimes = {NextBusAPI.getBusStopTitles(tag), NextBusAPI.getBusStopTimes(tag)};
+        return busStopTitlesAndTimes;
     }
 
-    protected void onPostExecute(String result) {
-        String[][] titlesAndTimes = NextBusAPI.getBusStopTitlesAndTimes(result);
+    protected void onPostExecute(Object[][] titlesAndTimes) {
         if (activity instanceof BusTimesActivity) {
             // Update bus stop titles and times
             ((BusTimesActivity) activity).setListView(titlesAndTimes[0], titlesAndTimes[1]);

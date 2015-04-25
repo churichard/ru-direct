@@ -1,6 +1,5 @@
 package me.rutgersdirect.rudirect.helper;
 
-import android.util.Log;
 import android.util.Xml;
 
 import org.xmlpull.v1.XmlPullParser;
@@ -11,9 +10,8 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.List;
 
-import me.rutgersdirect.rudirect.model.Vehicle;
+import me.rutgersdirect.rudirect.model.BusStop;
 
 public class XMLHelper {
     // Given a string representation of a URL, sets up a connection and gets
@@ -31,22 +29,22 @@ public class XMLHelper {
     }
 
     // Parses the XML feed.
-    public static List parse(String urlString, String entry) throws XmlPullParserException, IOException {
+    public static ArrayList<Object> parse(String urlString, String[] xmlTags) throws XmlPullParserException, IOException {
         InputStream in = downloadUrl(urlString);
         try {
             XmlPullParser parser = Xml.newPullParser();
             parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
             parser.setInput(in, null);
             parser.nextTag();
-            return readFeed(parser, entry);
+            return readFeed(parser, xmlTags);
         } finally {
             in.close();
         }
     }
 
     // Reads in the XML feed.
-    private static List readFeed(XmlPullParser parser, String entry) throws XmlPullParserException, IOException {
-        List entries = new ArrayList();
+    private static ArrayList<Object> readFeed(XmlPullParser parser, String[] xmlTags) throws XmlPullParserException, IOException {
+        ArrayList<Object> entries = new ArrayList<>();
 
         parser.require(XmlPullParser.START_TAG, null, "body");
         while (parser.next() != XmlPullParser.END_TAG) {
@@ -54,23 +52,16 @@ public class XMLHelper {
                 continue;
             }
             String name = parser.getName();
-            // Starts by looking for the vehicle tag
-            if (name.equals(entry)) {
-                entries.add(readEntry(parser, entry));
+            // Starts by looking for the first xml tag
+            if (name.equals(xmlTags[0]) && xmlTags[0].equals("vehicle")) {
+                entries.add(readRouteTag(parser));
+            } else if (name.equals(xmlTags[0]) && xmlTags[0].equals("route") && parser.getAttributeValue(null, "tag").equals(xmlTags[1])) {
+                entries.addAll(readStopTags(parser));
             } else {
                 skip(parser);
             }
         }
         return entries;
-    }
-
-    // Parses the contents of an entry.
-    private static Object readEntry(XmlPullParser parser, String entry) throws XmlPullParserException, IOException {
-        if (entry.equals("vehicle")) {
-            String routeTag = readRouteTag(parser);
-            return new Vehicle(routeTag);
-        }
-        return null;
     }
 
     // Processes route tags in the feed.
@@ -80,6 +71,34 @@ public class XMLHelper {
         parser.nextTag();
         parser.require(XmlPullParser.END_TAG, null, "vehicle");
         return routeTag;
+    }
+
+    // Processes stop tags in the feed.
+    private static ArrayList<Object> readStopTags(XmlPullParser parser) throws IOException, XmlPullParserException {
+        parser.require(XmlPullParser.START_TAG, null, "route");
+        ArrayList<Object> stops = new ArrayList<>();
+        while (parser.next() != XmlPullParser.END_TAG) {
+            if (parser.getEventType() != XmlPullParser.START_TAG) {
+                continue;
+            }
+            String name = parser.getName();
+            if (name.equals("stop")) {
+                stops.add(readStop(parser));
+            } else {
+                skip(parser);
+            }
+        }
+        return stops;
+    }
+
+    // Reads in a stop.
+    private static BusStop readStop(XmlPullParser parser) throws IOException, XmlPullParserException {
+        parser.require(XmlPullParser.START_TAG, null, "stop");
+        String stopTag = parser.getAttributeValue(null, "tag");
+        String stopTitle = parser.getAttributeValue(null, "title");
+        parser.nextTag();
+        parser.require(XmlPullParser.END_TAG, null, "stop");
+        return new BusStop(stopTag, stopTitle);
     }
 
     // Skips the tag.
