@@ -39,16 +39,12 @@ public class BusTimesActivity extends ListActivity {
         });
     }
 
-    public void setListView(Object[] titles, Object[] times) {
+    // Updates the list view with bus stop titles and times
+    public void setListView(String[] titles, String[] times) {
         String[] buses = new String[titles.length];
 
         for (int i = 0; i < buses.length; i++) {
-            if (times == null) {
-                buses[i] = (String) titles[i];
-            }
-            else {
-                buses[i] = titles[i] + "\n" + times[i];
-            }
+            buses[i] = titles[i] + "\n" + times[i];
         }
 
         ListView busTimesList = (ListView) findViewById(android.R.id.list);

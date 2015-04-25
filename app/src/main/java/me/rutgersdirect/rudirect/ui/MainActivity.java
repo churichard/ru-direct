@@ -17,7 +17,7 @@ import java.util.HashMap;
 
 import me.rutgersdirect.rudirect.BusConstants;
 import me.rutgersdirect.rudirect.R;
-import me.rutgersdirect.rudirect.api.NextBusAPI;
+import me.rutgersdirect.rudirect.api.NextbusAPI;
 import me.rutgersdirect.rudirect.helper.ShowBusStopsAndTimesHelper;
 
 public class MainActivity extends ActionBarActivity {
@@ -25,7 +25,7 @@ public class MainActivity extends ActionBarActivity {
 
     private class SetupListViewTask extends AsyncTask<Void, Void, String[]> {
         protected String[] doInBackground(Void... voids) {
-            return NextBusAPI.getActiveBusTags();
+            return NextbusAPI.getActiveBusTags();
         }
 
         protected void onPostExecute(String[] activeBusTags) {

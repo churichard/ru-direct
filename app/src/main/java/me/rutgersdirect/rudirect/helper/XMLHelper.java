@@ -1,5 +1,6 @@
 package me.rutgersdirect.rudirect.helper;
 
+import android.util.Log;
 import android.util.Xml;
 
 import org.xmlpull.v1.XmlPullParser;
@@ -57,6 +58,8 @@ public class XMLHelper {
                 entries.add(readRouteTag(parser));
             } else if (name.equals(xmlTags[0]) && xmlTags[0].equals("route") && parser.getAttributeValue(null, "tag").equals(xmlTags[1])) {
                 entries.addAll(readStopTags(parser));
+            } else if (name.equals(xmlTags[0]) && xmlTags[0].equals("predictions")) {
+                entries.add(readPredictions(parser));
             } else {
                 skip(parser);
             }
@@ -99,6 +102,60 @@ public class XMLHelper {
         parser.nextTag();
         parser.require(XmlPullParser.END_TAG, null, "stop");
         return new BusStop(stopTag, stopTitle);
+    }
+
+    // Processes prediction tags in the feed.
+    private static String readPredictions(XmlPullParser parser) throws IOException, XmlPullParserException {
+        parser.require(XmlPullParser.START_TAG, null, "predictions");
+        String preds = null;
+        while (parser.next() != XmlPullParser.END_TAG) {
+            if (parser.getEventType() != XmlPullParser.START_TAG) {
+                continue;
+            }
+            String name = parser.getName();
+            if (name.equals("direction")) {
+                preds = readDirection(parser);
+            } else {
+                skip(parser);
+            }
+        }
+        // If there are no active buses
+        if (preds == null) {
+            preds = "Offline";
+        }
+        return preds;
+    }
+
+    // Reads in a direction for a stop.
+    private static String readDirection(XmlPullParser parser) throws IOException, XmlPullParserException {
+        parser.require(XmlPullParser.START_TAG, null, "direction");
+        StringBuilder pred = new StringBuilder();
+        while (parser.next() != XmlPullParser.END_TAG) {
+            if (parser.getEventType() != XmlPullParser.START_TAG) {
+                continue;
+            }
+            String name = parser.getName();
+            if (name.equals("prediction")) {
+                if (pred.length() != 0) {
+                    pred.append(", ");
+                }
+                pred.append(readTimes(parser));
+            }
+        }
+        pred.append(" minutes");
+        return pred.toString();
+    }
+
+    // Reads in predictions for a stop.
+    private static String readTimes(XmlPullParser parser) throws IOException, XmlPullParserException {
+        parser.require(XmlPullParser.START_TAG, null, "prediction");
+        String min = parser.getAttributeValue(null, "minutes");
+        if (min.equals("0")) {
+            min = "<1";
+        }
+        parser.nextTag();
+        parser.require(XmlPullParser.END_TAG, null, "prediction");
+        return min;
     }
 
     // Skips the tag.

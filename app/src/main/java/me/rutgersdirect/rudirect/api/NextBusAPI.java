@@ -6,7 +6,7 @@ import me.rutgersdirect.rudirect.BusConstants;
 import me.rutgersdirect.rudirect.helper.XMLHelper;
 import me.rutgersdirect.rudirect.model.BusStop;
 
-public class NextBusAPI {
+public class NextbusAPI {
 
     // Returns a list of the active buses
     public static String[] getActiveBusTags() {
@@ -27,12 +27,12 @@ public class NextBusAPI {
     }
 
     // Takes in a bus tag and returns a list of the bus stop titles
-    public static Object[] getBusStopTitles(String busTag) {
+    public static String[] getBusStopTitles(String busTag) {
         return getBusStops(busTag, true);
     }
 
     // Takes in a bus tag and returns a list of the bus stop tags
-    public static Object[] getBusStopTags(String busTag) {
+    public static String[] getBusStopTags(String busTag) {
         return getBusStops(busTag, false);
     }
 
@@ -47,8 +47,7 @@ public class NextBusAPI {
                 for (int i = 0; i < stops.size(); i++) {
                     result[i] = ((BusStop) stops.get(i)).title;
                 }
-            }
-            else {
+            } else {
                 for (int i = 0; i < stops.size(); i++) {
                     result[i] = ((BusStop) stops.get(i)).tag;
                 }
@@ -61,70 +60,24 @@ public class NextBusAPI {
 
     // Returns a list of the bus stop times
     public static String[] getBusStopTimes(String busTag) {
-        return null;
+        String[] busStopTags = getBusStopTags(busTag);
+        StringBuilder link = new StringBuilder(BusConstants.PREDICTIONS_LINK);
+        for (String tag : busStopTags) {
+            String stop = "&stops=" + busTag + "|null|" + tag;
+            link.append(stop);
+        }
+        ArrayList<String> timesStrings = new ArrayList<>();
+        String[] xmlTags = {"predictions"};
+
+        try {
+            ArrayList<Object> times = XMLHelper.parse(link.toString(), xmlTags);
+            for (Object t : times) {
+                timesStrings.add((String) t);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return timesStrings.toArray(new String[timesStrings.size()]);
     }
-
-    // Gets JSON from an address
-//    public static String getJSON(String address) {
-//        StringBuilder builder = new StringBuilder();
-//        HttpClient client = new DefaultHttpClient();
-//        HttpGet httpGet = new HttpGet(address);
-//        try {
-//            HttpResponse response = client.execute(httpGet);
-//            StatusLine statusLine = response.getStatusLine();
-//            int statusCode = statusLine.getStatusCode();
-//            if (statusCode == 200) {
-//                HttpEntity entity = response.getEntity();
-//                InputStream content = entity.getContent();
-//                BufferedReader reader = new BufferedReader(new InputStreamReader(content));
-//                String line;
-//                while ((line = reader.readLine()) != null) {
-//                    builder.append(line);
-//                }
-//            } else {
-//                Log.e(MainActivity.class.toString(), "Failed to get JSON object");
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//        return builder.toString();
-//    }
-
-    // Returns bus stop titles and times
-//    public static String[][] getBusStopTitlesAndTimes(String json) {
-//        ArrayList<String> busStopTitles = new ArrayList<>();
-//        ArrayList<String> busStopTimes = new ArrayList<>();
-//        try {
-//            JSONArray jArray = new JSONArray(json);
-//            for (int i = 0; i < jArray.length(); i++) {
-//                StringBuilder allTimes = new StringBuilder();
-//                JSONObject stopObject = jArray.getJSONObject(i);
-//                busStopTitles.add(stopObject.getString("title"));
-//                if (!stopObject.getString("predictions").equals("null")) {
-//                    JSONArray predictions = stopObject.getJSONArray("predictions");
-//                    for (int j = 0; j < predictions.length(); j++) {
-//                        JSONObject times = predictions.getJSONObject(j);
-//                        String min = times.getString("minutes");
-//                        if (min.equals("0")) {
-//                            min = "<1";
-//                        }
-//                        allTimes.append(min);
-//                        if (j != predictions.length() - 1) {
-//                            allTimes.append(", ");
-//                        }
-//                    }
-//                    allTimes.append(" minutes");
-//                }
-//                else {
-//                    allTimes.append("Offline");
-//                }
-//                busStopTimes.add(allTimes.toString());
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//        String[][] titlesAndTimes = {busStopTitles.toArray(new String[busStopTitles.size()]),
-//                busStopTimes.toArray(new String[busStopTimes.size()])};
-//        return titlesAndTimes;
-//    }
 }

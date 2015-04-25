@@ -5,21 +5,21 @@ import android.content.Intent;
 import android.os.AsyncTask;
 
 import me.rutgersdirect.rudirect.BusConstants;
-import me.rutgersdirect.rudirect.api.NextBusAPI;
+import me.rutgersdirect.rudirect.api.NextbusAPI;
 import me.rutgersdirect.rudirect.ui.BusTimesActivity;
 
-public class ShowBusStopsAndTimesHelper extends AsyncTask<Object, Void, Object[][]> {
+public class ShowBusStopsAndTimesHelper extends AsyncTask<Object, Void, String[][]> {
     private String tag;
     private Activity activity;
 
-    protected Object[][] doInBackground(Object... objects) {
+    protected String[][] doInBackground(Object... objects) {
         tag = (String) objects[0];
         activity = (Activity) objects[1];
-        Object[][] busStopTitlesAndTimes = {NextBusAPI.getBusStopTitles(tag), NextBusAPI.getBusStopTimes(tag)};
+        String[][] busStopTitlesAndTimes = {NextbusAPI.getBusStopTitles(tag), NextbusAPI.getBusStopTimes(tag)};
         return busStopTitlesAndTimes;
     }
 
-    protected void onPostExecute(Object[][] titlesAndTimes) {
+    protected void onPostExecute(String[][] titlesAndTimes) {
         if (activity instanceof BusTimesActivity) {
             // Update bus stop titles and times
             ((BusTimesActivity) activity).setListView(titlesAndTimes[0], titlesAndTimes[1]);
