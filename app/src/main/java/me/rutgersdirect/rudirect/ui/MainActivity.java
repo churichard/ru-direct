@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,7 +18,7 @@ import java.util.HashMap;
 import me.rutgersdirect.rudirect.BusConstants;
 import me.rutgersdirect.rudirect.R;
 import me.rutgersdirect.rudirect.api.NextBusAPI;
-import me.rutgersdirect.rudirect.helper.ShowBusStopsHelper;
+import me.rutgersdirect.rudirect.helper.ShowBusStopsAndTimesHelper;
 
 public class MainActivity extends ActionBarActivity {
     private ListView listView;
@@ -51,7 +50,7 @@ public class MainActivity extends ActionBarActivity {
                     public void onItemClick(AdapterView<?> myAdapter, View myView, int myItemInt, long mylng) {
                         String bus = (String) (listView.getItemAtPosition(myItemInt));
                         String busTag = BusConstants.BUSES_TO_TAGS.get(bus);
-                        new ShowBusStopsHelper().execute(busTag, MainActivity.this);
+                        new ShowBusStopsAndTimesHelper().execute(busTag, MainActivity.this);
                     }
                 });
             }
@@ -108,7 +107,6 @@ public class MainActivity extends ActionBarActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.refresh) {
             new SetupListViewTask().execute();
             return true;

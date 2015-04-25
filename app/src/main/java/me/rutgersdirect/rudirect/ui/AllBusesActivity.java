@@ -11,7 +11,7 @@ import android.widget.ListView;
 
 import me.rutgersdirect.rudirect.R;
 import me.rutgersdirect.rudirect.BusConstants;
-import me.rutgersdirect.rudirect.helper.ShowBusStopsHelper;
+import me.rutgersdirect.rudirect.helper.ShowBusStopsAndTimesHelper;
 
 public class AllBusesActivity extends ActionBarActivity {
     private ListView listView;
@@ -32,7 +32,7 @@ public class AllBusesActivity extends ActionBarActivity {
             public void onItemClick(AdapterView<?> myAdapter, View myView, int myItemInt, long mylng) {
                 String bus = (String) (listView.getItemAtPosition(myItemInt));
                 String busTag = BusConstants.BUSES_TO_TAGS.get(bus);
-                new ShowBusStopsHelper().execute(busTag, AllBusesActivity.this);
+                new ShowBusStopsAndTimesHelper().execute(busTag, AllBusesActivity.this);
             }
         });
     }
@@ -51,7 +51,6 @@ public class AllBusesActivity extends ActionBarActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
         }

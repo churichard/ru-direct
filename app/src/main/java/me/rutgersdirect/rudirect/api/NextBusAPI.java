@@ -43,6 +43,16 @@ public class NextBusAPI {
         return routeTags.toArray(new String[routeTags.size()]);
     }
 
+    // Returns a list of the bus stop titles
+    public static String[] getBusStopTitles(String busTag) {
+        return null;
+    }
+
+    // Returns a list of the bus stop times
+    public static String[] getBusStopTimes(String busTag) {
+        return null;
+    }
+
     // Gets JSON from an address
     public static String getJSON(String address) {
         StringBuilder builder = new StringBuilder();
@@ -105,23 +115,5 @@ public class NextBusAPI {
         String[][] titlesAndTimes = {busStopTitles.toArray(new String[busStopTitles.size()]),
                 busStopTimes.toArray(new String[busStopTimes.size()])};
         return titlesAndTimes;
-    }
-
-    // Get active bus tags and titles
-    public static HashMap<String, String> getActiveBusTagsAndTitles(String json) {
-        HashMap<String, String> activeBusTitlesAndTags = new HashMap<>();
-
-        try {
-            JSONObject jObject = new JSONObject(json);
-            String busArray = jObject.getString("routes");
-            JSONArray jArray = new JSONArray(busArray);
-            for (int i = 0; i < jArray.length(); i++) {
-                JSONObject busObject = jArray.getJSONObject(i);
-                activeBusTitlesAndTags.put(busObject.getString("title"), busObject.getString("tag"));
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return activeBusTitlesAndTags;
     }
 }

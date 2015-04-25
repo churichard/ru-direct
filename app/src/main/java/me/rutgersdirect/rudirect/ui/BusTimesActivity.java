@@ -14,20 +14,22 @@ import android.widget.ListView;
 import me.rutgersdirect.rudirect.R;
 import me.rutgersdirect.rudirect.BusConstants;
 import me.rutgersdirect.rudirect.api.NextBusAPI;
+import me.rutgersdirect.rudirect.helper.ShowBusStopsAndTimesHelper;
 
 public class BusTimesActivity extends ListActivity {
     private String busTag;
 
-    private class SetupBusTitlesAndTimes extends AsyncTask<String, Void, String> {
-        protected String doInBackground(String... strings) {
-            return NextBusAPI.getJSON("http://runextbus.herokuapp.com/route/" + strings[0]);
-        }
-
-        protected void onPostExecute(String result) {
-            String[][] titlesAndTimes = NextBusAPI.getBusStopTitlesAndTimes(result);
-            setListView(titlesAndTimes[0], titlesAndTimes[1]);
-        }
-    }
+//    private class SetupBusTitlesAndTimes extends AsyncTask<String, Void, String[][]> {
+//        protected String[][] doInBackground(String... strings) {
+//            String tag = strings[0];
+//            String[][] busStopTitlesAndTimes = {NextBusAPI.getBusStopTitles(tag), NextBusAPI.getBusStopTimes(tag)};
+//            return busStopTitlesAndTimes;
+//        }
+//
+//        protected void onPostExecute(String[][] titlesAndTimes) {
+//            setListView(titlesAndTimes[0], titlesAndTimes[1]);
+//        }
+//    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,7 +48,7 @@ public class BusTimesActivity extends ListActivity {
         Button refresh = (Button) findViewById(R.id.refreshTimes);
         refresh.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                new SetupBusTitlesAndTimes().execute(busTag);
+                new ShowBusStopsAndTimesHelper().execute(busTag, BusTimesActivity.this);
             }
         });
     }
@@ -83,9 +85,8 @@ public class BusTimesActivity extends ListActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.refresh) {
-            new SetupBusTitlesAndTimes().execute(busTag);
+            new ShowBusStopsAndTimesHelper().execute(busTag, BusTimesActivity.this);
             return true;
         }
 
