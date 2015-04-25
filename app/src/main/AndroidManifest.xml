@@ -10,7 +10,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".MainActivity"
+            android:name="me.rutgersdirect.rudirect.ui.MainActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -19,11 +19,11 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".BusTimesActivity"
+            android:name="me.rutgersdirect.rudirect.ui.BusTimesActivity"
             android:label="@string/title_activity_bus_times" >
         </activity>
         <activity
-            android:name=".AllBusesActivity"
+            android:name="me.rutgersdirect.rudirect.ui.AllBusesActivity"
             android:label="@string/title_activity_all_buses" >
         </activity>
     </application>
