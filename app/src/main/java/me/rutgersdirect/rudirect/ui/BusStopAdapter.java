@@ -41,20 +41,26 @@ public class BusStopAdapter extends ArrayAdapter {
 
         // Change text color if lowest time is below 1 or 5 minutes
         String[] timeArray = busStopTimes.getText().toString().split(" ");
-        String lowestTime = timeArray[2].substring(0, timeArray[2].length() - 1);
-        int lowestTimeInt = 6; // Random number that is above the threshold for blue
-        if (!lowestTime.equals("<1")) {
-            lowestTimeInt = Integer.parseInt(lowestTime);
+        if (timeArray.length >= 2) {
+            String lowestTime = timeArray[2].substring(0, timeArray[2].length() - 1);
+            int lowestTimeInt = 6; // Random number that is above the threshold for blue
+            if (!lowestTime.equals("<1")) {
+                lowestTimeInt = Integer.parseInt(lowestTime);
+            }
+            if (lowestTime.equals("<1") || lowestTimeInt == 1) {
+                Log.d("Hello", "red: " + lowestTime);
+                busStopTimes.setTextColor(Color.parseColor("#C62828"));
+            } else if (lowestTimeInt > 1 && lowestTimeInt <= 5) {
+                Log.d("Hello", "orange: " + lowestTime);
+                busStopTimes.setTextColor(Color.parseColor("#EF6C00"));
+            } else {
+                Log.d("Hello", "blue: " + lowestTime);
+                busStopTimes.setTextColor(Color.parseColor("#1565C0"));
+            }
         }
-        if (lowestTime.equals("<1") || lowestTimeInt == 1) {
-            Log.d("Hello", "red: " + lowestTime);
-            busStopTimes.setTextColor(Color.parseColor("#C62828"));
-        } else if (lowestTimeInt > 1 && lowestTimeInt <= 5) {
-            Log.d("Hello", "orange: " + lowestTime);
-            busStopTimes.setTextColor(Color.parseColor("#EF6C00"));
-        } else {
-            Log.d("Hello", "blue: " + lowestTime);
-            busStopTimes.setTextColor(Color.parseColor("#1565C0"));
+        else {
+            busStopName.setTextColor(Color.parseColor("#9E9E9E"));
+            busStopTimes.setTextColor(Color.parseColor("#9E9E9E"));
         }
 
         return convertView;
