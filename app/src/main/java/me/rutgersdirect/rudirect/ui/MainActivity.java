@@ -18,7 +18,7 @@ import java.util.HashMap;
 import me.rutgersdirect.rudirect.BusConstants;
 import me.rutgersdirect.rudirect.R;
 import me.rutgersdirect.rudirect.api.NextbusAPI;
-import me.rutgersdirect.rudirect.helper.ShowBusStopsAndTimesHelper;
+import me.rutgersdirect.rudirect.helper.ShowBusStopsHelper;
 
 public class MainActivity extends ActionBarActivity {
     private ListView listView;
@@ -50,7 +50,7 @@ public class MainActivity extends ActionBarActivity {
                     public void onItemClick(AdapterView<?> myAdapter, View myView, int myItemInt, long mylng) {
                         String bus = (String) (listView.getItemAtPosition(myItemInt));
                         String busTag = BusConstants.BUSES_TO_TAGS.get(bus);
-                        new ShowBusStopsAndTimesHelper().execute(busTag, MainActivity.this);
+                        new ShowBusStopsHelper().execute(busTag, MainActivity.this);
                     }
                 });
             }
@@ -63,9 +63,11 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
         setTitle("RU Direct");
 
-        // Initialize mapping from tags to buses and buses to tags
+        // Initialize hash maps
         BusConstants.TAGS_TO_BUSES = new HashMap<>();
         BusConstants.BUSES_TO_TAGS = new HashMap<>();
+        BusConstants.TAGS_TO_STOPS = new HashMap<>();
+        BusConstants.TITLES_TO_STOPS = new HashMap<>();
         for (int i = 0; i < BusConstants.allBusNames.length; i++) {
             BusConstants.TAGS_TO_BUSES.put(BusConstants.allBusTags[i], BusConstants.allBusNames[i]);
             BusConstants.BUSES_TO_TAGS.put(BusConstants.allBusNames[i], BusConstants.allBusTags[i]);

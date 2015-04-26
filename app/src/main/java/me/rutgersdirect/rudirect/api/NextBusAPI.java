@@ -7,7 +7,6 @@ import me.rutgersdirect.rudirect.helper.XMLHelper;
 import me.rutgersdirect.rudirect.model.BusStop;
 
 public class NextbusAPI {
-
     // Returns a list of the active buses
     public static String[] getActiveBusTags() {
         ArrayList<String> buses = new ArrayList<>();
@@ -28,15 +27,21 @@ public class NextbusAPI {
 
     // Takes in a bus tag and returns a list of the bus stop titles
     public static String[] getBusStopTitles(String busTag) {
-        return getBusStops(busTag, true);
+        if (!BusConstants.TITLES_TO_STOPS.containsKey(busTag)) {
+            BusConstants.TITLES_TO_STOPS.put(busTag, getBusStops(busTag, true));
+        }
+        return BusConstants.TITLES_TO_STOPS.get(busTag);
     }
 
     // Takes in a bus tag and returns a list of the bus stop tags
     public static String[] getBusStopTags(String busTag) {
-        return getBusStops(busTag, false);
+        if (!BusConstants.TAGS_TO_STOPS.containsKey(busTag)) {
+            BusConstants.TAGS_TO_STOPS.put(busTag, getBusStops(busTag, false));
+        }
+        return BusConstants.TAGS_TO_STOPS.get(busTag);
     }
 
-    // Takes in a bus tag and whether or not it is getting titles and returns an ArrayList of bus stops
+    // Returns an ArrayList of bus stop titles or tags
     private static String[] getBusStops(String busTag, boolean isGettingTitles) {
         String[] result = null;
         String[] xmlTags = {"route", busTag};
@@ -62,22 +67,23 @@ public class NextbusAPI {
     public static String[] getBusStopTimes(String busTag) {
         String[] busStopTags = getBusStopTags(busTag);
         StringBuilder link = new StringBuilder(BusConstants.PREDICTIONS_LINK);
-        for (String tag : busStopTags) {
-            String stop = "&stops=" + busTag + "|null|" + tag;
+        for (String stopTag : busStopTags) {
+            String stop = "&stops=" + busTag + "|null|" + stopTag;
             link.append(stop);
         }
-        ArrayList<String> timesStrings = new ArrayList<>();
+        String[] result = null;
         String[] xmlTags = {"predictions"};
 
         try {
             ArrayList<Object> times = XMLHelper.parse(link.toString(), xmlTags);
-            for (Object t : times) {
-                timesStrings.add((String) t);
+            result = new String[times.size()];
+            for (int i = 0; i < times.size(); i++) {
+                result[i] = (String) times.get(i);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        return timesStrings.toArray(new String[timesStrings.size()]);
+        return result;
     }
 }

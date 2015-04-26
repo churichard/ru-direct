@@ -12,7 +12,7 @@ import android.widget.ListView;
 
 import me.rutgersdirect.rudirect.R;
 import me.rutgersdirect.rudirect.BusConstants;
-import me.rutgersdirect.rudirect.helper.ShowBusStopsAndTimesHelper;
+import me.rutgersdirect.rudirect.helper.ShowBusStopsHelper;
 
 public class BusTimesActivity extends ListActivity {
     private String busTag;
@@ -34,7 +34,7 @@ public class BusTimesActivity extends ListActivity {
         Button refresh = (Button) findViewById(R.id.refreshTimes);
         refresh.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                new ShowBusStopsAndTimesHelper().execute(busTag, BusTimesActivity.this);
+                new ShowBusStopsHelper().execute(busTag, BusTimesActivity.this);
             }
         });
     }
@@ -68,7 +68,7 @@ public class BusTimesActivity extends ListActivity {
         int id = item.getItemId();
 
         if (id == R.id.refresh) {
-            new ShowBusStopsAndTimesHelper().execute(busTag, BusTimesActivity.this);
+            new ShowBusStopsHelper().execute(busTag, BusTimesActivity.this);
             return true;
         }
 

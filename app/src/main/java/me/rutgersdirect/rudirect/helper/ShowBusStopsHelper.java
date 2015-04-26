@@ -8,7 +8,7 @@ import me.rutgersdirect.rudirect.BusConstants;
 import me.rutgersdirect.rudirect.api.NextbusAPI;
 import me.rutgersdirect.rudirect.ui.BusTimesActivity;
 
-public class ShowBusStopsAndTimesHelper extends AsyncTask<Object, Void, String[][]> {
+public class ShowBusStopsHelper extends AsyncTask<Object, Void, String[][]> {
     private String tag;
     private Activity activity;
 
