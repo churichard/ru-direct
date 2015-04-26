@@ -1,10 +1,12 @@
 package me.rutgersdirect.rudirect.api;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import me.rutgersdirect.rudirect.BusConstants;
 import me.rutgersdirect.rudirect.helper.XMLHelper;
 import me.rutgersdirect.rudirect.model.BusStop;
+import me.rutgersdirect.rudirect.model.BusTagComparator;
 
 public class NextbusAPI {
     // Returns a list of the active buses
@@ -22,7 +24,9 @@ public class NextbusAPI {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return buses.toArray(new String[buses.size()]);
+        String[] busArray = buses.toArray(new String[buses.size()]);
+        Arrays.sort(busArray, new BusTagComparator());
+        return busArray;
     }
 
     // Takes in a bus tag and returns a list of the bus stop titles

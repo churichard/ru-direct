@@ -20,7 +20,7 @@ import me.rutgersdirect.rudirect.R;
 import me.rutgersdirect.rudirect.api.NextbusAPI;
 import me.rutgersdirect.rudirect.helper.ShowBusStopsHelper;
 
-public class MainActivity extends ActionBarActivity {
+public class ActiveBusesActivity extends ActionBarActivity {
     private ListView listView;
 
     private class SetupListViewTask extends AsyncTask<Void, Void, String[]> {
@@ -50,7 +50,7 @@ public class MainActivity extends ActionBarActivity {
                     public void onItemClick(AdapterView<?> myAdapter, View myView, int myItemInt, long mylng) {
                         String bus = (String) (listView.getItemAtPosition(myItemInt));
                         String busTag = BusConstants.BUSES_TO_TAGS.get(bus);
-                        new ShowBusStopsHelper().execute(busTag, MainActivity.this);
+                        new ShowBusStopsHelper().execute(busTag, ActiveBusesActivity.this);
                     }
                 });
             }
@@ -60,7 +60,7 @@ public class MainActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_active_buses);
         setTitle("RU Direct");
 
         // Initialize hash maps
@@ -89,8 +89,8 @@ public class MainActivity extends ActionBarActivity {
         allBusesButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 // Start new activity to display all buses
-                Intent intent = new Intent(MainActivity.this, AllBusesActivity.class);
-                MainActivity.this.startActivity(intent);
+                Intent intent = new Intent(ActiveBusesActivity.this, AllBusesActivity.class);
+                ActiveBusesActivity.this.startActivity(intent);
             }
         });
     }

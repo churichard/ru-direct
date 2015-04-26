@@ -1,6 +1,5 @@
 package me.rutgersdirect.rudirect.helper;
 
-import android.util.Log;
 import android.util.Xml;
 
 import org.xmlpull.v1.XmlPullParser;
@@ -101,7 +100,7 @@ public class XMLHelper {
         String stopTitle = parser.getAttributeValue(null, "title");
         parser.nextTag();
         parser.require(XmlPullParser.END_TAG, null, "stop");
-        return new BusStop(stopTag, stopTitle);
+        return new BusStop(stopTag, stopTitle, null);
     }
 
     // Processes prediction tags in the feed.
@@ -139,10 +138,13 @@ public class XMLHelper {
                 if (pred.length() != 0) {
                     pred.append(", ");
                 }
+                if (pred.length() == 0) {
+                    pred.append("Arriving in ");
+                }
                 pred.append(readTimes(parser));
             }
         }
-        pred.append(" minutes");
+        pred.append(" minutes.");
         return pred.toString();
     }
 

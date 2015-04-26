@@ -1,5 +1,6 @@
 package me.rutgersdirect.rudirect.ui;
 
+import android.app.Activity;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,18 +11,21 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 
+import java.util.ArrayList;
+
 import me.rutgersdirect.rudirect.R;
 import me.rutgersdirect.rudirect.BusConstants;
 import me.rutgersdirect.rudirect.helper.ShowBusStopsHelper;
+import me.rutgersdirect.rudirect.model.BusStop;
 
-public class BusTimesActivity extends ListActivity {
+public class BusStopsActivity extends Activity {
     private String busTag;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_bus_times);
+        setContentView(R.layout.activity_bus_stops);
 
         Intent intent = getIntent();
         busTag = intent.getStringExtra(BusConstants.BUS_TAG_MESSAGE);
@@ -34,22 +38,21 @@ public class BusTimesActivity extends ListActivity {
         Button refresh = (Button) findViewById(R.id.refreshTimes);
         refresh.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                new ShowBusStopsHelper().execute(busTag, BusTimesActivity.this);
+                new ShowBusStopsHelper().execute(busTag, BusStopsActivity.this);
             }
         });
     }
 
     // Updates the list view with bus stop titles and times
     public void setListView(String[] titles, String[] times) {
-        String[] buses = new String[titles.length];
+        ArrayList<BusStop> buses = new ArrayList<>(titles.length);
 
-        for (int i = 0; i < buses.length; i++) {
-            buses[i] = titles[i] + "\n" + times[i];
+        for (int i = 0; i < titles.length; i++) {
+            buses.add(new BusStop(null, titles[i], times[i]));
         }
 
         ListView busTimesList = (ListView) findViewById(android.R.id.list);
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(getApplicationContext(),
-                 R.layout.list_black_text, R.id.list_content, buses);
+        BusStopAdapter adapter = new BusStopAdapter(getApplicationContext(), R.layout.list_bus_stops, buses);
         busTimesList.setAdapter(adapter);
     }
 
@@ -68,7 +71,7 @@ public class BusTimesActivity extends ListActivity {
         int id = item.getItemId();
 
         if (id == R.id.refresh) {
-            new ShowBusStopsHelper().execute(busTag, BusTimesActivity.this);
+            new ShowBusStopsHelper().execute(busTag, BusStopsActivity.this);
             return true;
         }
 
