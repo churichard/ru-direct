@@ -19,6 +19,7 @@ import me.rutgersdirect.rudirect.helper.ShowBusStopsHelper;
 import me.rutgersdirect.rudirect.model.BusStop;
 
 public class BusStopsActivity extends Activity {
+    public static boolean active;
     private String busTag;
 
     @Override
@@ -54,6 +55,18 @@ public class BusStopsActivity extends Activity {
         ListView busTimesList = (ListView) findViewById(android.R.id.list);
         BusStopAdapter adapter = new BusStopAdapter(getApplicationContext(), R.layout.list_bus_stops, buses);
         busTimesList.setAdapter(adapter);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        active = true;
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        active = false;
     }
 
     @Override

@@ -48,9 +48,12 @@ public class ActiveBusesActivity extends ActionBarActivity {
             if (activeBusTags.length != 0) {
                 listView.setOnItemClickListener(new OnItemClickListener() {
                     public void onItemClick(AdapterView<?> myAdapter, View myView, int myItemInt, long mylng) {
-                        String bus = (String) (listView.getItemAtPosition(myItemInt));
-                        String busTag = BusConstants.BUSES_TO_TAGS.get(bus);
-                        new ShowBusStopsHelper().execute(busTag, ActiveBusesActivity.this);
+                        if (!BusStopsActivity.active) {
+                            BusStopsActivity.active = true;
+                            String bus = (String) (listView.getItemAtPosition(myItemInt));
+                            String busTag = BusConstants.BUSES_TO_TAGS.get(bus);
+                            new ShowBusStopsHelper().execute(busTag, ActiveBusesActivity.this);
+                        }
                     }
                 });
             }

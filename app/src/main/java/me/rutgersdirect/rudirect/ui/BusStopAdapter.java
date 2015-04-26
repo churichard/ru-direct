@@ -2,7 +2,6 @@ package me.rutgersdirect.rudirect.ui;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,13 +47,10 @@ public class BusStopAdapter extends ArrayAdapter {
                 lowestTimeInt = Integer.parseInt(lowestTime);
             }
             if (lowestTime.equals("<1") || lowestTimeInt == 1) {
-                Log.d("Hello", "red: " + lowestTime);
                 busStopTimes.setTextColor(Color.parseColor("#C62828"));
             } else if (lowestTimeInt > 1 && lowestTimeInt <= 5) {
-                Log.d("Hello", "orange: " + lowestTime);
                 busStopTimes.setTextColor(Color.parseColor("#EF6C00"));
             } else {
-                Log.d("Hello", "blue: " + lowestTime);
                 busStopTimes.setTextColor(Color.parseColor("#1565C0"));
             }
         }
