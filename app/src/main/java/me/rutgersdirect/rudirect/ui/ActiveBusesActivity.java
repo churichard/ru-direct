@@ -63,6 +63,9 @@ public class ActiveBusesActivity extends ActionBarActivity {
         setContentView(R.layout.activity_active_buses);
         setTitle("RU Direct");
 
+        // Setup the list view
+        new SetupListViewTask().execute();
+
         // Initialize hash maps
         BusConstants.TAGS_TO_BUSES = new HashMap<>();
         BusConstants.BUSES_TO_TAGS = new HashMap<>();
@@ -72,9 +75,6 @@ public class ActiveBusesActivity extends ActionBarActivity {
             BusConstants.TAGS_TO_BUSES.put(BusConstants.allBusTags[i], BusConstants.allBusNames[i]);
             BusConstants.BUSES_TO_TAGS.put(BusConstants.allBusNames[i], BusConstants.allBusTags[i]);
         }
-
-        // Setup the list view
-        new SetupListViewTask().execute();
 
         // Setup refresh button
         final Button refresh = (Button) findViewById(R.id.refresh);
