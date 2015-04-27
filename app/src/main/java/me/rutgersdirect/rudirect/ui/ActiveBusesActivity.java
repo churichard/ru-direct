@@ -81,14 +81,6 @@ public class ActiveBusesActivity extends ActionBarActivity {
             BusConstants.BUSES_TO_TAGS.put(BusConstants.allBusNames[i], BusConstants.allBusTags[i]);
         }
 
-        // Setup refresh button
-        final Button refresh = (Button) findViewById(R.id.refresh);
-        refresh.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                new SetupListViewTask().execute();
-            }
-        });
-
         // Setup all buses button
         Button allBusesButton = (Button) findViewById(R.id.allBuses);
         allBusesButton.setOnClickListener(new View.OnClickListener() {
@@ -105,8 +97,6 @@ public class ActiveBusesActivity extends ActionBarActivity {
         actionBar.setLogo(R.mipmap.ic_launcher);
         actionBar.setDisplayUseLogoEnabled(true);
         actionBar.setDisplayShowHomeEnabled(true);
-
-
     }
 
     @Override

@@ -1,6 +1,5 @@
 package me.rutgersdirect.rudirect.ui;
 
-import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
@@ -9,7 +8,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 
@@ -20,7 +18,7 @@ import me.rutgersdirect.rudirect.BusConstants;
 import me.rutgersdirect.rudirect.helper.ShowBusStopsHelper;
 import me.rutgersdirect.rudirect.model.BusStop;
 
-public class    BusStopsActivity extends ActionBarActivity {
+public class BusStopsActivity extends ActionBarActivity {
     public static boolean active;
     private String busTag;
 
@@ -37,20 +35,11 @@ public class    BusStopsActivity extends ActionBarActivity {
 
         setListView(busStopTitles, busStopTimes);
 
-        // Setup refresh button
-        Button refresh = (Button) findViewById(R.id.refreshTimes);
-        refresh.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                new ShowBusStopsHelper().execute(busTag, BusStopsActivity.this);
-            }
-        });
-
         //ActionBar setup
         ActionBar actionBar = getSupportActionBar();
         actionBar.setLogo(R.mipmap.ic_launcher);
         actionBar.setDisplayUseLogoEnabled(true);
         actionBar.setDisplayShowHomeEnabled(true);
-
     }
 
     // Updates the list view with bus stop titles and times
