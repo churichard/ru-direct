@@ -82,12 +82,13 @@ public class ActiveBusesActivity extends ActionBarActivity {
         }
 
         // Setup refresh button
-        final Button refresh = (Button) findViewById(R.id.refresh);
+        /*final Button refresh = (Button) findViewById(R.id.refresh);
         refresh.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 new SetupListViewTask().execute();
             }
         });
+        */
 
         // Setup all buses button
         Button allBusesButton = (Button) findViewById(R.id.allBuses);
@@ -105,6 +106,7 @@ public class ActiveBusesActivity extends ActionBarActivity {
         actionBar.setLogo(R.mipmap.ic_launcher);
         actionBar.setDisplayUseLogoEnabled(true);
         actionBar.setDisplayShowHomeEnabled(true);
+
 
 
     }

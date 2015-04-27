@@ -14,13 +14,14 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
-    <Button
+    <!--<Button
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
         android:id="@+id/refresh"
         android:text="@string/refresh"
 
         android:layout_toLeftOf="@+id/blank_space" />
+
 
     <ImageView
         android:id="@+id/blank_space"
@@ -30,19 +31,21 @@
         android:layout_marginRight="10sp"
         android:layout_marginLeft="10sp"/>
 
+    -->
+
     <Button
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
         android:id="@+id/allBuses"
         android:text="@string/all_buses"
-        android:layout_toRightOf="@id/blank_space" />
+        android:layout_centerHorizontal="true" />
 
 
     <ListView
         android:id="@+id/busList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/refresh"
+        android:layout_below="@+id/allBuses"
         android:orientation="vertical" />
 
 </RelativeLayout>

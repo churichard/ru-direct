@@ -37,19 +37,21 @@ public class    BusStopsActivity extends ActionBarActivity {
 
         setListView(busStopTitles, busStopTimes);
 
-        // Setup refresh button
+        /* Setup refresh button
         Button refresh = (Button) findViewById(R.id.refreshTimes);
         refresh.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 new ShowBusStopsHelper().execute(busTag, BusStopsActivity.this);
             }
         });
+        */
 
         //ActionBar setup
         ActionBar actionBar = getSupportActionBar();
         actionBar.setLogo(R.mipmap.ic_launcher);
         actionBar.setDisplayUseLogoEnabled(true);
         actionBar.setDisplayShowHomeEnabled(true);
+        actionBar.setDisplayHomeAsUpEnabled(true);
 
     }
 

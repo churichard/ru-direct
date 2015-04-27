@@ -46,6 +46,7 @@ public class AllBusesActivity extends ActionBarActivity {
         actionBar.setLogo(R.mipmap.ic_launcher);
         actionBar.setDisplayUseLogoEnabled(true);
         actionBar.setDisplayShowHomeEnabled(true);
+        actionBar.setDisplayHomeAsUpEnabled(true);
     }
 
     @Override
