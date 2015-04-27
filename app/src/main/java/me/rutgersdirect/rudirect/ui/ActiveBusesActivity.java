@@ -96,6 +96,8 @@ public class ActiveBusesActivity extends ActionBarActivity {
                 ActiveBusesActivity.this.startActivity(intent);
             }
         });
+
+
     }
 
     @Override
