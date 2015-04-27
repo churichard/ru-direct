@@ -3,8 +3,10 @@ package me.rutgersdirect.rudirect.ui;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -17,7 +19,7 @@ import java.util.HashMap;
 
 import me.rutgersdirect.rudirect.BusConstants;
 import me.rutgersdirect.rudirect.R;
-import me.rutgersdirect.rudirect.api.NextbusAPI;
+import me.rutgersdirect.rudirect.api.NextBusAPI;
 import me.rutgersdirect.rudirect.helper.ShowBusStopsHelper;
 
 public class ActiveBusesActivity extends ActionBarActivity {
@@ -25,7 +27,7 @@ public class ActiveBusesActivity extends ActionBarActivity {
 
     private class SetupListViewTask extends AsyncTask<Void, Void, String[]> {
         protected String[] doInBackground(Void... voids) {
-            return NextbusAPI.getActiveBusTags();
+            return NextBusAPI.getActiveBusTags();
         }
 
         protected void onPostExecute(String[] activeBusTags) {
@@ -96,13 +98,22 @@ public class ActiveBusesActivity extends ActionBarActivity {
                 ActiveBusesActivity.this.startActivity(intent);
             }
         });
+
+        //ActionBar setup
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setLogo(R.mipmap.ic_launcher);
+        actionBar.setDisplayUseLogoEnabled(true);
+        actionBar.setDisplayShowHomeEnabled(true);
+
+
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_main, menu);
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
