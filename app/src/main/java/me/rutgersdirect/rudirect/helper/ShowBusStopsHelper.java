@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 
 import me.rutgersdirect.rudirect.BusConstants;
-import me.rutgersdirect.rudirect.api.NextbusAPI;
+import me.rutgersdirect.rudirect.api.NextBusAPI;
 import me.rutgersdirect.rudirect.ui.BusStopsActivity;
 
 public class ShowBusStopsHelper extends AsyncTask<Object, Void, String[][]> {
@@ -15,7 +15,7 @@ public class ShowBusStopsHelper extends AsyncTask<Object, Void, String[][]> {
     protected String[][] doInBackground(Object... objects) {
         tag = (String) objects[0];
         activity = (Activity) objects[1];
-        String[][] busStopTitlesAndTimes = {NextbusAPI.getBusStopTitles(tag), NextbusAPI.getBusStopTimes(tag)};
+        String[][] busStopTitlesAndTimes = {NextBusAPI.getBusStopTitles(tag), NextBusAPI.getBusStopTimes(tag)};
         return busStopTitlesAndTimes;
     }
 

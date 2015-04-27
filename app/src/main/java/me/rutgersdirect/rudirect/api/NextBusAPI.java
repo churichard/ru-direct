@@ -8,7 +8,7 @@ import me.rutgersdirect.rudirect.helper.XMLHelper;
 import me.rutgersdirect.rudirect.model.BusStop;
 import me.rutgersdirect.rudirect.model.BusTagComparator;
 
-public class NextbusAPI {
+public class NextBusAPI {
     // Returns a list of the active buses
     public static String[] getActiveBusTags() {
         ArrayList<String> buses = new ArrayList<>();

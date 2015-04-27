@@ -1,10 +1,12 @@
 package me.rutgersdirect.rudirect.ui;
 
-import android.app.Activity;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -18,7 +20,7 @@ import me.rutgersdirect.rudirect.BusConstants;
 import me.rutgersdirect.rudirect.helper.ShowBusStopsHelper;
 import me.rutgersdirect.rudirect.model.BusStop;
 
-public class BusStopsActivity extends Activity {
+public class    BusStopsActivity extends ActionBarActivity {
     public static boolean active;
     private String busTag;
 
@@ -42,6 +44,13 @@ public class BusStopsActivity extends Activity {
                 new ShowBusStopsHelper().execute(busTag, BusStopsActivity.this);
             }
         });
+
+        //ActionBar setup
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setLogo(R.mipmap.ic_launcher);
+        actionBar.setDisplayUseLogoEnabled(true);
+        actionBar.setDisplayShowHomeEnabled(true);
+
     }
 
     // Updates the list view with bus stop titles and times
@@ -72,8 +81,9 @@ public class BusStopsActivity extends Activity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_bus_times, menu);
-        return true;
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_bus_times, menu);
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
