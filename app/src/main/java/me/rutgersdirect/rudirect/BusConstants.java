@@ -12,8 +12,8 @@ public class BusConstants {
     public static final String BUS_STOP_TITLES_MESSAGE = "Bus Stop Titles";
     public static final String BUS_STOP_TIMES_MESSAGE = "Bus Stop Times";
     // All bus names and tags
-    public static final String[] allBusNames = {"A", "B", "C", "EE", "F", "H", "LX", "Rex B", "Rex L", "Weekend 1", "Weekend 2"};
-    public static final String[] allBusTags = {"a", "b", "c", "ee", "f", "h", "lx", "rexb", "rexl", "wknd1", "wknd2"};
+    public static final String[] allBusNames = {"A", "B", "C", "EE", "F", "H", "LX", "Rex B", "Rex L", "Weekend 1", "Weekend 2", "Brunsquick Shuttle 1", "Brunsquick Shuttle 2"};
+    public static final String[] allBusTags = {"a", "b", "c", "ee", "f", "h", "lx", "rexb", "rexl", "wknd1", "wknd2", "w1", "w2"};
     // Caching of bus names to tags (and vice versa) and tags/titles to stops
     public static HashMap<String, String> TAGS_TO_BUSES;
     public static HashMap<String, String> BUSES_TO_TAGS;
