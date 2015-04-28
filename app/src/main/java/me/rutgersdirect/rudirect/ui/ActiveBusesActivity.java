@@ -81,17 +81,6 @@ public class ActiveBusesActivity extends ActionBarActivity {
             BusConstants.BUSES_TO_TAGS.put(BusConstants.allBusNames[i], BusConstants.allBusTags[i]);
         }
 
-
-        // Setup all buses button
-        Button allBusesButton = (Button) findViewById(R.id.allBuses);
-        allBusesButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                // Start new activity to display all buses
-                Intent intent = new Intent(ActiveBusesActivity.this, AllBusesActivity.class);
-                ActiveBusesActivity.this.startActivity(intent);
-            }
-        });
-
         //ActionBar setup
         ActionBar actionBar = getSupportActionBar();
         actionBar.setLogo(R.mipmap.ic_launcher);
@@ -116,6 +105,12 @@ public class ActiveBusesActivity extends ActionBarActivity {
 
         if (id == R.id.refresh) {
             new SetupListViewTask().execute();
+            return true;
+        }
+
+        if(id == R.id.allBus){
+            Intent intent = new Intent(ActiveBusesActivity.this, AllBusesActivity.class);
+            ActiveBusesActivity.this.startActivity(intent);
             return true;
         }
 

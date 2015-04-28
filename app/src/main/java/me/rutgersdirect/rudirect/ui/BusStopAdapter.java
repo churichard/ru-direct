@@ -40,25 +40,7 @@ public class BusStopAdapter extends ArrayAdapter {
 
         // Change text color if lowest time is below 1 or 5 minutes
         String[] timeArray = busStopTimes.getText().toString().split(" ");
-        if(timeArray.length == 1){ //For things with just 1 stop, especially for Brunsquick buses and incase API fails.
-            String lowestTime = timeArray[0]; //Just has 1 stop
-            int lowestTimeInt = 6; // Random number that is above the threshold for blue
-            if (!lowestTime.equals("<1") && !(lowestTime.equals("Offline") || lowestTime.equals(""))){ //Accounting for Offline and no name buses, since it returns parse error
-                 lowestTimeInt = Integer.parseInt(lowestTime);
-            }
-            if (lowestTime.equals("<1") || lowestTimeInt == 1) {
-                busStopTimes.setTextColor(Color.parseColor("#C62828"));
-            } else if (lowestTimeInt > 1 && lowestTimeInt <= 5) {
-                busStopTimes.setTextColor(Color.parseColor("#EF6C00"));
-            } else {
-                busStopTimes.setTextColor(Color.parseColor("#1565C0"));
-            }
-            if(lowestTime.equals("Offline") || lowestTime.equals("")){
-                busStopName.setTextColor(Color.parseColor("#9E9E9E"));
-                busStopTimes.setTextColor(Color.parseColor("#9E9E9E"));
-            }
-        }
-        else if (timeArray.length >= 2) {
+        if(timeArray.length >= 2) {
             String lowestTime = timeArray[2].substring(0, timeArray[2].length() - 1);
             int lowestTimeInt = 6; // Random number that is above the threshold for blue
             if (!lowestTime.equals("<1") && !(lowestTime.equals("Offline") || lowestTime.equals(""))) {

@@ -6,7 +6,9 @@ RU Direct is an Android app that provides a clean and easy to use interface for 
 ## Things to Do
 - Hardcode bus routes
 - Add sliding view between active buses and all buses
-- Make the app look better
+- Make the app look better (It's getting there)
+- Add expanded times (in 12:00 form) when bus stop is clicked on
+- Change titles of screens to match bus names
 - Publish the app on the Play Store and release it to the public
 - Add directions from one bus stop to another
 - Add in maps of the bus routes

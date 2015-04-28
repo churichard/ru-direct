@@ -35,11 +35,8 @@ public class BusStopsActivity extends ActionBarActivity {
 
         setListView(busStopTitles, busStopTimes);
 
-
         //ActionBar setup
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setLogo(R.mipmap.ic_launcher);
-        actionBar.setDisplayUseLogoEnabled(true);
         actionBar.setDisplayShowHomeEnabled(true);
         actionBar.setDisplayHomeAsUpEnabled(true);
 

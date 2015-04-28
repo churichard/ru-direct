@@ -14,19 +14,11 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
-    <Button
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:id="@+id/allBuses"
-        android:text="@string/all_buses"
-        android:layout_centerHorizontal="true" />
-
-
     <ListView
         android:id="@+id/busList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/allBuses"
+        android:layout_centerHorizontal="true"
         android:orientation="vertical" />
 
 </RelativeLayout>
