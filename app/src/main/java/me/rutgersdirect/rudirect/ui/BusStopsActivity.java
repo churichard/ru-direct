@@ -12,6 +12,8 @@ import android.widget.Button;
 import android.widget.ListView;
 
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import me.rutgersdirect.rudirect.R;
 import me.rutgersdirect.rudirect.BusConstants;
@@ -21,6 +23,7 @@ import me.rutgersdirect.rudirect.model.BusStop;
 public class BusStopsActivity extends ActionBarActivity {
     public static boolean active;
     private String busTag;
+    private Timer autoUpdate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,7 +61,21 @@ public class BusStopsActivity extends ActionBarActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        autoUpdate = new Timer(); //Auto Update Setup
+        autoUpdate.schedule(new TimerTask(){
+            public void run(){
+                runOnUiThread(new Runnable(){
+                    public void run() {
+                        updateBusTimes();
+                    }
+                });
+            }
+        }, 0, 60000); //Updates every minute nonetheless
         active = true;
+    }
+
+    private void updateBusTimes(){ //Helper Class to update buses
+        new ShowBusStopsHelper().execute(busTag, BusStopsActivity.this);
     }
 
     @Override
@@ -81,12 +98,10 @@ public class BusStopsActivity extends ActionBarActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
         if (id == R.id.refresh) {
             new ShowBusStopsHelper().execute(busTag, BusStopsActivity.this);
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 }
