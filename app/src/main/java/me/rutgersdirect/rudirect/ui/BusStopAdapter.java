@@ -40,11 +40,18 @@ public class BusStopAdapter extends ArrayAdapter {
 
         // Change text color if lowest time is below 1 or 5 minutes
         String[] timeArray = busStopTimes.getText().toString().split(" ");
-        if(timeArray.length >= 2) {
-            String lowestTime = timeArray[2].substring(0, timeArray[2].length() - 1);
+        if (timeArray.length >= 2) {
             int lowestTimeInt = 6; // Random number that is above the threshold for blue
-            if (!lowestTime.equals("<1") && !(lowestTime.equals("Offline") || lowestTime.equals(""))) {
-                    lowestTimeInt = Integer.parseInt(lowestTime);
+            String lowestTime;
+            if (timeArray.length != 4) {
+                lowestTime = timeArray[2].substring(0, timeArray[2].length() - 1);
+            }
+            else {
+                lowestTime = timeArray[2];
+            }
+
+            if (!lowestTime.equals("<1") && !lowestTime.equals("Offline") && !lowestTime.equals("")) {
+                lowestTimeInt = Integer.parseInt(lowestTime);
             }
             if (lowestTime.equals("<1") || lowestTimeInt == 1) {
                 busStopTimes.setTextColor(Color.parseColor("#C62828"));
@@ -53,12 +60,8 @@ public class BusStopAdapter extends ArrayAdapter {
             } else {
                 busStopTimes.setTextColor(Color.parseColor("#1565C0"));
             }
-            if(lowestTime.equals("Offline") || lowestTime.equals("")){
-                busStopName.setTextColor(Color.parseColor("#9E9E9E"));
-                busStopTimes.setTextColor(Color.parseColor("#9E9E9E"));
-            }
         }
-        else { //For just things with nothing in them
+        else { // If the bus is offline or it is empty
             busStopName.setTextColor(Color.parseColor("#9E9E9E"));
             busStopTimes.setTextColor(Color.parseColor("#9E9E9E"));
         }
