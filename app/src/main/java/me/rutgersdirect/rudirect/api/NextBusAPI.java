@@ -1,93 +1,93 @@
 package me.rutgersdirect.rudirect.api;
 
-import java.util.ArrayList;
+import org.xml.sax.helpers.DefaultHandler;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Arrays;
 
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
 import me.rutgersdirect.rudirect.BusConstants;
-import me.rutgersdirect.rudirect.helper.XMLHelper;
-import me.rutgersdirect.rudirect.model.BusStop;
-import me.rutgersdirect.rudirect.model.BusTagComparator;
+import me.rutgersdirect.rudirect.helper.XMLActiveBusHandler;
+import me.rutgersdirect.rudirect.helper.XMLBusStopHandler;
+import me.rutgersdirect.rudirect.helper.XMLBusTimesHandler;
 
 public class NextBusAPI {
-    // Returns a list of the active buses
-    public static String[] getActiveBusTags() {
-        ArrayList<String> buses = new ArrayList<>();
-        String[] xmlTags = {"vehicle"};
+    // Returns the input stream from the parameter url
+    private static InputStream downloadUrl(String urlString) throws IOException {
+        URL url = new URL(urlString);
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setReadTimeout(10000 /* milliseconds */);
+        conn.setConnectTimeout(15000 /* milliseconds */);
+        conn.setRequestMethod("GET");
+        conn.setDoInput(true);
+        // Starts the query
+        conn.connect();
+        return conn.getInputStream();
+    }
+
+    // Setups the SAX parser and parses the XML from the url
+    private static void parseXML(String urlString, DefaultHandler handler) {
         try {
-            ArrayList routeTags = XMLHelper.parse(BusConstants.VEHICLE_LOCATIONS_LINK, xmlTags);
-            for (Object rt : routeTags) {
-                String rTag = (String) rt;
-                if (!buses.contains(rTag)) {
-                    buses.add(rTag);
-                }
-            }
+            SAXParserFactory factory = SAXParserFactory.newInstance();
+            SAXParser saxParser = factory.newSAXParser();
+            saxParser.parse(downloadUrl(urlString), handler);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        String[] busArray = buses.toArray(new String[buses.size()]);
-        Arrays.sort(busArray, new BusTagComparator());
+    }
+
+    // Returns a list of the active buses
+    public static String[] getActiveBusTags() {
+        String[] busArray = {"No active buses"};
+        parseXML(BusConstants.VEHICLE_LOCATIONS_LINK, new XMLActiveBusHandler());
+
+        // Return active buses
+        if (BusConstants.ACTIVE_BUSES.size() > 0) {
+            busArray = BusConstants.ACTIVE_BUSES.toArray(new String[BusConstants.ACTIVE_BUSES.size()]);
+            Arrays.sort(busArray);
+        }
+
         return busArray;
+    }
+
+    // Returns an ArrayList of bus stop titles or tags
+    private static void getBusStops(String busTag) {
+        BusConstants.currentBusTag = busTag;
+        parseXML(BusConstants.ALL_ROUTES_LINK, new XMLBusStopHandler());
     }
 
     // Takes in a bus tag and returns a list of the bus stop titles
     public static String[] getBusStopTitles(String busTag) {
-        if (!BusConstants.TITLES_TO_STOPS.containsKey(busTag)) {
-            BusConstants.TITLES_TO_STOPS.put(busTag, getBusStops(busTag, true));
+        if (!BusConstants.BUS_TAGS_TO_STOP_TITLES.containsKey(busTag)) {
+            getBusStops(busTag);
         }
-        return BusConstants.TITLES_TO_STOPS.get(busTag);
+        return BusConstants.BUS_TAGS_TO_STOP_TITLES.get(busTag);
     }
 
     // Takes in a bus tag and returns a list of the bus stop tags
     public static String[] getBusStopTags(String busTag) {
-        if (!BusConstants.TAGS_TO_STOPS.containsKey(busTag)) {
-            BusConstants.TAGS_TO_STOPS.put(busTag, getBusStops(busTag, false));
+        if (!BusConstants.BUS_TAGS_TO_STOP_TAGS.containsKey(busTag)) {
+            getBusStops(busTag);
         }
-        return BusConstants.TAGS_TO_STOPS.get(busTag);
-    }
-
-    // Returns an ArrayList of bus stop titles or tags
-    private static String[] getBusStops(String busTag, boolean isGettingTitles) {
-        String[] result = null;
-        String[] xmlTags = {"route", busTag};
-        try {
-            ArrayList<Object> stops = XMLHelper.parse(BusConstants.ALL_ROUTES_LINK, xmlTags);
-            result = new String[stops.size()];
-            if (isGettingTitles) {
-                for (int i = 0; i < stops.size(); i++) {
-                    result[i] = ((BusStop) stops.get(i)).title;
-                }
-            } else {
-                for (int i = 0; i < stops.size(); i++) {
-                    result[i] = ((BusStop) stops.get(i)).tag;
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return result;
+        return BusConstants.BUS_TAGS_TO_STOP_TAGS.get(busTag);
     }
 
     // Returns a list of the bus stop times
     public static String[] getBusStopTimes(String busTag) {
+        BusConstants.currentBusTag = busTag;
         String[] busStopTags = getBusStopTags(busTag);
         StringBuilder link = new StringBuilder(BusConstants.PREDICTIONS_LINK);
         for (String stopTag : busStopTags) {
             String stop = "&stops=" + busTag + "|null|" + stopTag;
             link.append(stop);
         }
-        String[] result = null;
-        String[] xmlTags = {"predictions"};
+        parseXML(link.toString(), new XMLBusTimesHandler());
 
-        try {
-            ArrayList<Object> times = XMLHelper.parse(link.toString(), xmlTags);
-            result = new String[times.size()];
-            for (int i = 0; i < times.size(); i++) {
-                result[i] = (String) times.get(i);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return result;
+        return BusConstants.BUS_TAGS_TO_STOP_TIMES.get(busTag);
     }
 }

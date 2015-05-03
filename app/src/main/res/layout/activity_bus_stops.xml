@@ -14,6 +14,6 @@
         android:layout_width="fill_parent"
         android:layout_height="match_parent"
         android:layout_centerHorizontal="true"
-        android:orientation="vertical"/>
+        android:orientation="vertical" />
 
 </RelativeLayout>

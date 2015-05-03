@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import me.rutgersdirect.rudirect.R;
 import me.rutgersdirect.rudirect.model.BusStop;
 
-public class BusStopAdapter extends ArrayAdapter {
+public class BusStopAdapter extends ArrayAdapter<BusStop> {
     private Context context;
     private int layout;
     private ArrayList<BusStop> values;
@@ -38,9 +38,9 @@ public class BusStopAdapter extends ArrayAdapter {
         busStopName.setText(values.get(position).title);
         busStopTimes.setText(values.get(position).times);
 
-        // Change text color if lowest time is below 1 or 5 minutes
+        // Change text color depending on what the lowest time is
         String[] timeArray = busStopTimes.getText().toString().split(" ");
-        if (timeArray.length >= 2) {
+        if (timeArray.length >= 4) { // Arriving in ___ minutes
             int lowestTimeInt = 6; // Random number that is above the threshold for blue
             String lowestTime;
             if (timeArray.length != 4) {
@@ -50,19 +50,19 @@ public class BusStopAdapter extends ArrayAdapter {
                 lowestTime = timeArray[2];
             }
 
-            if (!lowestTime.equals("<1") && !lowestTime.equals("Offline") && !lowestTime.equals("")) {
+            if (!lowestTime.equals("<1")) {
                 lowestTimeInt = Integer.parseInt(lowestTime);
             }
-            if (lowestTime.equals("<1") || lowestTimeInt == 1) {
-                busStopTimes.setTextColor(Color.parseColor("#C62828"));
+            if (lowestTime.equals("<1") || lowestTimeInt <= 1) {
+                busStopTimes.setTextColor(Color.parseColor("#C62828")); // Red
             } else if (lowestTimeInt > 1 && lowestTimeInt <= 5) {
-                busStopTimes.setTextColor(Color.parseColor("#EF6C00"));
+                busStopTimes.setTextColor(Color.parseColor("#EF6C00")); // Orange
             } else {
-                busStopTimes.setTextColor(Color.parseColor("#1565C0"));
+                busStopTimes.setTextColor(Color.parseColor("#1565C0")); // Blue
             }
         }
         else { // If the bus is offline or it is empty
-            busStopName.setTextColor(Color.parseColor("#9E9E9E"));
+            busStopName.setTextColor(Color.parseColor("#9E9E9E")); // Grey
             busStopTimes.setTextColor(Color.parseColor("#9E9E9E"));
         }
 

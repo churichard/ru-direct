@@ -12,7 +12,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ListView;
 
 import java.util.HashMap;
@@ -32,12 +31,9 @@ public class ActiveBusesActivity extends ActionBarActivity {
 
         protected void onPostExecute(String[] activeBusTags) {
             // Fill active bus array with active bus names
-            String[] activeBuses = {"No active buses"};
-            if (activeBusTags.length != 0) {
-                activeBuses = new String[activeBusTags.length];
-                for (int i = 0; i < activeBusTags.length; i++) {
-                    activeBuses[i] = BusConstants.TAGS_TO_BUSES.get(activeBusTags[i]);
-                }
+            String[] activeBuses = new String[activeBusTags.length];
+            for (int i = 0; i < activeBusTags.length; i++) {
+                activeBuses[i] = BusConstants.TAGS_TO_BUSES.get(activeBusTags[i]);
             }
 
             // Setup list view
@@ -74,14 +70,14 @@ public class ActiveBusesActivity extends ActionBarActivity {
         // Initialize hash maps
         BusConstants.TAGS_TO_BUSES = new HashMap<>();
         BusConstants.BUSES_TO_TAGS = new HashMap<>();
-        BusConstants.TAGS_TO_STOPS = new HashMap<>();
-        BusConstants.TITLES_TO_STOPS = new HashMap<>();
+        BusConstants.BUS_TAGS_TO_STOP_TAGS = new HashMap<>();
+        BusConstants.BUS_TAGS_TO_STOP_TITLES = new HashMap<>();
         for (int i = 0; i < BusConstants.allBusNames.length; i++) {
             BusConstants.TAGS_TO_BUSES.put(BusConstants.allBusTags[i], BusConstants.allBusNames[i]);
             BusConstants.BUSES_TO_TAGS.put(BusConstants.allBusNames[i], BusConstants.allBusTags[i]);
         }
 
-        //ActionBar setup
+        // ActionBar setup
         ActionBar actionBar = getSupportActionBar();
         actionBar.setLogo(R.mipmap.ic_launcher);
         actionBar.setDisplayUseLogoEnabled(true);
@@ -108,7 +104,7 @@ public class ActiveBusesActivity extends ActionBarActivity {
             return true;
         }
 
-        if(id == R.id.allBus){
+        if (id == R.id.allBus) {
             Intent intent = new Intent(ActiveBusesActivity.this, AllBusesActivity.class);
             ActiveBusesActivity.this.startActivity(intent);
             return true;

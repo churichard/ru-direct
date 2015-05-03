@@ -7,23 +7,20 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
 import android.widget.ListView;
 
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import me.rutgersdirect.rudirect.R;
 import me.rutgersdirect.rudirect.BusConstants;
+import me.rutgersdirect.rudirect.R;
 import me.rutgersdirect.rudirect.helper.ShowBusStopsHelper;
 import me.rutgersdirect.rudirect.model.BusStop;
 
 public class BusStopsActivity extends ActionBarActivity {
     public static boolean active;
     private String busTag;
-    private Timer autoUpdate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,13 +39,11 @@ public class BusStopsActivity extends ActionBarActivity {
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayShowHomeEnabled(true);
         actionBar.setDisplayHomeAsUpEnabled(true);
-
     }
 
     // Updates the list view with bus stop titles and times
     public void setListView(String[] titles, String[] times) {
         ArrayList<BusStop> buses = new ArrayList<>(titles.length);
-
         for (int i = 0; i < titles.length; i++) {
             buses.add(new BusStop(null, titles[i], times[i]));
         }
@@ -61,20 +56,17 @@ public class BusStopsActivity extends ActionBarActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        autoUpdate = new Timer(); //Auto Update Setup
-        autoUpdate.schedule(new TimerTask(){
-            public void run(){
-                runOnUiThread(new Runnable(){
-                    public void run() {
-                        updateBusTimes();
-                    }
-                });
+        Timer autoUpdate = new Timer(); //Auto Update Setup
+        autoUpdate.schedule(new TimerTask() {
+            public void run() {
+                updateBusTimes();
             }
         }, 0, 60000); //Updates every minute nonetheless
         active = true;
     }
 
-    private void updateBusTimes(){ //Helper Class to update buses
+    // Updates the bus times
+    private void updateBusTimes() {
         new ShowBusStopsHelper().execute(busTag, BusStopsActivity.this);
     }
 
@@ -94,12 +86,10 @@ public class BusStopsActivity extends ActionBarActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
+        // Handle action bar item clicks here
         int id = item.getItemId();
         if (id == R.id.refresh) {
-            new ShowBusStopsHelper().execute(busTag, BusStopsActivity.this);
+            updateBusTimes();
             return true;
         }
         return super.onOptionsItemSelected(item);
