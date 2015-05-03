@@ -1,6 +1,8 @@
 package me.rutgersdirect.rudirect.ui;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
@@ -62,10 +64,20 @@ public class ActiveBusesActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_active_buses);
-        setTitle("RU Direct");
 
         // Setup the list view
         new SetupListViewTask().execute();
+
+//        SharedPreferences tagsToBusesPref = getSharedPreferences(getString(R.string.tags_to_buses_key), Context.MODE_PRIVATE);
+//        SharedPreferences busesToTagsPref = getSharedPreferences(getString(R.string.buses_to_tags_key), Context.MODE_PRIVATE);
+//        SharedPreferences.Editor tagsToBusesEdit = tagsToBusesPref.edit();
+//        SharedPreferences.Editor busesToTagsEdit = busesToTagsPref.edit();
+//        for (int i = 0; i < BusConstants.allBusNames.length; i++) {
+//            tagsToBusesEdit.putString(BusConstants.allBusTags[i], BusConstants.allBusNames[i]);
+//            busesToTagsEdit.putString(BusConstants.allBusTags[i], BusConstants.allBusNames[i]);
+//        }
+//        tagsToBusesEdit.apply();
+//        busesToTagsEdit.apply();
 
         // Initialize hash maps
         BusConstants.TAGS_TO_BUSES = new HashMap<>();

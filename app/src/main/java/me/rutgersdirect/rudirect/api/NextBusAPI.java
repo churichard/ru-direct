@@ -47,8 +47,8 @@ public class NextBusAPI {
         parseXML(BusConstants.VEHICLE_LOCATIONS_LINK, new XMLActiveBusHandler());
 
         // Return active buses
-        if (BusConstants.ACTIVE_BUSES.size() > 0) {
-            busArray = BusConstants.ACTIVE_BUSES.toArray(new String[BusConstants.ACTIVE_BUSES.size()]);
+        if (BusConstants.ACTIVE_BUSES.length > 0) {
+            busArray = BusConstants.ACTIVE_BUSES;
             Arrays.sort(busArray);
         }
 

@@ -1,6 +1,5 @@
 package me.rutgersdirect.rudirect;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 public class BusConstants {
@@ -22,8 +21,8 @@ public class BusConstants {
     public static HashMap<String, String[]> BUS_TAGS_TO_STOP_TITLES;
     // HashMap of bus tags to bus stop times
     public static HashMap<String, String[]> BUS_TAGS_TO_STOP_TIMES;
-    // ArrayList of active buses
-    public static ArrayList<String> ACTIVE_BUSES;
+    // Array of active buses
+    public static String[] ACTIVE_BUSES;
     // Current bus tag being worked on
     public static String currentBusTag;
 }
