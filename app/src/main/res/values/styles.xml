@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
 
+<resources>
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <item name="android:actionBarStyle">@style/MyActionBar</item>
     </style>
@@ -9,6 +9,4 @@
         parent="Widget.AppCompat.Light.ActionBar">
         <item name="android:background">#1b1b18</item>
     </style>
-
-
 </resources>

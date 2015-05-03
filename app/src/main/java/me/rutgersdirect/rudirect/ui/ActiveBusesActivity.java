@@ -16,6 +16,8 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import java.util.HashMap;
+
 import me.rutgersdirect.rudirect.BusConstants;
 import me.rutgersdirect.rudirect.R;
 import me.rutgersdirect.rudirect.api.NextBusAPI;
@@ -34,7 +36,7 @@ public class ActiveBusesActivity extends AppCompatActivity {
             String[] activeBuses = new String[activeBusTags.length];
             SharedPreferences tagsToBusesPref = getSharedPreferences(getString(R.string.tags_to_buses_key), Context.MODE_PRIVATE);
             for (int i = 0; i < activeBusTags.length; i++) {
-                activeBuses[i] = tagsToBusesPref.getString(activeBusTags[i], null);
+                activeBuses[i] = tagsToBusesPref.getString(activeBusTags[i], "No active buses\nCheck your Internet connection");
             }
 
             // Setup list view
@@ -48,11 +50,13 @@ public class ActiveBusesActivity extends AppCompatActivity {
                 listView.setOnItemClickListener(new OnItemClickListener() {
                     public void onItemClick(AdapterView<?> myAdapter, View myView, int myItemInt, long mylng) {
                         if (!BusStopsActivity.active) {
-                            BusStopsActivity.active = true;
                             String bus = (String) (listView.getItemAtPosition(myItemInt));
                             SharedPreferences busesToTagsPref = getSharedPreferences(getString(R.string.buses_to_tags_key), Context.MODE_PRIVATE);
                             String busTag = busesToTagsPref.getString(bus, null);
-                            new ShowBusStopsHelper().execute(busTag, ActiveBusesActivity.this, getApplicationContext());
+                            if (busTag != null) {
+                                BusStopsActivity.active = true;
+                                new ShowBusStopsHelper().execute(busTag, ActiveBusesActivity.this, getApplicationContext());
+                            }
                         }
                     }
                 });
@@ -93,23 +97,12 @@ public class ActiveBusesActivity extends AppCompatActivity {
             tagsToBusesEdit.apply();
             busesToTagsEdit.apply();
         }
-        BusConstants.context = getApplicationContext();
 
-//        BusConstants.BUS_TAGS_TO_STOP_TAGS = new HashMap<>();
-//        BusConstants.BUS_TAGS_TO_STOP_TITLES = new HashMap<>();
-
-        // Initialize hash maps
-//        BusConstants.TAGS_TO_BUSES = new HashMap<>();
-//        BusConstants.BUSES_TO_TAGS = new HashMap<>();
-//
-//        for (int i = 0; i < BusConstants.allBusNames.length; i++) {
-//            BusConstants.TAGS_TO_BUSES.put(BusConstants.allBusTags[i], BusConstants.allBusNames[i]);
-//            BusConstants.BUSES_TO_TAGS.put(BusConstants.allBusNames[i], BusConstants.allBusTags[i]);
-//        }
+        // Initialize bus tags to stop times hash map
+        BusConstants.BUS_TAGS_TO_STOP_TIMES = new HashMap<>();
 
         // ActionBar setup
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setLogo(R.mipmap.ic_launcher);
         actionBar.setDisplayUseLogoEnabled(true);
         actionBar.setDisplayShowHomeEnabled(true);
     }
@@ -124,9 +117,7 @@ public class ActiveBusesActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
+        // Handle action bar item clicks here
         int id = item.getItemId();
 
         if (id == R.id.refresh) {

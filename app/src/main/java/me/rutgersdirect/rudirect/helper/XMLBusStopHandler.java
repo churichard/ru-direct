@@ -33,8 +33,10 @@ public class XMLBusStopHandler extends DefaultHandler {
     }
 
     public void startDocument() throws SAXException {
-        SharedPreferences busTagsToStopTagsPref = context.getSharedPreferences(context.getString(R.string.bus_tags_to_stop_tags_key), Context.MODE_PRIVATE);
-        SharedPreferences busTagsToStopTitlesPref = context.getSharedPreferences(context.getString(R.string.bus_tags_to_stop_titles_key), Context.MODE_PRIVATE);
+        SharedPreferences busTagsToStopTagsPref = context.getSharedPreferences(
+                context.getString(R.string.bus_tags_to_stop_tags_key), Context.MODE_PRIVATE);
+        SharedPreferences busTagsToStopTitlesPref = context.getSharedPreferences(
+                context.getString(R.string.bus_tags_to_stop_titles_key), Context.MODE_PRIVATE);
         busTagsToStopTagsEdit = busTagsToStopTagsPref.edit();
         busTagsToStopTitlesEdit = busTagsToStopTitlesPref.edit();
         stopTitles = new ArrayList<>();

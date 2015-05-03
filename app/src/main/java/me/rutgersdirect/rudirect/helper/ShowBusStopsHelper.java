@@ -12,12 +12,11 @@ import me.rutgersdirect.rudirect.ui.BusStopsActivity;
 public class ShowBusStopsHelper extends AsyncTask<Object, Void, String[][]> {
     private String tag;
     private Activity activity;
-    private Context context;
 
     protected String[][] doInBackground(Object... objects) {
         tag = (String) objects[0];
         activity = (Activity) objects[1];
-        context = (Context) objects[2];
+        Context context = (Context) objects[2];
         String[][] busStopTitlesAndTimes = {NextBusAPI.getBusStopTitles(tag, context), NextBusAPI.getBusStopTimes(tag, context)};
         return busStopTitlesAndTimes;
     }

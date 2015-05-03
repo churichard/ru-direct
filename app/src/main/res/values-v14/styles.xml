@@ -9,7 +9,4 @@
         parent="@style/Widget.AppCompat.Light.ActionBar.Solid">
         <item name="android:background">#8b8878</item>
     </style>
-
-
-
 </resources>

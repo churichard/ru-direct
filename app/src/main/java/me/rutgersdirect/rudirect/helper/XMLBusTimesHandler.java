@@ -10,9 +10,14 @@ import java.util.HashMap;
 import me.rutgersdirect.rudirect.BusConstants;
 
 public class XMLBusTimesHandler extends DefaultHandler {
+    private String busTag;
     private boolean inBusTag;
     private ArrayList<String> stopTimes;
     private StringBuilder times;
+
+    public XMLBusTimesHandler(String busTag) {
+        this.busTag = busTag;
+    }
 
     public void startDocument() throws SAXException {
         BusConstants.BUS_TAGS_TO_STOP_TIMES = new HashMap<>();
@@ -55,6 +60,8 @@ public class XMLBusTimesHandler extends DefaultHandler {
     }
 
     public void endDocument() throws SAXException {
-        BusConstants.BUS_TAGS_TO_STOP_TIMES.put(BusConstants.currentBusTag, stopTimes.toArray(new String[stopTimes.size()]));
+        if (stopTimes.size() > 0) {
+            BusConstants.BUS_TAGS_TO_STOP_TIMES.put(busTag, stopTimes.toArray(new String[stopTimes.size()]));
+        }
     }
 }

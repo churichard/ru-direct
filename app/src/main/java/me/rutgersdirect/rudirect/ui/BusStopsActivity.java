@@ -35,7 +35,7 @@ public class BusStopsActivity extends AppCompatActivity {
 
         setListView(busStopTitles, busStopTimes);
 
-        //ActionBar setup
+        // ActionBar setup
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayShowHomeEnabled(true);
         actionBar.setDisplayHomeAsUpEnabled(true);

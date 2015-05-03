@@ -2,6 +2,7 @@ package me.rutgersdirect.rudirect.api;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -47,16 +48,11 @@ public class NextBusAPI {
 
     // Returns a list of the active buses
     public static String[] getActiveBusTags() {
-        String[] busArray = {"No active buses"};
+        // Default value if there is no Internet or there are no active buses
+        BusConstants.ACTIVE_BUSES = new String[1];
+
         parseXML(BusConstants.VEHICLE_LOCATIONS_LINK, new XMLActiveBusHandler());
-
-        // Return active buses
-        if (BusConstants.ACTIVE_BUSES.length > 0) {
-            busArray = BusConstants.ACTIVE_BUSES;
-            Arrays.sort(busArray);
-        }
-
-        return busArray;
+        return BusConstants.ACTIVE_BUSES;
     }
 
     // Saves the bus stops to shared preferences
@@ -74,40 +70,33 @@ public class NextBusAPI {
         return array;
     }
 
-    // Returns an ArrayList of bus stop titles or tags
-//    private static void getBusStops(String busTag) {
-//        BusConstants.currentBusTag = busTag;
-//        parseXML(BusConstants.ALL_ROUTES_LINK, new XMLBusStopHandler());
-//    }
-
     // Takes in a bus tag and returns a list of the bus stop titles
     public static String[] getBusStopTitles(String busTag, Context context) {
-//        if (!BusConstants.BUS_TAGS_TO_STOP_TITLES.containsKey(busTag)) {
-//            getBusStops(busTag);
-//        }
-//        return BusConstants.BUS_TAGS_TO_STOP_TITLES.get(busTag);
         return loadArray(R.string.bus_tags_to_stop_titles_key, busTag, context);
     }
 
     // Takes in a bus tag and returns a list of the bus stop tags
     public static String[] getBusStopTags(String busTag, Context context) {
-//        if (!BusConstants.BUS_TAGS_TO_STOP_TAGS.containsKey(busTag)) {
-//            getBusStops(busTag);
-//        }
-//        return BusConstants.BUS_TAGS_TO_STOP_TAGS.get(busTag);
         return loadArray(R.string.bus_tags_to_stop_tags_key, busTag, context);
     }
 
     // Returns a list of the bus stop times
     public static String[] getBusStopTimes(String busTag, Context context) {
-        BusConstants.currentBusTag = busTag;
+        // If there is no Internet
+        int length = loadArray(R.string.bus_tags_to_stop_tags_key, busTag, context).length;
+        String[] defaultTime = new String[length];
+        for (int i = 0; i < length; i++) {
+            defaultTime[i] = "Offline";
+        }
+        BusConstants.BUS_TAGS_TO_STOP_TIMES.put(busTag, defaultTime);
+
         String[] busStopTags = getBusStopTags(busTag, context);
         StringBuilder link = new StringBuilder(BusConstants.PREDICTIONS_LINK);
         for (String stopTag : busStopTags) {
             String stop = "&stops=" + busTag + "|null|" + stopTag;
             link.append(stop);
         }
-        parseXML(link.toString(), new XMLBusTimesHandler());
+        parseXML(link.toString(), new XMLBusTimesHandler(busTag));
 
         return BusConstants.BUS_TAGS_TO_STOP_TIMES.get(busTag);
     }
