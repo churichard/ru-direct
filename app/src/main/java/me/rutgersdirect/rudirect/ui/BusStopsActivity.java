@@ -1,6 +1,8 @@
 package me.rutgersdirect.rudirect.ui;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -25,14 +27,19 @@ public class BusStopsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_bus_stops);
 
+        // Gets the bus tag, stop titles, and stop times
         Intent intent = getIntent();
         busTag = intent.getStringExtra(BusConstants.BUS_TAG_MESSAGE);
         String[] busStopTitles = intent.getStringArrayExtra(BusConstants.BUS_STOP_TITLES_MESSAGE);
         String[] busStopTimes = intent.getStringArrayExtra(BusConstants.BUS_STOP_TIMES_MESSAGE);
 
+        // Sets the title to the name of the bus
+        SharedPreferences tagsToBusesPref = getSharedPreferences(getString(R.string.tags_to_buses_key), Context.MODE_PRIVATE);
+        setTitle(tagsToBusesPref.getString(busTag, "Bus Stops"));
+
+        // Sets up the list view
         setListView(busStopTitles, busStopTimes);
 
         // ActionBar setup

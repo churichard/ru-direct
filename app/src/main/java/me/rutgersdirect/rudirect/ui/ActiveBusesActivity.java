@@ -103,6 +103,7 @@ public class ActiveBusesActivity extends AppCompatActivity {
 
         // ActionBar setup
         ActionBar actionBar = getSupportActionBar();
+        actionBar.setLogo(R.mipmap.ic_launcher);
         actionBar.setDisplayUseLogoEnabled(true);
         actionBar.setDisplayShowHomeEnabled(true);
     }
