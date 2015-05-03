@@ -3,6 +3,8 @@
     <string name="refresh">Refresh</string>
     <string name="tags_to_buses_key">me.rutgersdirect.rudirect.TAGS_TO_BUSES_KEY</string>
     <string name="buses_to_tags_key">me.rutgersdirect.rudirect.BUSES_TO_TAGS_KEY</string>
+    <string name="bus_tags_to_stop_tags_key">me.rutgersdirect.rudirect.BUS_TAGS_TO_STOP_TAGS_KEY</string>
+    <string name="bus_tags_to_stop_titles_key">me.rutgersdirect.rudirect.BUS_TAGS_TO_STOP_TITLES_KEY</string>
     <string name="going">Where are you going?</string>
     <string name="coming">Where are you?</string>
     <string name="action_settings">Settings</string>

@@ -6,7 +6,7 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -16,14 +16,12 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import java.util.HashMap;
-
 import me.rutgersdirect.rudirect.BusConstants;
 import me.rutgersdirect.rudirect.R;
 import me.rutgersdirect.rudirect.api.NextBusAPI;
 import me.rutgersdirect.rudirect.helper.ShowBusStopsHelper;
 
-public class ActiveBusesActivity extends ActionBarActivity {
+public class ActiveBusesActivity extends AppCompatActivity {
     private ListView listView;
 
     private class SetupListViewTask extends AsyncTask<Void, Void, String[]> {
@@ -34,8 +32,9 @@ public class ActiveBusesActivity extends ActionBarActivity {
         protected void onPostExecute(String[] activeBusTags) {
             // Fill active bus array with active bus names
             String[] activeBuses = new String[activeBusTags.length];
+            SharedPreferences tagsToBusesPref = getSharedPreferences(getString(R.string.tags_to_buses_key), Context.MODE_PRIVATE);
             for (int i = 0; i < activeBusTags.length; i++) {
-                activeBuses[i] = BusConstants.TAGS_TO_BUSES.get(activeBusTags[i]);
+                activeBuses[i] = tagsToBusesPref.getString(activeBusTags[i], null);
             }
 
             // Setup list view
@@ -51,8 +50,9 @@ public class ActiveBusesActivity extends ActionBarActivity {
                         if (!BusStopsActivity.active) {
                             BusStopsActivity.active = true;
                             String bus = (String) (listView.getItemAtPosition(myItemInt));
-                            String busTag = BusConstants.BUSES_TO_TAGS.get(bus);
-                            new ShowBusStopsHelper().execute(busTag, ActiveBusesActivity.this);
+                            SharedPreferences busesToTagsPref = getSharedPreferences(getString(R.string.buses_to_tags_key), Context.MODE_PRIVATE);
+                            String busTag = busesToTagsPref.getString(bus, null);
+                            new ShowBusStopsHelper().execute(busTag, ActiveBusesActivity.this, getApplicationContext());
                         }
                     }
                 });
@@ -60,34 +60,52 @@ public class ActiveBusesActivity extends ActionBarActivity {
         }
     }
 
+    // Sets up the bus routes
+    private class SetupBusRoutes extends AsyncTask<Void, Void, Void> {
+        protected Void doInBackground(Void... voids) {
+            NextBusAPI.saveBusStops(getApplicationContext());
+            return null;
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_active_buses);
+        setTitle("Active Buses");
 
         // Setup the list view
         new SetupListViewTask().execute();
 
-//        SharedPreferences tagsToBusesPref = getSharedPreferences(getString(R.string.tags_to_buses_key), Context.MODE_PRIVATE);
-//        SharedPreferences busesToTagsPref = getSharedPreferences(getString(R.string.buses_to_tags_key), Context.MODE_PRIVATE);
-//        SharedPreferences.Editor tagsToBusesEdit = tagsToBusesPref.edit();
-//        SharedPreferences.Editor busesToTagsEdit = busesToTagsPref.edit();
-//        for (int i = 0; i < BusConstants.allBusNames.length; i++) {
-//            tagsToBusesEdit.putString(BusConstants.allBusTags[i], BusConstants.allBusNames[i]);
-//            busesToTagsEdit.putString(BusConstants.allBusTags[i], BusConstants.allBusNames[i]);
-//        }
-//        tagsToBusesEdit.apply();
-//        busesToTagsEdit.apply();
+        // Initialize shared preferences
+        SharedPreferences tagsToBusesPref = getSharedPreferences(getString(R.string.tags_to_buses_key), Context.MODE_PRIVATE);
+        SharedPreferences busesToTagsPref = getSharedPreferences(getString(R.string.buses_to_tags_key), Context.MODE_PRIVATE);
+        if (!tagsToBusesPref.contains(BusConstants.allBusTags[0])) {
+            // Save bus routes
+            new SetupBusRoutes().execute();
+            // Save tags to buses and buses to tags hash maps
+            SharedPreferences.Editor tagsToBusesEdit = tagsToBusesPref.edit();
+            SharedPreferences.Editor busesToTagsEdit = busesToTagsPref.edit();
+            for (int i = 0; i < BusConstants.allBusNames.length; i++) {
+                tagsToBusesEdit.putString(BusConstants.allBusTags[i], BusConstants.allBusNames[i]);
+                busesToTagsEdit.putString(BusConstants.allBusNames[i], BusConstants.allBusTags[i]);
+            }
+            tagsToBusesEdit.apply();
+            busesToTagsEdit.apply();
+        }
+        BusConstants.context = getApplicationContext();
+
+//        BusConstants.BUS_TAGS_TO_STOP_TAGS = new HashMap<>();
+//        BusConstants.BUS_TAGS_TO_STOP_TITLES = new HashMap<>();
 
         // Initialize hash maps
-        BusConstants.TAGS_TO_BUSES = new HashMap<>();
-        BusConstants.BUSES_TO_TAGS = new HashMap<>();
-        BusConstants.BUS_TAGS_TO_STOP_TAGS = new HashMap<>();
-        BusConstants.BUS_TAGS_TO_STOP_TITLES = new HashMap<>();
-        for (int i = 0; i < BusConstants.allBusNames.length; i++) {
-            BusConstants.TAGS_TO_BUSES.put(BusConstants.allBusTags[i], BusConstants.allBusNames[i]);
-            BusConstants.BUSES_TO_TAGS.put(BusConstants.allBusNames[i], BusConstants.allBusTags[i]);
-        }
+//        BusConstants.TAGS_TO_BUSES = new HashMap<>();
+//        BusConstants.BUSES_TO_TAGS = new HashMap<>();
+//
+//        for (int i = 0; i < BusConstants.allBusNames.length; i++) {
+//            BusConstants.TAGS_TO_BUSES.put(BusConstants.allBusTags[i], BusConstants.allBusNames[i]);
+//            BusConstants.BUSES_TO_TAGS.put(BusConstants.allBusNames[i], BusConstants.allBusTags[i]);
+//        }
 
         // ActionBar setup
         ActionBar actionBar = getSupportActionBar();

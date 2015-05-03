@@ -1,5 +1,7 @@
 package me.rutgersdirect.rudirect;
 
+import android.content.Context;
+
 import java.util.HashMap;
 
 public class BusConstants {
@@ -15,14 +17,16 @@ public class BusConstants {
     public static final String[] allBusNames = {"A", "B", "C", "EE", "F", "H", "LX", "REX B", "REX L", "All Campuses", "New Brunsquick 1 Shuttle", "New Brunsquick 2 Shuttle", "Weekend 1", "Weekend 2"};
     public static final String[] allBusTags = {"a", "b", "c", "ee", "f", "h", "lx", "rexb", "rexl", "s", "w1", "w2", "wknd1", "wknd2"};
     // Caching of bus names to tags (and vice versa) and bus tags to stop titles/tags
-    public static HashMap<String, String> TAGS_TO_BUSES;
-    public static HashMap<String, String> BUSES_TO_TAGS;
-    public static HashMap<String, String[]> BUS_TAGS_TO_STOP_TAGS;
-    public static HashMap<String, String[]> BUS_TAGS_TO_STOP_TITLES;
+//    public static HashMap<String, String> TAGS_TO_BUSES;
+//    public static HashMap<String, String> BUSES_TO_TAGS;
+//    public static HashMap<String, String[]> BUS_TAGS_TO_STOP_TAGS;
+//    public static HashMap<String, String[]> BUS_TAGS_TO_STOP_TITLES;
     // HashMap of bus tags to bus stop times
     public static HashMap<String, String[]> BUS_TAGS_TO_STOP_TIMES;
     // Array of active buses
     public static String[] ACTIVE_BUSES;
     // Current bus tag being worked on
     public static String currentBusTag;
+    // Application context
+    public static Context context;
 }

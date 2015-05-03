@@ -3,7 +3,7 @@ package me.rutgersdirect.rudirect.ui;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -18,7 +18,7 @@ import me.rutgersdirect.rudirect.R;
 import me.rutgersdirect.rudirect.helper.ShowBusStopsHelper;
 import me.rutgersdirect.rudirect.model.BusStop;
 
-public class BusStopsActivity extends ActionBarActivity {
+public class BusStopsActivity extends AppCompatActivity {
     public static boolean active;
     private String busTag;
 
@@ -67,7 +67,7 @@ public class BusStopsActivity extends ActionBarActivity {
 
     // Updates the bus times
     private void updateBusTimes() {
-        new ShowBusStopsHelper().execute(busTag, BusStopsActivity.this);
+        new ShowBusStopsHelper().execute(busTag, BusStopsActivity.this, getApplicationContext());
     }
 
     @Override

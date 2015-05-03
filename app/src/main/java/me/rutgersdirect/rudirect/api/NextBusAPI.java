@@ -1,5 +1,8 @@
 package me.rutgersdirect.rudirect.api;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+
 import org.xml.sax.helpers.DefaultHandler;
 
 import java.io.IOException;
@@ -12,6 +15,7 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
 import me.rutgersdirect.rudirect.BusConstants;
+import me.rutgersdirect.rudirect.R;
 import me.rutgersdirect.rudirect.helper.XMLActiveBusHandler;
 import me.rutgersdirect.rudirect.helper.XMLBusStopHandler;
 import me.rutgersdirect.rudirect.helper.XMLBusTimesHandler;
@@ -21,8 +25,8 @@ public class NextBusAPI {
     private static InputStream downloadUrl(String urlString) throws IOException {
         URL url = new URL(urlString);
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        conn.setReadTimeout(10000 /* milliseconds */);
-        conn.setConnectTimeout(15000 /* milliseconds */);
+        conn.setReadTimeout(10000); // milliseconds
+        conn.setConnectTimeout(15000);
         conn.setRequestMethod("GET");
         conn.setDoInput(true);
         // Starts the query
@@ -55,32 +59,49 @@ public class NextBusAPI {
         return busArray;
     }
 
-    // Returns an ArrayList of bus stop titles or tags
-    private static void getBusStops(String busTag) {
-        BusConstants.currentBusTag = busTag;
-        parseXML(BusConstants.ALL_ROUTES_LINK, new XMLBusStopHandler());
+    // Saves the bus stops to shared preferences
+    public static void saveBusStops(Context context) {
+        parseXML(BusConstants.ALL_ROUTES_LINK, new XMLBusStopHandler(context));
     }
 
+    // Loads an array from shared preferences
+    private static String[] loadArray(int preference, String arrayName, Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(context.getString(preference), Context.MODE_PRIVATE);
+        int size = prefs.getInt(arrayName + "_size", 0);
+        String array[] = new String[size];
+        for (int i = 0; i < size; i++)
+            array[i] = prefs.getString(arrayName + "_" + i, null);
+        return array;
+    }
+
+    // Returns an ArrayList of bus stop titles or tags
+//    private static void getBusStops(String busTag) {
+//        BusConstants.currentBusTag = busTag;
+//        parseXML(BusConstants.ALL_ROUTES_LINK, new XMLBusStopHandler());
+//    }
+
     // Takes in a bus tag and returns a list of the bus stop titles
-    public static String[] getBusStopTitles(String busTag) {
-        if (!BusConstants.BUS_TAGS_TO_STOP_TITLES.containsKey(busTag)) {
-            getBusStops(busTag);
-        }
-        return BusConstants.BUS_TAGS_TO_STOP_TITLES.get(busTag);
+    public static String[] getBusStopTitles(String busTag, Context context) {
+//        if (!BusConstants.BUS_TAGS_TO_STOP_TITLES.containsKey(busTag)) {
+//            getBusStops(busTag);
+//        }
+//        return BusConstants.BUS_TAGS_TO_STOP_TITLES.get(busTag);
+        return loadArray(R.string.bus_tags_to_stop_titles_key, busTag, context);
     }
 
     // Takes in a bus tag and returns a list of the bus stop tags
-    public static String[] getBusStopTags(String busTag) {
-        if (!BusConstants.BUS_TAGS_TO_STOP_TAGS.containsKey(busTag)) {
-            getBusStops(busTag);
-        }
-        return BusConstants.BUS_TAGS_TO_STOP_TAGS.get(busTag);
+    public static String[] getBusStopTags(String busTag, Context context) {
+//        if (!BusConstants.BUS_TAGS_TO_STOP_TAGS.containsKey(busTag)) {
+//            getBusStops(busTag);
+//        }
+//        return BusConstants.BUS_TAGS_TO_STOP_TAGS.get(busTag);
+        return loadArray(R.string.bus_tags_to_stop_tags_key, busTag, context);
     }
 
     // Returns a list of the bus stop times
-    public static String[] getBusStopTimes(String busTag) {
+    public static String[] getBusStopTimes(String busTag, Context context) {
         BusConstants.currentBusTag = busTag;
-        String[] busStopTags = getBusStopTags(busTag);
+        String[] busStopTags = getBusStopTags(busTag, context);
         StringBuilder link = new StringBuilder(BusConstants.PREDICTIONS_LINK);
         for (String stopTag : busStopTags) {
             String stop = "&stops=" + busTag + "|null|" + stopTag;

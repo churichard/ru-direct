@@ -1,6 +1,7 @@
 package me.rutgersdirect.rudirect.helper;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 
@@ -11,11 +12,13 @@ import me.rutgersdirect.rudirect.ui.BusStopsActivity;
 public class ShowBusStopsHelper extends AsyncTask<Object, Void, String[][]> {
     private String tag;
     private Activity activity;
+    private Context context;
 
     protected String[][] doInBackground(Object... objects) {
         tag = (String) objects[0];
         activity = (Activity) objects[1];
-        String[][] busStopTitlesAndTimes = {NextBusAPI.getBusStopTitles(tag), NextBusAPI.getBusStopTimes(tag)};
+        context = (Context) objects[2];
+        String[][] busStopTitlesAndTimes = {NextBusAPI.getBusStopTitles(tag, context), NextBusAPI.getBusStopTimes(tag, context)};
         return busStopTitlesAndTimes;
     }
 

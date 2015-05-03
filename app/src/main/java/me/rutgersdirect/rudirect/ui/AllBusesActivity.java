@@ -1,8 +1,10 @@
 package me.rutgersdirect.rudirect.ui;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -15,7 +17,7 @@ import me.rutgersdirect.rudirect.R;
 import me.rutgersdirect.rudirect.BusConstants;
 import me.rutgersdirect.rudirect.helper.ShowBusStopsHelper;
 
-public class AllBusesActivity extends ActionBarActivity {
+public class AllBusesActivity extends AppCompatActivity {
     private ListView listView;
 
     @Override
@@ -35,8 +37,9 @@ public class AllBusesActivity extends ActionBarActivity {
                 if (!BusStopsActivity.active) {
                     BusStopsActivity.active = true;
                     String bus = (String) (listView.getItemAtPosition(myItemInt));
-                    String busTag = BusConstants.BUSES_TO_TAGS.get(bus);
-                    new ShowBusStopsHelper().execute(busTag, AllBusesActivity.this);
+                    SharedPreferences busesToTagsPref = getSharedPreferences(getString(R.string.buses_to_tags_key), Context.MODE_PRIVATE);
+                    String busTag = busesToTagsPref.getString(bus, null);
+                    new ShowBusStopsHelper().execute(busTag, AllBusesActivity.this, getApplicationContext());
                 }
             }
         });
