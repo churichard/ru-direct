@@ -1,4 +1,4 @@
-package me.rutgersdirect.rudirect.helper;
+package me.rutgersdirect.rudirect.api;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -25,11 +25,11 @@ public class XMLBusStopHandler extends DefaultHandler {
     }
 
     // Saves an array to shared preferences
-    private static boolean saveArray(SharedPreferences.Editor editor, String[] array, String arrayName) {
+    private static void saveArray(SharedPreferences.Editor editor, String[] array, String arrayName) {
         editor.putInt(arrayName +"_size", array.length);
         for(int i = 0; i < array.length; i++)
             editor.putString(arrayName + "_" + i, array[i]);
-        return editor.commit();
+        editor.apply();
     }
 
     public void startDocument() throws SAXException {

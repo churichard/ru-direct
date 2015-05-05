@@ -1,28 +1,29 @@
-package me.rutgersdirect.rudirect.ui;
+package me.rutgersdirect.rudirect.ui.activity;
 
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.v7.app.ActionBar;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.ListView;
 
 import java.util.ArrayList;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import me.rutgersdirect.rudirect.BusConstants;
 import me.rutgersdirect.rudirect.R;
 import me.rutgersdirect.rudirect.helper.ShowBusStopsHelper;
 import me.rutgersdirect.rudirect.model.BusStop;
+import me.rutgersdirect.rudirect.ui.adapter.BusStopAdapter;
 
 public class BusStopsActivity extends AppCompatActivity {
     public static boolean active;
     private String busTag;
+    private Handler handler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,13 +40,12 @@ public class BusStopsActivity extends AppCompatActivity {
         SharedPreferences tagsToBusesPref = getSharedPreferences(getString(R.string.tags_to_buses_key), Context.MODE_PRIVATE);
         setTitle(tagsToBusesPref.getString(busTag, "Bus Stops"));
 
+        // Setup the toolbar
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
         // Sets up the list view
         setListView(busStopTitles, busStopTimes);
-
-        // ActionBar setup
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayShowHomeEnabled(true);
-        actionBar.setDisplayHomeAsUpEnabled(true);
     }
 
     // Updates the list view with bus stop titles and times
@@ -60,21 +60,26 @@ public class BusStopsActivity extends AppCompatActivity {
         busTimesList.setAdapter(adapter);
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        Timer autoUpdate = new Timer(); //Auto Update Setup
-        autoUpdate.schedule(new TimerTask() {
-            public void run() {
-                updateBusTimes();
-            }
-        }, 0, 60000); //Updates every minute nonetheless
-        active = true;
-    }
-
     // Updates the bus times
     private void updateBusTimes() {
-        new ShowBusStopsHelper().execute(busTag, BusStopsActivity.this, getApplicationContext());
+        new ShowBusStopsHelper().execute(busTag, this, getApplicationContext());
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        // Auto refreshes times every 60 seconds
+        handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                updateBusTimes();
+                handler.postDelayed(this, 60000);
+            }
+        }, 60000);
+
+        active = true;
     }
 
     @Override
@@ -87,7 +92,7 @@ public class BusStopsActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_bus_times, menu);
+        inflater.inflate(R.menu.menu_bus_stops, menu);
         return super.onCreateOptionsMenu(menu);
     }
 

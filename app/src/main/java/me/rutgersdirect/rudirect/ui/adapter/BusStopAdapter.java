@@ -1,4 +1,4 @@
-package me.rutgersdirect.rudirect.ui;
+package me.rutgersdirect.rudirect.ui.adapter;
 
 import android.content.Context;
 import android.graphics.Color;

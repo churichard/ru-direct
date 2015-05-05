@@ -2,7 +2,6 @@ package me.rutgersdirect.rudirect.api;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.util.Log;
 
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -10,16 +9,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.Arrays;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
 import me.rutgersdirect.rudirect.BusConstants;
 import me.rutgersdirect.rudirect.R;
-import me.rutgersdirect.rudirect.helper.XMLActiveBusHandler;
-import me.rutgersdirect.rudirect.helper.XMLBusStopHandler;
-import me.rutgersdirect.rudirect.helper.XMLBusTimesHandler;
 
 public class NextBusAPI {
     // Returns the input stream from the parameter url

@@ -7,7 +7,7 @@ import android.os.AsyncTask;
 
 import me.rutgersdirect.rudirect.BusConstants;
 import me.rutgersdirect.rudirect.api.NextBusAPI;
-import me.rutgersdirect.rudirect.ui.BusStopsActivity;
+import me.rutgersdirect.rudirect.ui.activity.BusStopsActivity;
 
 public class ShowBusStopsHelper extends AsyncTask<Object, Void, String[][]> {
     private String tag;

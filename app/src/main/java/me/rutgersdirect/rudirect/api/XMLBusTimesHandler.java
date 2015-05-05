@@ -1,4 +1,4 @@
-package me.rutgersdirect.rudirect.helper;
+package me.rutgersdirect.rudirect.api;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
