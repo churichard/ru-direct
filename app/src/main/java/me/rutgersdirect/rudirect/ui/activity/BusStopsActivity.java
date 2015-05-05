@@ -1,5 +1,6 @@
 package me.rutgersdirect.rudirect.ui.activity;
 
+import android.support.v7.app.ActionBar;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -43,6 +44,10 @@ public class BusStopsActivity extends AppCompatActivity {
         // Setup the toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
 
         // Sets up the list view
         setListView(busStopTitles, busStopTimes);
