@@ -4,11 +4,5 @@
     <style name="AppTheme" parent="Theme.AppCompat.Light">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
-        <!--&lt;!&ndash;<item name="android:actionBarStyle">@style/MyActionBar</item>&ndash;&gt;-->
     </style>
-
-    <!--<style name="MyActionBar"-->
-        <!--parent="Widget.AppCompat.Light.ActionBar">-->
-        <!--<item name="android:background">#1b1b18</item>-->
-    <!--</style>-->
 </resources>

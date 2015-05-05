@@ -5,8 +5,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -20,7 +18,7 @@ import android.widget.RelativeLayout;
 
 import me.rutgersdirect.rudirect.R;
 import me.rutgersdirect.rudirect.api.NextBusAPI;
-import me.rutgersdirect.rudirect.helper.ShowBusStopsHelper;
+import me.rutgersdirect.rudirect.ui.helper.ShowBusStopsHelper;
 import me.rutgersdirect.rudirect.ui.activity.BusStopsActivity;
 import me.rutgersdirect.rudirect.ui.activity.MainActivity;
 

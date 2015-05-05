@@ -1,4 +1,4 @@
-package me.rutgersdirect.rudirect.helper;
+package me.rutgersdirect.rudirect.ui.helper;
 
 import android.app.Activity;
 import android.content.Context;
@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 
 import me.rutgersdirect.rudirect.BusConstants;
+import me.rutgersdirect.rudirect.R;
 import me.rutgersdirect.rudirect.api.NextBusAPI;
 import me.rutgersdirect.rudirect.ui.activity.BusStopsActivity;
 
@@ -33,6 +34,7 @@ public class ShowBusStopsHelper extends AsyncTask<Object, Void, String[][]> {
             intent.putExtra(BusConstants.BUS_STOP_TITLES_MESSAGE, titlesAndTimes[0]);
             intent.putExtra(BusConstants.BUS_STOP_TIMES_MESSAGE, titlesAndTimes[1]);
             activity.startActivity(intent);
+            activity.overridePendingTransition(R.anim.abc_grow_fade_in_from_bottom, 0);
         }
     }
 }

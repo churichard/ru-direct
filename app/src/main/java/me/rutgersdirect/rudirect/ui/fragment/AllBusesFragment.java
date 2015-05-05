@@ -16,7 +16,7 @@ import android.widget.RelativeLayout;
 
 import me.rutgersdirect.rudirect.BusConstants;
 import me.rutgersdirect.rudirect.R;
-import me.rutgersdirect.rudirect.helper.ShowBusStopsHelper;
+import me.rutgersdirect.rudirect.ui.helper.ShowBusStopsHelper;
 import me.rutgersdirect.rudirect.ui.activity.BusStopsActivity;
 import me.rutgersdirect.rudirect.ui.activity.MainActivity;
 

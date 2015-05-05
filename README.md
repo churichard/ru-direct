@@ -5,7 +5,7 @@ RU Direct is an Android app that provides a clean and easy to use interface for 
 
 ## Things to Do
 - Add expanded times (in 12:00 form) when bus stop is clicked on
-- Add side menu with active buses and all buses
+- Make back button go to previous fragment
 - Make the app look better (It's getting there)
 - Publish the app on the Play Store and release it to the public
 - Add in maps of the bus routes

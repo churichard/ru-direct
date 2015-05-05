@@ -15,7 +15,6 @@ import me.rutgersdirect.rudirect.ui.layout.SlidingTabLayout;
 
 public class SlidingTabsFragment extends Fragment {
     private MainActivity mainActivity;
-    private String[] titles = {"Active Buses", "All Buses"};
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -28,7 +27,7 @@ public class SlidingTabsFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         // Set the sliding pager adapter for the view pager
-        SlidingPagerAdapter slidingPagerAdapter = new SlidingPagerAdapter(getFragmentManager(), titles);
+        SlidingPagerAdapter slidingPagerAdapter = new SlidingPagerAdapter(getFragmentManager());
         ViewPager pager = (ViewPager) mainActivity.findViewById(R.id.sliding_pager);
         pager.setAdapter(slidingPagerAdapter);
 

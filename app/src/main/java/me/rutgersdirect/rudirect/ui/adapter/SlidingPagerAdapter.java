@@ -9,11 +9,10 @@ import me.rutgersdirect.rudirect.ui.fragment.AllBusesFragment;
 
 public class SlidingPagerAdapter extends FragmentPagerAdapter {
     private static final int NUM_ITEMS = 2;
-    private String[] titles;
+    private static final String[] titles = {"Active Buses", "All Buses"};
 
-    public SlidingPagerAdapter(FragmentManager fm, String[] titles) {
+    public SlidingPagerAdapter(FragmentManager fm) {
         super(fm);
-        this.titles = titles;
     }
 
     @Override
@@ -33,7 +32,7 @@ public class SlidingPagerAdapter extends FragmentPagerAdapter {
     }
 
     @Override
-    public CharSequence getPageTitle(int position) {
+    public String getPageTitle(int position) {
         return titles[position];
     }
 }

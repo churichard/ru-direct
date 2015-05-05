@@ -17,7 +17,7 @@ import java.util.ArrayList;
 
 import me.rutgersdirect.rudirect.BusConstants;
 import me.rutgersdirect.rudirect.R;
-import me.rutgersdirect.rudirect.helper.ShowBusStopsHelper;
+import me.rutgersdirect.rudirect.ui.helper.ShowBusStopsHelper;
 import me.rutgersdirect.rudirect.model.BusStop;
 import me.rutgersdirect.rudirect.ui.adapter.BusStopAdapter;
 
@@ -72,8 +72,6 @@ public class BusStopsActivity extends AppCompatActivity {
 
     @Override
     public void onResume() {
-        super.onResume();
-
         // Auto refreshes times every 60 seconds
         handler = new Handler();
         handler.postDelayed(new Runnable() {
@@ -83,14 +81,21 @@ public class BusStopsActivity extends AppCompatActivity {
                 handler.postDelayed(this, 60000);
             }
         }, 60000);
+        active = true; // Activity is active
 
-        active = true;
+        super.onResume();
     }
 
     @Override
     protected void onPause() {
+        active = false; // Activity is not active
         super.onPause();
-        active = false;
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(0, R.anim.abc_shrink_fade_out_from_bottom);
     }
 
     @Override
@@ -107,6 +112,10 @@ public class BusStopsActivity extends AppCompatActivity {
         int id = item.getItemId();
         if (id == R.id.refresh) {
             updateBusTimes();
+            return true;
+        }
+        else if (id == android.R.id.home) {
+            onBackPressed();
             return true;
         }
         return super.onOptionsItemSelected(item);
