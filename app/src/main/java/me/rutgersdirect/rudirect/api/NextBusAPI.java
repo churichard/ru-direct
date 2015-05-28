@@ -76,12 +76,12 @@ public class NextBusAPI {
     }
 
     // Returns a list of the bus stop times
-    public static String[] getBusStopTimes(String busTag, Context context) {
+    public static int[][] getBusStopTimes(String busTag, Context context) {
         // If there is no Internet
         int length = loadArray(R.string.bus_tags_to_stop_tags_key, busTag, context).length;
-        String[] defaultTime = new String[length];
+        int[][] defaultTime = new int[length][1];
         for (int i = 0; i < length; i++) {
-            defaultTime[i] = "Offline";
+            defaultTime[i][0] = -1;
         }
         BusConstants.BUS_TAGS_TO_STOP_TIMES.put(busTag, defaultTime);
 

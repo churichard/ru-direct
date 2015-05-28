@@ -12,8 +12,8 @@ import me.rutgersdirect.rudirect.BusConstants;
 public class XMLBusTimesHandler extends DefaultHandler {
     private String busTag;
     private boolean inBusTag;
-    private ArrayList<String> stopTimes;
-    private StringBuilder times;
+    private ArrayList<int[]> stopTimes;
+    private ArrayList<Integer> times;
 
     public XMLBusTimesHandler(String busTag) {
         this.busTag = busTag;
@@ -29,39 +29,37 @@ public class XMLBusTimesHandler extends DefaultHandler {
             throws SAXException {
         if (qName.equalsIgnoreCase("predictions")) {
             inBusTag = true;
-            times = new StringBuilder();
+            times = new ArrayList<>();
         }
         if (inBusTag && qName.equalsIgnoreCase("prediction")) {
-            if (times.length() != 0) {
-                times.append(", ");
-            }
-            else if (times.length() == 0) {
-                times.append("Arriving in ");
-            }
-            String min = atts.getValue("minutes");
-            if (min.equals("0")) {
-                min = "<1";
-            }
-            times.append(min);
+            int min = Integer.parseInt(atts.getValue("minutes"));
+            times.add(min);
         }
     }
 
     public void endElement(String uri, String localName, String qName) throws SAXException {
         if (inBusTag && qName.equalsIgnoreCase("predictions")) {
             inBusTag = false;
-            if (times.length() != 0) {
-                times.append(" minutes.");
+            if (times.size() != 0) {
+                int[] temp = new int[times.size()];
+                for (int i = 0; i < temp.length; i++) {
+                    temp[i] = times.get(i);
+                }
+                stopTimes.add(temp);
+            } else {
+                int[] temp = {-1}; // Offline bus
+                stopTimes.add(temp);
             }
-            else {
-                times.append("Offline");
-            }
-            stopTimes.add(times.toString());
         }
     }
 
     public void endDocument() throws SAXException {
         if (stopTimes.size() > 0) {
-            BusConstants.BUS_TAGS_TO_STOP_TIMES.put(busTag, stopTimes.toArray(new String[stopTimes.size()]));
+            int[][] temp = new int[stopTimes.size()][];
+            for (int i = 0; i < temp.length; i++) {
+                temp[i] = stopTimes.get(i);
+            }
+            BusConstants.BUS_TAGS_TO_STOP_TIMES.put(busTag, temp);
         }
     }
 }

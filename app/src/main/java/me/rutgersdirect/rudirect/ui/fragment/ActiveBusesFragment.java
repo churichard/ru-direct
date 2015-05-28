@@ -18,9 +18,9 @@ import android.widget.RelativeLayout;
 
 import me.rutgersdirect.rudirect.R;
 import me.rutgersdirect.rudirect.api.NextBusAPI;
-import me.rutgersdirect.rudirect.ui.helper.ShowBusStopsHelper;
 import me.rutgersdirect.rudirect.ui.activity.BusStopsActivity;
 import me.rutgersdirect.rudirect.ui.activity.MainActivity;
+import me.rutgersdirect.rudirect.ui.helper.ShowBusStopsHelper;
 
 public class ActiveBusesFragment extends Fragment {
     private MainActivity mainActivity;
@@ -36,7 +36,8 @@ public class ActiveBusesFragment extends Fragment {
             String[] activeBuses = new String[activeBusTags.length];
             SharedPreferences tagsToBusesPref = mainActivity.getSharedPreferences(getString(R.string.tags_to_buses_key), Context.MODE_PRIVATE);
             for (int i = 0; i < activeBusTags.length; i++) {
-                activeBuses[i] = tagsToBusesPref.getString(activeBusTags[i], "No active buses\nCheck your Internet connection");
+                activeBuses[i] = tagsToBusesPref.getString(activeBusTags[i], "No active buses");
+                /* TODO: Return a message if Internet connection isn't active */
             }
 
             // Setup list view
@@ -50,11 +51,11 @@ public class ActiveBusesFragment extends Fragment {
                 listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     public void onItemClick(AdapterView<?> myAdapter, View myView, int myItemInt, long mylng) {
                         if (!BusStopsActivity.active) {
-                            BusStopsActivity.active = true;
                             String bus = (String) (listView.getItemAtPosition(myItemInt));
                             SharedPreferences busesToTagsPref = mainActivity.getSharedPreferences(getString(R.string.buses_to_tags_key), Context.MODE_PRIVATE);
                             String busTag = busesToTagsPref.getString(bus, null);
                             if (busTag != null) {
+                                BusStopsActivity.active = true;
                                 new ShowBusStopsHelper().execute(busTag, mainActivity, mainActivity.getApplicationContext());
                             }
                         }

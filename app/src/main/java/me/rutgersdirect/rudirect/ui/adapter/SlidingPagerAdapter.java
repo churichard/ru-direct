@@ -25,8 +25,7 @@ public class SlidingPagerAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
         if (position == 0) {
             return new ActiveBusesFragment();
-        }
-        else {
+        } else {
             return new AllBusesFragment();
         }
     }

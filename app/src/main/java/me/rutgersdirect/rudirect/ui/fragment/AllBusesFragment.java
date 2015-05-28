@@ -16,9 +16,9 @@ import android.widget.RelativeLayout;
 
 import me.rutgersdirect.rudirect.BusConstants;
 import me.rutgersdirect.rudirect.R;
-import me.rutgersdirect.rudirect.ui.helper.ShowBusStopsHelper;
 import me.rutgersdirect.rudirect.ui.activity.BusStopsActivity;
 import me.rutgersdirect.rudirect.ui.activity.MainActivity;
+import me.rutgersdirect.rudirect.ui.helper.ShowBusStopsHelper;
 
 public class AllBusesFragment extends Fragment {
     private MainActivity mainActivity;
@@ -59,7 +59,7 @@ public class AllBusesFragment extends Fragment {
     }
 
     @Override
-    public void onViewCreated (View view, Bundle savedInstanceState) {
+    public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         setupListView();
     }

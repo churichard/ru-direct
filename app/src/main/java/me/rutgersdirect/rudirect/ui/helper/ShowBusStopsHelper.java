@@ -4,35 +4,42 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.Bundle;
 
 import me.rutgersdirect.rudirect.BusConstants;
 import me.rutgersdirect.rudirect.R;
 import me.rutgersdirect.rudirect.api.NextBusAPI;
 import me.rutgersdirect.rudirect.ui.activity.BusStopsActivity;
 
-public class ShowBusStopsHelper extends AsyncTask<Object, Void, String[][]> {
+public class ShowBusStopsHelper extends AsyncTask<Object, Void, Void> {
     private String tag;
     private Activity activity;
+    private String[] busStopTitles;
+    private int[][] busStopTimes;
 
-    protected String[][] doInBackground(Object... objects) {
+    @Override
+    protected Void doInBackground(Object... objects) {
         tag = (String) objects[0];
         activity = (Activity) objects[1];
         Context context = (Context) objects[2];
-        String[][] busStopTitlesAndTimes = {NextBusAPI.getBusStopTitles(tag, context), NextBusAPI.getBusStopTimes(tag, context)};
-        return busStopTitlesAndTimes;
+        busStopTitles = NextBusAPI.getBusStopTitles(tag, context);
+        busStopTimes = NextBusAPI.getBusStopTimes(tag, context);
+        return null;
     }
 
-    protected void onPostExecute(String[][] titlesAndTimes) {
+    @Override
+    protected void onPostExecute(Void v) {
         if (activity instanceof BusStopsActivity) {
             // Update bus stop titles and times
-            ((BusStopsActivity) activity).setListView(titlesAndTimes[0], titlesAndTimes[1]);
-        }
-        else {
+            ((BusStopsActivity) activity).setListView(busStopTitles, busStopTimes);
+        } else {
             // Start new activity to display bus stop titles and times
             Intent intent = new Intent(activity, BusStopsActivity.class);
             intent.putExtra(BusConstants.BUS_TAG_MESSAGE, tag);
-            intent.putExtra(BusConstants.BUS_STOP_TITLES_MESSAGE, titlesAndTimes[0]);
-            intent.putExtra(BusConstants.BUS_STOP_TIMES_MESSAGE, titlesAndTimes[1]);
+            intent.putExtra(BusConstants.BUS_STOP_TITLES_MESSAGE, busStopTitles);
+            Bundle mBundle = new Bundle();
+            mBundle.putSerializable(BusConstants.BUS_STOP_TIMES_MESSAGE, busStopTimes);
+            intent.putExtras(mBundle);
             activity.startActivity(intent);
             activity.overridePendingTransition(R.anim.abc_grow_fade_in_from_bottom, 0);
         }

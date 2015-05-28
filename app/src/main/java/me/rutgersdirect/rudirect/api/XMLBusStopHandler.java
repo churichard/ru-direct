@@ -26,8 +26,8 @@ public class XMLBusStopHandler extends DefaultHandler {
 
     // Saves an array to shared preferences
     private static void saveArray(SharedPreferences.Editor editor, String[] array, String arrayName) {
-        editor.putInt(arrayName +"_size", array.length);
-        for(int i = 0; i < array.length; i++)
+        editor.putInt(arrayName + "_size", array.length);
+        for (int i = 0; i < array.length; i++)
             editor.putString(arrayName + "_" + i, array[i]);
         editor.apply();
     }
