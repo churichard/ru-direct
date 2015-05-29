@@ -8,13 +8,16 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import me.rutgersdirect.rudirect.R;
 import me.rutgersdirect.rudirect.model.BusStop;
 import me.rutgersdirect.rudirect.ui.activity.BusStopsActivity;
 
 public class BusStopAdapter extends ArrayAdapter<BusStop> {
+    private static final int MILLIS_IN_ONE_MINUTE = 60000;
     private Context context;
     private int layout;
     private ArrayList<BusStop> values;
@@ -48,8 +51,24 @@ public class BusStopAdapter extends ArrayAdapter<BusStop> {
     // Sets up the expanded view of the bus stop times
     private void setupExpandedItem(TextView busStopName, TextView busStopTimes, BusStop stop) {
         if (BusStopsActivity.expBusStopIndex != BusStopsActivity.lastExpBusStopIndex || !BusStopsActivity.isExpBusStopIndexExpanded) {
-            BusStopsActivity.isExpBusStopIndexExpanded = true;
-            busStopTimes.setText("Expanded!");
+            // Expand to show the times that the bus is arriving at
+            if (!busStopTimes.getText().equals("Offline")) {
+                BusStopsActivity.isExpBusStopIndexExpanded = true;
+                int[] minutes = stop.times;
+                long currentTime = new Date().getTime();
+                StringBuilder builder = new StringBuilder();
+                builder.append("Arriving at ");
+                for (int i = 0; i < minutes.length; i++) {
+                    Date stopTime = new Date(currentTime + (minutes[i] * MILLIS_IN_ONE_MINUTE));
+                    String time = DateFormat.getTimeInstance(DateFormat.SHORT).format(stopTime);
+                    builder.append(time);
+                    if (i != minutes.length - 1) {
+                        builder.append(", ");
+                    }
+                }
+                builder.append(".");
+                busStopTimes.setText(builder.toString());
+            }
         } else {
             BusStopsActivity.isExpBusStopIndexExpanded = false;
             setupNormalItem(busStopName, busStopTimes, stop);
