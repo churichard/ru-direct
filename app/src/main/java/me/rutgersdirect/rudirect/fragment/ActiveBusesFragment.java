@@ -1,4 +1,4 @@
-package me.rutgersdirect.rudirect.ui.fragment;
+package me.rutgersdirect.rudirect.fragment;
 
 import android.app.Fragment;
 import android.content.Context;
@@ -17,10 +17,10 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 
 import me.rutgersdirect.rudirect.R;
+import me.rutgersdirect.rudirect.activity.BusStopsActivity;
+import me.rutgersdirect.rudirect.activity.MainActivity;
 import me.rutgersdirect.rudirect.api.NextBusAPI;
-import me.rutgersdirect.rudirect.ui.activity.BusStopsActivity;
-import me.rutgersdirect.rudirect.ui.activity.MainActivity;
-import me.rutgersdirect.rudirect.ui.helper.ShowBusStopsHelper;
+import me.rutgersdirect.rudirect.util.ShowBusStopsHelper;
 
 public class ActiveBusesFragment extends Fragment {
     private MainActivity mainActivity;
@@ -40,8 +40,7 @@ public class ActiveBusesFragment extends Fragment {
                 /* TODO: Return a message if Internet connection isn't active */
             }
 
-            // Setup list view
-            listView = (ListView) mainActivity.findViewById(R.id.busList);
+            // Set listView adapter
             ArrayAdapter<String> adapter = new ArrayAdapter<>(mainActivity.getApplicationContext(),
                     R.layout.list_black_text, R.id.list_content, activeBuses);
             listView.setAdapter(adapter);
@@ -83,6 +82,13 @@ public class ActiveBusesFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        // Initialize listView
+        listView = (ListView) mainActivity.findViewById(R.id.busList);
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
         setupListView();
     }
 

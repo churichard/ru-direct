@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package me.rutgersdirect.rudirect.ui.layout;
+package me.rutgersdirect.rudirect.ui;
 
 import android.content.Context;
 import android.graphics.Canvas;

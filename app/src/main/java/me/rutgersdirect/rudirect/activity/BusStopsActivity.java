@@ -1,4 +1,4 @@
-package me.rutgersdirect.rudirect.ui.activity;
+package me.rutgersdirect.rudirect.activity;
 
 import android.content.Context;
 import android.content.Intent;
@@ -17,11 +17,11 @@ import android.widget.ListView;
 
 import java.util.ArrayList;
 
-import me.rutgersdirect.rudirect.BusConstants;
+import me.rutgersdirect.rudirect.data.AppData;
 import me.rutgersdirect.rudirect.R;
 import me.rutgersdirect.rudirect.model.BusStop;
-import me.rutgersdirect.rudirect.ui.adapter.BusStopAdapter;
-import me.rutgersdirect.rudirect.ui.helper.ShowBusStopsHelper;
+import me.rutgersdirect.rudirect.adapter.BusStopAdapter;
+import me.rutgersdirect.rudirect.util.ShowBusStopsHelper;
 
 public class BusStopsActivity extends AppCompatActivity {
     public static boolean active; // Whether or not the activity is active
@@ -41,9 +41,9 @@ public class BusStopsActivity extends AppCompatActivity {
 
         // Gets the bus tag, stop titles, and stop times
         Intent intent = getIntent();
-        busTag = intent.getStringExtra(BusConstants.BUS_TAG_MESSAGE);
-        String[] busStopTitles = intent.getStringArrayExtra(BusConstants.BUS_STOP_TITLES_MESSAGE);
-        final int[][] busStopTimes = (int[][]) intent.getExtras().getSerializable(BusConstants.BUS_STOP_TIMES_MESSAGE);
+        busTag = intent.getStringExtra(AppData.BUS_TAG_MESSAGE);
+        String[] busStopTitles = intent.getStringArrayExtra(AppData.BUS_STOP_TITLES_MESSAGE);
+        final int[][] busStopTimes = (int[][]) intent.getExtras().getSerializable(AppData.BUS_STOP_TIMES_MESSAGE);
 
         // Sets the title to the name of the bus
         SharedPreferences tagsToBusesPref = getSharedPreferences(getString(R.string.tags_to_buses_key), Context.MODE_PRIVATE);

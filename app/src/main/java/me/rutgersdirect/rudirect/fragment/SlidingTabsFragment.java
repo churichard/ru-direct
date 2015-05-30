@@ -1,4 +1,4 @@
-package me.rutgersdirect.rudirect.ui.fragment;
+package me.rutgersdirect.rudirect.fragment;
 
 import android.app.Fragment;
 import android.os.Bundle;
@@ -9,9 +9,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import me.rutgersdirect.rudirect.R;
-import me.rutgersdirect.rudirect.ui.activity.MainActivity;
-import me.rutgersdirect.rudirect.ui.adapter.SlidingPagerAdapter;
-import me.rutgersdirect.rudirect.ui.layout.SlidingTabLayout;
+import me.rutgersdirect.rudirect.activity.MainActivity;
+import me.rutgersdirect.rudirect.adapter.SlidingPagerAdapter;
+import me.rutgersdirect.rudirect.ui.view.SlidingTabLayout;
 
 public class SlidingTabsFragment extends Fragment {
     private MainActivity mainActivity;

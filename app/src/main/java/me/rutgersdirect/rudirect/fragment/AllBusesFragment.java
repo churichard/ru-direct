@@ -1,4 +1,4 @@
-package me.rutgersdirect.rudirect.ui.fragment;
+package me.rutgersdirect.rudirect.fragment;
 
 import android.app.Fragment;
 import android.content.Context;
@@ -14,11 +14,11 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 
-import me.rutgersdirect.rudirect.BusConstants;
+import me.rutgersdirect.rudirect.data.AppData;
 import me.rutgersdirect.rudirect.R;
-import me.rutgersdirect.rudirect.ui.activity.BusStopsActivity;
-import me.rutgersdirect.rudirect.ui.activity.MainActivity;
-import me.rutgersdirect.rudirect.ui.helper.ShowBusStopsHelper;
+import me.rutgersdirect.rudirect.activity.BusStopsActivity;
+import me.rutgersdirect.rudirect.activity.MainActivity;
+import me.rutgersdirect.rudirect.util.ShowBusStopsHelper;
 
 public class AllBusesFragment extends Fragment {
     private MainActivity mainActivity;
@@ -31,7 +31,7 @@ public class AllBusesFragment extends Fragment {
             listView = (ListView) getView().findViewById(R.id.allBusesList);
         }
         ArrayAdapter<String> adapter = new ArrayAdapter<>(mainActivity.getApplicationContext(),
-                R.layout.list_black_text, R.id.list_content, BusConstants.allBusNames);
+                R.layout.list_black_text, R.id.list_content, AppData.allBusNames);
         listView.setAdapter(adapter);
 
         // Setup item click listener

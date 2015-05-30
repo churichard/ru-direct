@@ -7,7 +7,7 @@ import org.xml.sax.helpers.DefaultHandler;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 
-import me.rutgersdirect.rudirect.BusConstants;
+import me.rutgersdirect.rudirect.data.AppData;
 
 public class XMLActiveBusHandler extends DefaultHandler {
     private LinkedHashSet<String> activeBuses;
@@ -25,8 +25,8 @@ public class XMLActiveBusHandler extends DefaultHandler {
 
     public void endDocument() throws SAXException {
         if (activeBuses.size() > 0) {
-            BusConstants.ACTIVE_BUSES = activeBuses.toArray(new String[activeBuses.size()]);
-            Arrays.sort(BusConstants.ACTIVE_BUSES);
+            AppData.ACTIVE_BUSES = activeBuses.toArray(new String[activeBuses.size()]);
+            Arrays.sort(AppData.ACTIVE_BUSES);
         }
     }
 }

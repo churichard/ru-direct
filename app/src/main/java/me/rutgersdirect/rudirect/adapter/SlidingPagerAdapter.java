@@ -1,11 +1,11 @@
-package me.rutgersdirect.rudirect.ui.adapter;
+package me.rutgersdirect.rudirect.adapter;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.support.v13.app.FragmentPagerAdapter;
 
-import me.rutgersdirect.rudirect.ui.fragment.ActiveBusesFragment;
-import me.rutgersdirect.rudirect.ui.fragment.AllBusesFragment;
+import me.rutgersdirect.rudirect.fragment.ActiveBusesFragment;
+import me.rutgersdirect.rudirect.fragment.AllBusesFragment;
 
 public class SlidingPagerAdapter extends FragmentPagerAdapter {
     private static final int NUM_ITEMS = 2;

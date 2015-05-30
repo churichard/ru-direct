@@ -7,7 +7,7 @@ import org.xml.sax.helpers.DefaultHandler;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import me.rutgersdirect.rudirect.BusConstants;
+import me.rutgersdirect.rudirect.data.AppData;
 
 public class XMLBusTimesHandler extends DefaultHandler {
     private String busTag;
@@ -20,7 +20,7 @@ public class XMLBusTimesHandler extends DefaultHandler {
     }
 
     public void startDocument() throws SAXException {
-        BusConstants.BUS_TAGS_TO_STOP_TIMES = new HashMap<>();
+        AppData.BUS_TAGS_TO_STOP_TIMES = new HashMap<>();
         stopTimes = new ArrayList<>();
         inBusTag = false;
     }
@@ -59,7 +59,7 @@ public class XMLBusTimesHandler extends DefaultHandler {
             for (int i = 0; i < temp.length; i++) {
                 temp[i] = stopTimes.get(i);
             }
-            BusConstants.BUS_TAGS_TO_STOP_TIMES.put(busTag, temp);
+            AppData.BUS_TAGS_TO_STOP_TIMES.put(busTag, temp);
         }
     }
 }

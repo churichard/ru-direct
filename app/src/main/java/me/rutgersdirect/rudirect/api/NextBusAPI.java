@@ -13,7 +13,7 @@ import java.net.URL;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
-import me.rutgersdirect.rudirect.BusConstants;
+import me.rutgersdirect.rudirect.data.AppData;
 import me.rutgersdirect.rudirect.R;
 
 public class NextBusAPI {
@@ -44,15 +44,15 @@ public class NextBusAPI {
     // Returns a list of the active buses
     public static String[] getActiveBusTags() {
         // Default value if there is no Internet or there are no active buses
-        BusConstants.ACTIVE_BUSES = new String[1];
+        AppData.ACTIVE_BUSES = new String[1];
 
-        parseXML(BusConstants.VEHICLE_LOCATIONS_LINK, new XMLActiveBusHandler());
-        return BusConstants.ACTIVE_BUSES;
+        parseXML(AppData.VEHICLE_LOCATIONS_LINK, new XMLActiveBusHandler());
+        return AppData.ACTIVE_BUSES;
     }
 
     // Saves the bus stops to shared preferences
     public static void saveBusStops(Context context) {
-        parseXML(BusConstants.ALL_ROUTES_LINK, new XMLBusStopHandler(context));
+        parseXML(AppData.ALL_ROUTES_LINK, new XMLBusStopHandler(context));
     }
 
     // Loads an array from shared preferences
@@ -83,16 +83,16 @@ public class NextBusAPI {
         for (int i = 0; i < length; i++) {
             defaultTime[i][0] = -1;
         }
-        BusConstants.BUS_TAGS_TO_STOP_TIMES.put(busTag, defaultTime);
+        AppData.BUS_TAGS_TO_STOP_TIMES.put(busTag, defaultTime);
 
         String[] busStopTags = getBusStopTags(busTag, context);
-        StringBuilder link = new StringBuilder(BusConstants.PREDICTIONS_LINK);
+        StringBuilder link = new StringBuilder(AppData.PREDICTIONS_LINK);
         for (String stopTag : busStopTags) {
             String stop = "&stops=" + busTag + "|null|" + stopTag;
             link.append(stop);
         }
         parseXML(link.toString(), new XMLBusTimesHandler(busTag));
 
-        return BusConstants.BUS_TAGS_TO_STOP_TIMES.get(busTag);
+        return AppData.BUS_TAGS_TO_STOP_TIMES.get(busTag);
     }
 }
