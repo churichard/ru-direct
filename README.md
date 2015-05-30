@@ -11,6 +11,10 @@ RU Direct is an Android app that provides a clean and easy to use interface for 
 - Add directions from one bus stop to another
 - iOS version
 
+## Open Bugs
+- Going to the BusStopsActivity, switching to another app, and then going to RU Direct and pressing the back button goes to the home screen when it should be going to the ActiveBusesActivity
+- Going to the BusStopsActivity, closing the app from multitasking, and opening RU Direct back up shows an empty ListView
+
 ## Contributors
 RU Direct is currently in active development by Richard Chu, James Paik, Kenny Li, and Andy Le.
 
