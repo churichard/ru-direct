@@ -39,8 +39,15 @@ public class BusStopAdapter extends ArrayAdapter<BusStop> {
         TextView busStopName = (TextView) convertView.findViewById(R.id.bus_stop_name);
         TextView busStopTimes = (TextView) convertView.findViewById(R.id.bus_stop_times);
 
-        if (BusStopsActivity.expBusStopIndex != -1 && BusStopsActivity.expBusStopIndex == position) {
-            setupExpandedItem(busStopName, busStopTimes, values.get(position));
+        if (BusStopsActivity.expansionRequest && BusStopsActivity.expBusStopIndex == position
+                && !busStopTimes.getText().equals("Offline")) {
+            if (!BusStopsActivity.isExpBusStopIndexExpanded
+                    || BusStopsActivity.expBusStopIndex != BusStopsActivity.lastExpBusStopIndex) {
+                setupExpandedItem(busStopTimes, values.get(position));
+            } else if (BusStopsActivity.isExpBusStopIndexExpanded) {
+                BusStopsActivity.isExpBusStopIndexExpanded = false;
+                setupNormalItem(busStopName, busStopTimes, values.get(position));
+            }
         } else {
             setupNormalItem(busStopName, busStopTimes, values.get(position));
         }
@@ -49,30 +56,25 @@ public class BusStopAdapter extends ArrayAdapter<BusStop> {
     }
 
     // Sets up the expanded view of the bus stop times
-    private void setupExpandedItem(TextView busStopName, TextView busStopTimes, BusStop stop) {
-        if (BusStopsActivity.expBusStopIndex != BusStopsActivity.lastExpBusStopIndex || !BusStopsActivity.isExpBusStopIndexExpanded) {
-            // Expand to show the times that the bus is arriving at
-            if (!busStopTimes.getText().equals("Offline")) {
-                BusStopsActivity.isExpBusStopIndexExpanded = true;
-                int[] minutes = stop.times;
-                long currentTime = new Date().getTime();
-                StringBuilder builder = new StringBuilder();
-                builder.append("Arriving at ");
-                for (int i = 0; i < minutes.length; i++) {
-                    Date stopTime = new Date(currentTime + (minutes[i] * MILLIS_IN_ONE_MINUTE));
-                    String time = DateFormat.getTimeInstance(DateFormat.SHORT).format(stopTime);
-                    builder.append(time);
-                    if (i != minutes.length - 1) {
-                        builder.append(", ");
-                    }
-                }
-                builder.append(".");
-                busStopTimes.setText(builder.toString());
+    private void setupExpandedItem(TextView busStopTimes, BusStop stop) {
+        BusStopsActivity.isExpBusStopIndexExpanded = true;
+        int[] minutes = stop.times;
+        long currentTime = new Date().getTime();
+
+        // Build string of times
+        StringBuilder builder = new StringBuilder();
+        builder.append("Arriving at ");
+        for (int i = 0; i < minutes.length; i++) {
+            Date stopTime = new Date(currentTime + (minutes[i] * MILLIS_IN_ONE_MINUTE));
+            String time = DateFormat.getTimeInstance(DateFormat.SHORT).format(stopTime);
+            builder.append(time);
+            if (i != minutes.length - 1) {
+                builder.append(", ");
             }
-        } else {
-            BusStopsActivity.isExpBusStopIndexExpanded = false;
-            setupNormalItem(busStopName, busStopTimes, stop);
         }
+        builder.append(".");
+
+        busStopTimes.setText(builder.toString());
     }
 
     // Sets up the normal view of the bus stop times
@@ -109,7 +111,7 @@ public class BusStopAdapter extends ArrayAdapter<BusStop> {
         return builder.toString();
     }
 
-    // Change text color of the listview items
+    // Change text color of the ListView items
     private void setTextColor(TextView busStopName, TextView busStopTimes, int[] times) {
         busStopName.setTextColor(Color.parseColor("#000000")); // Black
         if (times[0] == -1) {
@@ -124,7 +126,7 @@ public class BusStopAdapter extends ArrayAdapter<BusStop> {
         }
     }
 
-    // Refills the listview with refreshed values
+    // Refills the ListView with refreshed values
     public void refill(ArrayList<BusStop> newValues) {
         values.clear();
         values.addAll(newValues);

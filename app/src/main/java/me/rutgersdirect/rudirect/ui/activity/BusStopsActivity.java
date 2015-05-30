@@ -25,11 +25,14 @@ import me.rutgersdirect.rudirect.ui.helper.ShowBusStopsHelper;
 
 public class BusStopsActivity extends AppCompatActivity {
     public static boolean active; // Whether or not the activity is active
+    private String busTag; // Bus tag that the bus stops are being shown for
+    private Handler refreshHandler; // Handles auto refresh
+
+    // Bus stop times expansion
+    public static boolean expansionRequest; // Whether or not the bus stop should be expanded
     public static int expBusStopIndex; // Index of the bus stop to be expanded
     public static int lastExpBusStopIndex; // Index of the last bus stop expanded
     public static boolean isExpBusStopIndexExpanded; // Is the bus stop expanded already?
-    private String busTag; // Bus tag that the bus stops are being shown for
-    private Handler refreshHandler; // Handles auto refresh
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,7 +43,7 @@ public class BusStopsActivity extends AppCompatActivity {
         Intent intent = getIntent();
         busTag = intent.getStringExtra(BusConstants.BUS_TAG_MESSAGE);
         String[] busStopTitles = intent.getStringArrayExtra(BusConstants.BUS_STOP_TITLES_MESSAGE);
-        int[][] busStopTimes = (int[][]) intent.getExtras().getSerializable(BusConstants.BUS_STOP_TIMES_MESSAGE);
+        final int[][] busStopTimes = (int[][]) intent.getExtras().getSerializable(BusConstants.BUS_STOP_TIMES_MESSAGE);
 
         // Sets the title to the name of the bus
         SharedPreferences tagsToBusesPref = getSharedPreferences(getString(R.string.tags_to_buses_key), Context.MODE_PRIVATE);
@@ -62,6 +65,7 @@ public class BusStopsActivity extends AppCompatActivity {
         ListView listView = (ListView) findViewById(android.R.id.list);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> myAdapter, View myView, int myItemInt, long myLong) {
+                expansionRequest = true;
                 lastExpBusStopIndex = expBusStopIndex;
                 expBusStopIndex = myItemInt;
                 updateBusTimes();
@@ -97,6 +101,7 @@ public class BusStopsActivity extends AppCompatActivity {
         refreshHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
+                expansionRequest = false;
                 updateBusTimes();
                 refreshHandler.postDelayed(this, 60000);
             }
@@ -131,6 +136,7 @@ public class BusStopsActivity extends AppCompatActivity {
         // Handle action bar item clicks here
         int id = item.getItemId();
         if (id == R.id.refresh) {
+            expansionRequest = false;
             updateBusTimes();
             return true;
         } else if (id == android.R.id.home) {
