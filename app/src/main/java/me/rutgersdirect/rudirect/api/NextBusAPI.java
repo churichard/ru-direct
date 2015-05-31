@@ -2,7 +2,9 @@ package me.rutgersdirect.rudirect.api;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
+import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import java.io.IOException;
@@ -10,13 +12,16 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
-import me.rutgersdirect.rudirect.data.AppData;
 import me.rutgersdirect.rudirect.R;
+import me.rutgersdirect.rudirect.data.AppData;
 
 public class NextBusAPI {
+    private static final String TAG = NextBusAPI.class.getName();
+
     // Returns the input stream from the parameter url
     private static InputStream downloadUrl(String urlString) throws IOException {
         URL url = new URL(urlString);
@@ -36,8 +41,8 @@ public class NextBusAPI {
             SAXParserFactory factory = SAXParserFactory.newInstance();
             SAXParser saxParser = factory.newSAXParser();
             saxParser.parse(downloadUrl(urlString), handler);
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (IOException | SAXException | ParserConfigurationException e) {
+            Log.e(TAG, e.toString());
         }
     }
 

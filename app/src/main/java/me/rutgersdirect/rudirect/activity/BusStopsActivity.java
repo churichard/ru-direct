@@ -17,10 +17,10 @@ import android.widget.ListView;
 
 import java.util.ArrayList;
 
-import me.rutgersdirect.rudirect.data.AppData;
 import me.rutgersdirect.rudirect.R;
-import me.rutgersdirect.rudirect.model.BusStop;
 import me.rutgersdirect.rudirect.adapter.BusStopAdapter;
+import me.rutgersdirect.rudirect.data.AppData;
+import me.rutgersdirect.rudirect.model.BusStop;
 import me.rutgersdirect.rudirect.util.ShowBusStopsHelper;
 
 public class BusStopsActivity extends AppCompatActivity {

@@ -14,10 +14,10 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 
-import me.rutgersdirect.rudirect.data.AppData;
 import me.rutgersdirect.rudirect.R;
 import me.rutgersdirect.rudirect.activity.BusStopsActivity;
 import me.rutgersdirect.rudirect.activity.MainActivity;
+import me.rutgersdirect.rudirect.data.AppData;
 import me.rutgersdirect.rudirect.util.ShowBusStopsHelper;
 
 public class AllBusesFragment extends Fragment {

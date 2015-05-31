@@ -11,7 +11,7 @@ import android.view.ViewGroup;
 import me.rutgersdirect.rudirect.R;
 import me.rutgersdirect.rudirect.activity.MainActivity;
 import me.rutgersdirect.rudirect.adapter.SlidingPagerAdapter;
-import me.rutgersdirect.rudirect.ui.view.SlidingTabLayout;
+import me.rutgersdirect.rudirect.ui.SlidingTabLayout;
 
 public class SlidingTabsFragment extends Fragment {
     private MainActivity mainActivity;

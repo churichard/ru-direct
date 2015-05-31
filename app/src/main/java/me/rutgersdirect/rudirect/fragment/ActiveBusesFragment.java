@@ -3,8 +3,11 @@ package me.rutgersdirect.rudirect.fragment;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -15,6 +18,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import me.rutgersdirect.rudirect.R;
 import me.rutgersdirect.rudirect.activity.BusStopsActivity;
@@ -24,11 +28,20 @@ import me.rutgersdirect.rudirect.util.ShowBusStopsHelper;
 
 public class ActiveBusesFragment extends Fragment {
     private MainActivity mainActivity;
+    private RelativeLayout rlLayout;
     private ListView listView;
+    private TextView errorView;
 
     private class SetupListViewTask extends AsyncTask<Void, Void, String[]> {
         protected String[] doInBackground(Void... voids) {
             return NextBusAPI.getActiveBusTags();
+        }
+
+        private boolean isNetworkAvailable() {
+            ConnectivityManager connectivityManager
+                    = (ConnectivityManager) mainActivity.getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+            return activeNetworkInfo != null && activeNetworkInfo.isConnectedOrConnecting();
         }
 
         protected void onPostExecute(String[] activeBusTags) {
@@ -36,17 +49,32 @@ public class ActiveBusesFragment extends Fragment {
             String[] activeBuses = new String[activeBusTags.length];
             SharedPreferences tagsToBusesPref = mainActivity.getSharedPreferences(getString(R.string.tags_to_buses_key), Context.MODE_PRIVATE);
             for (int i = 0; i < activeBusTags.length; i++) {
-                activeBuses[i] = tagsToBusesPref.getString(activeBusTags[i], "No active buses");
-                /* TODO: Return a message if Internet connection isn't active */
+                activeBuses[i] = tagsToBusesPref.getString(activeBusTags[i], "Offline");
             }
+            if (errorView != null) {
+                rlLayout.removeView(errorView);
+            }
+            if (activeBusTags.length == 1 && activeBuses[0].equals("Offline")) {
+                errorView = new TextView(mainActivity);
+                errorView.setTextSize(24);
 
-            // Set listView adapter
-            ArrayAdapter<String> adapter = new ArrayAdapter<>(mainActivity.getApplicationContext(),
-                    R.layout.list_black_text, R.id.list_content, activeBuses);
-            listView.setAdapter(adapter);
+                RelativeLayout.LayoutParams params
+                        = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
+                errorView.setLayoutParams(params);
+                errorView.setGravity(Gravity.CENTER);
+                if (isNetworkAvailable()) {
+                    errorView.setText("No active buses.");
+                } else {
+                    errorView.setText("Unable to get active buses - check your Internet connection and try again.");
+                }
+                rlLayout.addView(errorView);
+            } else {
+                // Set listView adapter
+                ArrayAdapter<String> adapter = new ArrayAdapter<>(mainActivity.getApplicationContext(),
+                        R.layout.list_black_text, R.id.list_content, activeBuses);
+                listView.setAdapter(adapter);
 
-            // Setup item click listener
-            if (activeBusTags.length != 0) {
+                // Setup item click listener
                 listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     public void onItemClick(AdapterView<?> myAdapter, View myView, int myItemInt, long mylng) {
                         if (!BusStopsActivity.active) {
@@ -72,7 +100,7 @@ public class ActiveBusesFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mainActivity = (MainActivity) super.getActivity();
-        RelativeLayout rlLayout = (RelativeLayout) inflater.inflate(R.layout.fragment_active_buses, container, false);
+        rlLayout = (RelativeLayout) inflater.inflate(R.layout.fragment_active_buses, container, false);
 
         setHasOptionsMenu(true);
 

@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="me.rutgersdirect.rudirect" >
+    package="me.rutgersdirect.rudirect">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:allowBackup="true"
@@ -11,9 +12,9 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".activity.MainActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize"
             android:alwaysRetainTaskState="true"
-            android:label="@string/app_name" >
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -22,7 +23,7 @@
         <activity
             android:name=".activity.BusStopsActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:label="@string/bus_times" >
+            android:label="@string/bus_times">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activity.MainActivity" />

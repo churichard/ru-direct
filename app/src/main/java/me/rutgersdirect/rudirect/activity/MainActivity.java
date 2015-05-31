@@ -12,9 +12,9 @@ import android.support.v7.widget.Toolbar;
 
 import java.util.HashMap;
 
-import me.rutgersdirect.rudirect.data.AppData;
 import me.rutgersdirect.rudirect.R;
 import me.rutgersdirect.rudirect.api.NextBusAPI;
+import me.rutgersdirect.rudirect.data.AppData;
 import me.rutgersdirect.rudirect.fragment.SlidingTabsFragment;
 
 public class MainActivity extends AppCompatActivity {
