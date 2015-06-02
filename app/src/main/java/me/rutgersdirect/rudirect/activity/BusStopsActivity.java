@@ -25,7 +25,7 @@ import me.rutgersdirect.rudirect.util.ShowBusStopsHelper;
 
 public class BusStopsActivity extends AppCompatActivity {
     public static boolean active; // Whether or not the activity is active
-    private String busTag; // Bus tag that the bus stops are being shown for
+    private String busTag; // Bus tag
     private Handler refreshHandler; // Handles auto refresh
 
     // Bus stop times expansion
@@ -42,8 +42,8 @@ public class BusStopsActivity extends AppCompatActivity {
         // Gets the bus tag, stop titles, and stop times
         Intent intent = getIntent();
         busTag = intent.getStringExtra(AppData.BUS_TAG_MESSAGE);
-        String[] busStopTitles = intent.getStringArrayExtra(AppData.BUS_STOP_TITLES_MESSAGE);
-        final int[][] busStopTimes = (int[][]) intent.getExtras().getSerializable(AppData.BUS_STOP_TIMES_MESSAGE);
+        @SuppressWarnings("unchecked")
+        ArrayList<BusStop> busStops = (ArrayList) intent.getParcelableArrayListExtra(AppData.BUS_STOPS_MESSAGE);
 
         // Sets the title to the name of the bus
         SharedPreferences tagsToBusesPref = getSharedPreferences(getString(R.string.tags_to_buses_key), Context.MODE_PRIVATE);
@@ -60,7 +60,7 @@ public class BusStopsActivity extends AppCompatActivity {
         // Sets up the list view
         expBusStopIndex = -1;
         isExpBusStopIndexExpanded = false;
-        setListView(busStopTitles, busStopTimes);
+        setListView(busStops);
 
         ListView listView = (ListView) findViewById(android.R.id.list);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -74,18 +74,13 @@ public class BusStopsActivity extends AppCompatActivity {
     }
 
     // Updates the list view with bus stop titles and times
-    public void setListView(String[] titles, int[][] times) {
-        ArrayList<BusStop> buses = new ArrayList<>(titles.length);
-        for (int i = 0; i < titles.length; i++) {
-            buses.add(new BusStop(busTag, titles[i], times[i]));
-        }
-
+    public void setListView(ArrayList<BusStop> busStops) {
         ListView busTimesList = (ListView) findViewById(android.R.id.list);
         if (busTimesList.getAdapter() == null) {
-            BusStopAdapter adapter = new BusStopAdapter(getApplicationContext(), R.layout.list_bus_stops, buses);
+            BusStopAdapter adapter = new BusStopAdapter(getApplicationContext(), R.layout.list_bus_stops, busStops);
             busTimesList.setAdapter(adapter);
         } else {
-            ((BusStopAdapter) busTimesList.getAdapter()).refill(buses);
+            ((BusStopAdapter) busTimesList.getAdapter()).refill(busStops);
         }
     }
 
