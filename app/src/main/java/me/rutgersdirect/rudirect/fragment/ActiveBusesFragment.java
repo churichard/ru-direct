@@ -12,6 +12,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -108,7 +109,7 @@ public class ActiveBusesFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mainActivity = (MainActivity) super.getActivity();
+        mainActivity = (MainActivity) getActivity();
         rlLayout = (RelativeLayout) inflater.inflate(R.layout.fragment_active_buses, container, false);
 
         setHasOptionsMenu(true);
@@ -142,5 +143,19 @@ public class ActiveBusesFragment extends Fragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_active_buses, menu);
         super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here
+        int id = item.getItemId();
+
+        if (id == R.id.refresh) {
+            mSwipeRefreshLayout.setRefreshing(true);
+            setupListView();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }

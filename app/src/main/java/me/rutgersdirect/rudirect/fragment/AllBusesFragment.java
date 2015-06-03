@@ -50,7 +50,7 @@ public class AllBusesFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mainActivity = (MainActivity) super.getActivity();
+        mainActivity = (MainActivity) getActivity();
         RelativeLayout rlLayout = (RelativeLayout) inflater.inflate(R.layout.fragment_all_buses, container, false);
 
         setHasOptionsMenu(true);

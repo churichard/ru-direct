@@ -144,7 +144,12 @@ public class BusStopsActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here
         int id = item.getItemId();
-        if (id == android.R.id.home) {
+        if (id == R.id.refresh) {
+            mSwipeRefreshLayout.setRefreshing(true);
+            expansionRequest = false;
+            updateBusTimes();
+            return true;
+        } else if (id == android.R.id.home) {
             onBackPressed();
             return true;
         }
