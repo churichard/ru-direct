@@ -56,11 +56,15 @@ public class ActiveBusesFragment extends Fragment {
                 rlLayout.removeView(errorView);
             }
             if (activeBusTags.length == 1 && activeBuses[0].equals("Offline")) {
+                // Setup error message
                 errorView = new TextView(mainActivity);
                 errorView.setTextSize(24);
 
                 RelativeLayout.LayoutParams params
                         = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
+                float scale = getResources().getDisplayMetrics().density;
+                int dpAsPixels = (int) (10 * scale + 0.5f);
+                errorView.setPadding(dpAsPixels, 0, dpAsPixels, 0);
                 errorView.setLayoutParams(params);
                 errorView.setGravity(Gravity.CENTER);
                 if (isNetworkAvailable()) {
@@ -68,6 +72,10 @@ public class ActiveBusesFragment extends Fragment {
                 } else {
                     errorView.setText("Unable to get active buses - check your Internet connection and try again.");
                 }
+                rlLayout.addView(errorView);
+
+                // Clear listView
+                listView.setAdapter(null);
             } else {
                 // Set listView adapter
                 ArrayAdapter<String> adapter = new ArrayAdapter<>(mainActivity.getApplicationContext(),
