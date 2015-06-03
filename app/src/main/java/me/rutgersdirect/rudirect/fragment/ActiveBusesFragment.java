@@ -68,7 +68,6 @@ public class ActiveBusesFragment extends Fragment {
                 } else {
                     errorView.setText("Unable to get active buses - check your Internet connection and try again.");
                 }
-                rlLayout.addView(errorView);
             } else {
                 // Set listView adapter
                 ArrayAdapter<String> adapter = new ArrayAdapter<>(mainActivity.getApplicationContext(),
@@ -122,6 +121,7 @@ public class ActiveBusesFragment extends Fragment {
                 setupListView();
             }
         });
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.primaryColor);
     }
 
     @Override

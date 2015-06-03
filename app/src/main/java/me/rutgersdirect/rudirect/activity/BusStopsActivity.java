@@ -68,6 +68,7 @@ public class BusStopsActivity extends AppCompatActivity {
                 updateBusTimes();
             }
         });
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.primaryColor);
 
         // Sets up the list view
         expBusStopIndex = -1;

@@ -3,5 +3,4 @@
     <dimen name="vertical_margin">16dp</dimen>
     <dimen name="listview_horizontal_margin">16dp</dimen>
     <dimen name="listview_vertical_margin">4dp</dimen>
-    <dimen name="small_listview_vertical_margin">1dp</dimen>
 </resources>

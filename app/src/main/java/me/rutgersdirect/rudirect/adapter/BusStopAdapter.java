@@ -13,8 +13,8 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import me.rutgersdirect.rudirect.R;
-import me.rutgersdirect.rudirect.model.BusStop;
 import me.rutgersdirect.rudirect.activity.BusStopsActivity;
+import me.rutgersdirect.rudirect.model.BusStop;
 
 public class BusStopAdapter extends ArrayAdapter<BusStop> {
     private static final int MILLIS_IN_ONE_MINUTE = 60000;
