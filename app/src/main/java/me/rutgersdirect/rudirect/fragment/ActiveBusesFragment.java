@@ -7,11 +7,11 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -31,6 +31,7 @@ public class ActiveBusesFragment extends Fragment {
     private RelativeLayout rlLayout;
     private ListView listView;
     private TextView errorView;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
 
     private class SetupListViewTask extends AsyncTask<Void, Void, String[]> {
         protected String[] doInBackground(Void... voids) {
@@ -89,6 +90,7 @@ public class ActiveBusesFragment extends Fragment {
                     }
                 });
             }
+            mSwipeRefreshLayout.setRefreshing(false);
         }
     }
 
@@ -112,6 +114,14 @@ public class ActiveBusesFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         // Initialize listView
         listView = (ListView) mainActivity.findViewById(R.id.busList);
+        // Set up swipe refresh layout
+        mSwipeRefreshLayout = (SwipeRefreshLayout) mainActivity.findViewById(R.id.active_buses_swipe_refresh_layout);
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                setupListView();
+            }
+        });
     }
 
     @Override
@@ -124,18 +134,5 @@ public class ActiveBusesFragment extends Fragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_active_buses, menu);
         super.onCreateOptionsMenu(menu, inflater);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here
-        int id = item.getItemId();
-
-        if (id == R.id.refresh) {
-            setupListView();
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 }

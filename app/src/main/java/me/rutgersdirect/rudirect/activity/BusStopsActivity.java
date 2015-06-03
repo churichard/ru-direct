@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -27,6 +28,7 @@ public class BusStopsActivity extends AppCompatActivity {
     public static boolean active; // Whether or not the activity is active
     private String busTag; // Bus tag
     private Handler refreshHandler; // Handles auto refresh
+    private SwipeRefreshLayout mSwipeRefreshLayout;
 
     // Bus stop times expansion
     public static boolean expansionRequest; // Whether or not the bus stop should be expanded
@@ -57,6 +59,16 @@ public class BusStopsActivity extends AppCompatActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
+        // Set up swipe refresh layout
+        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.bus_stops_swipe_refresh_layout);
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                expansionRequest = false;
+                updateBusTimes();
+            }
+        });
+
         // Sets up the list view
         expBusStopIndex = -1;
         isExpBusStopIndexExpanded = false;
@@ -82,6 +94,7 @@ public class BusStopsActivity extends AppCompatActivity {
         } else {
             ((BusStopAdapter) busTimesList.getAdapter()).refill(busStops);
         }
+        mSwipeRefreshLayout.setRefreshing(false);
     }
 
     // Updates the bus times
@@ -130,11 +143,7 @@ public class BusStopsActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here
         int id = item.getItemId();
-        if (id == R.id.refresh) {
-            expansionRequest = false;
-            updateBusTimes();
-            return true;
-        } else if (id == android.R.id.home) {
+        if (id == android.R.id.home) {
             onBackPressed();
             return true;
         }
