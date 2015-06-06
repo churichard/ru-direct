@@ -2,7 +2,9 @@ package me.rutgersdirect.rudirect.data;
 
 import java.util.HashMap;
 
+
 public class AppData {
+
     // NextBus API links
     public static final String VEHICLE_LOCATIONS_LINK = "http://webservices.nextbus.com/service/publicXMLFeed?a=rutgers&command=vehicleLocations";
     public static final String ALL_ROUTES_LINK = "http://webservices.nextbus.com/service/publicXMLFeed?a=rutgers&command=routeConfig";

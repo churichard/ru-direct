@@ -9,7 +9,9 @@ import java.util.LinkedHashSet;
 
 import me.rutgersdirect.rudirect.data.AppData;
 
+
 public class XMLActiveBusHandler extends DefaultHandler {
+
     private LinkedHashSet<String> activeBuses;
 
     public void startDocument() throws SAXException {

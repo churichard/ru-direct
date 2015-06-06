@@ -9,7 +9,9 @@ import java.util.HashMap;
 
 import me.rutgersdirect.rudirect.data.AppData;
 
+
 public class XMLBusTimesHandler extends DefaultHandler {
+
     private String busTag;
     private boolean inBusTag;
     private ArrayList<int[]> stopTimes;

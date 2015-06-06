@@ -7,11 +7,13 @@ import android.support.v13.app.FragmentPagerAdapter;
 import me.rutgersdirect.rudirect.fragment.ActiveBusesFragment;
 import me.rutgersdirect.rudirect.fragment.AllBusesFragment;
 
-public class SlidingPagerAdapter extends FragmentPagerAdapter {
+
+public class MainPagerAdapter extends FragmentPagerAdapter {
+
     private static final int NUM_ITEMS = 2;
     private static final String[] titles = {"Active Buses", "All Buses"};
 
-    public SlidingPagerAdapter(FragmentManager fm) {
+    public MainPagerAdapter(FragmentManager fm) {
         super(fm);
     }
 

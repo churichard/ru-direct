@@ -8,33 +8,31 @@ import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import me.rutgersdirect.rudirect.R;
-import me.rutgersdirect.rudirect.activity.BusStopsActivity;
 import me.rutgersdirect.rudirect.activity.MainActivity;
+import me.rutgersdirect.rudirect.adapter.BusRouteAdapter;
 import me.rutgersdirect.rudirect.api.NextBusAPI;
-import me.rutgersdirect.rudirect.util.ShowBusStopsHelper;
+import me.rutgersdirect.rudirect.ui.view.DividerItemDecoration;
+
 
 public class ActiveBusesFragment extends Fragment {
+
     private MainActivity mainActivity;
     private RelativeLayout rlLayout;
-    private ListView listView;
+    private RecyclerView activeBusesRecyclerView;
     private TextView errorView;
     private SwipeRefreshLayout mSwipeRefreshLayout;
 
-    private class SetupListViewTask extends AsyncTask<Void, Void, String[]> {
+    private class UpdateRecyclerViewTask extends AsyncTask<Void, Void, String[]> {
         protected String[] doInBackground(Void... voids) {
             return NextBusAPI.getActiveBusTags();
         }
@@ -74,37 +72,17 @@ public class ActiveBusesFragment extends Fragment {
                     errorView.setText("Unable to get active buses - check your Internet connection and try again.");
                 }
                 rlLayout.addView(errorView);
-
-                // Clear listView
-                listView.setAdapter(null);
             } else {
-                // Set listView adapter
-                ArrayAdapter<String> adapter = new ArrayAdapter<>(mainActivity.getApplicationContext(),
-                        R.layout.list_black_text, R.id.list_content, activeBuses);
-                listView.setAdapter(adapter);
-
-                // Setup item click listener
-                listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    public void onItemClick(AdapterView<?> myAdapter, View myView, int myItemInt, long mylng) {
-                        if (!BusStopsActivity.active) {
-                            String bus = (String) (listView.getItemAtPosition(myItemInt));
-                            SharedPreferences busesToTagsPref = mainActivity.getSharedPreferences(getString(R.string.buses_to_tags_key), Context.MODE_PRIVATE);
-                            String busTag = busesToTagsPref.getString(bus, null);
-                            if (busTag != null) {
-                                BusStopsActivity.active = true;
-                                new ShowBusStopsHelper().execute(busTag, mainActivity, mainActivity.getApplicationContext());
-                            }
-                        }
-                    }
-                });
+                // Set RecyclerView adapter
+                activeBusesRecyclerView.setAdapter(new BusRouteAdapter(activeBuses, mainActivity, ActiveBusesFragment.this));
             }
             mSwipeRefreshLayout.setRefreshing(false);
         }
     }
 
     // Sets up the list view
-    public void setupListView() {
-        new SetupListViewTask().execute();
+    public void updateRecyclerView() {
+        new UpdateRecyclerViewTask().execute();
     }
 
     @Override
@@ -112,50 +90,45 @@ public class ActiveBusesFragment extends Fragment {
         mainActivity = (MainActivity) getActivity();
         rlLayout = (RelativeLayout) inflater.inflate(R.layout.fragment_active_buses, container, false);
 
-        setHasOptionsMenu(true);
-
         return rlLayout;
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        // Initialize listView
-        listView = (ListView) mainActivity.findViewById(R.id.busList);
-        // Set up swipe refresh layout
-        mSwipeRefreshLayout = (SwipeRefreshLayout) mainActivity.findViewById(R.id.active_buses_swipe_refresh_layout);
-        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                setupListView();
-            }
-        });
-        mSwipeRefreshLayout.setColorSchemeResources(R.color.primaryColor);
+
+        setupRecyclerView();
+        setupSwipeRefreshLayout();
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        setupListView();
+        updateRecyclerView();
     }
 
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_active_buses, menu);
-        super.onCreateOptionsMenu(menu, inflater);
+    // Set up RecyclerView
+    private void setupRecyclerView() {
+        // Initialize recycler view
+        activeBusesRecyclerView = (RecyclerView) mainActivity.findViewById(R.id.active_buses_recyclerview);
+        // Set layout manager
+        LinearLayoutManager layoutManager = new LinearLayoutManager(mainActivity);
+        activeBusesRecyclerView.setLayoutManager(layoutManager);
+        // Setup layout
+        activeBusesRecyclerView.addItemDecoration(new DividerItemDecoration(mainActivity, LinearLayoutManager.VERTICAL));
+        // Set adapter
+        activeBusesRecyclerView.setAdapter(new BusRouteAdapter());
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here
-        int id = item.getItemId();
-
-        if (id == R.id.refresh) {
-            mSwipeRefreshLayout.setRefreshing(true);
-            setupListView();
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
+    // Set up SwipeRefreshLayout
+    private void setupSwipeRefreshLayout() {
+        mSwipeRefreshLayout = (SwipeRefreshLayout) mainActivity.findViewById(R.id.active_buses_swipe_refresh_layout);
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                updateRecyclerView();
+            }
+        });
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.primaryColor);
     }
 }

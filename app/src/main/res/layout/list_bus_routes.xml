@@ -7,7 +7,7 @@
     android:paddingRight="@dimen/listview_horizontal_margin">
 
     <TextView
-        android:id="@+id/list_content"
+        android:id="@+id/bus_route_name"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"

@@ -11,7 +11,9 @@ import java.util.ArrayList;
 
 import me.rutgersdirect.rudirect.R;
 
+
 public class XMLBusStopHandler extends DefaultHandler {
+
     private Context context;
     private boolean inBusTag;
     private String busTag;
