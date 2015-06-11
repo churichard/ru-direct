@@ -11,7 +11,7 @@ import me.rutgersdirect.rudirect.fragment.AllBusesFragment;
 public class MainPagerAdapter extends FragmentPagerAdapter {
 
     private static final int NUM_ITEMS = 2;
-    private static final String[] titles = {"Active Buses", "All Buses"};
+    private static final String[] titles = {"Active Routes", "All Routes"};
 
     public MainPagerAdapter(FragmentManager fm) {
         super(fm);

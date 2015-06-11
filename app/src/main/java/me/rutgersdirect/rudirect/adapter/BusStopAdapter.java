@@ -12,7 +12,6 @@ import java.util.Date;
 import java.util.List;
 
 import me.rutgersdirect.rudirect.R;
-import me.rutgersdirect.rudirect.fragment.BusTimesFragment;
 import me.rutgersdirect.rudirect.model.BusStop;
 import me.rutgersdirect.rudirect.ui.holder.BusStopViewHolder;
 
@@ -21,6 +20,7 @@ public class BusStopAdapter extends RecyclerView.Adapter<BusStopViewHolder> {
 
     private static final int MILLIS_IN_ONE_MINUTE = 60000;
     private List<BusStop> busStops;
+    private static boolean expToggleRequest; // Whether or not the bus stop should be expanded/retracted
 
     public BusStopAdapter(List<BusStop> busStops) {
         this.busStops = busStops;
@@ -36,9 +36,12 @@ public class BusStopAdapter extends RecyclerView.Adapter<BusStopViewHolder> {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_bus_stops, parent, false);
         return new BusStopViewHolder(v, new BusStopViewHolder.BusStopViewHolderClick() {
             public void onClick(View v, int position) {
-                BusTimesFragment.expansionRequest = true;
-                BusTimesFragment.lastExpBusStopIndex = BusTimesFragment.expBusStopIndex;
-                BusTimesFragment.expBusStopIndex = position;
+                expToggleRequest = true;
+
+                BusStop stop = busStops.get(position);
+                TextView titleTextView = (TextView) v.findViewById(R.id.bus_stop_name);
+                TextView timesTextView = (TextView) v.findViewById(R.id.bus_stop_times);
+                timesTextView.setText(getBusStopTimes(stop, titleTextView, timesTextView));
             }
         });
     }
@@ -51,7 +54,7 @@ public class BusStopAdapter extends RecyclerView.Adapter<BusStopViewHolder> {
         TextView timesTextView = viewHolder.times;
 
         titleTextView.setText(stop.getTitle());
-        timesTextView.setText(getBusStopTimes(stop.getTimes(), position, titleTextView, timesTextView));
+        timesTextView.setText(getBusStopTimes(stop, titleTextView, timesTextView));
     }
 
     // Return the number of posts
@@ -63,27 +66,23 @@ public class BusStopAdapter extends RecyclerView.Adapter<BusStopViewHolder> {
         return 0;
     }
 
-    private String getBusStopTimes(int[] times, int position, TextView titleTextView, TextView timesTextView) {
-        if (BusTimesFragment.expansionRequest && BusTimesFragment.expBusStopIndex == position
-                && times[0] == -1) {
-            if (!BusTimesFragment.isExpBusStopIndexExpanded
-                    || BusTimesFragment.expBusStopIndex != BusTimesFragment.lastExpBusStopIndex) {
-                return expandedTimes(times);
-            } else if (BusTimesFragment.isExpBusStopIndexExpanded) {
-                BusTimesFragment.isExpBusStopIndexExpanded = false;
+    private String getBusStopTimes(BusStop busStop, TextView titleTextView, TextView timesTextView) {
+        int[] times = busStop.getTimes();
+        if (expToggleRequest && times[0] != -1) {
+            if (!busStop.isExpanded()) {
+                busStop.setIsExpanded(true);
                 setTextColor(titleTextView, timesTextView, times);
-                return normalTimes(times);
+                return expandedTimes(times);
+            } else {
+                busStop.setIsExpanded(false);
             }
-        } else {
-            setTextColor(titleTextView, timesTextView, times);
-            return normalTimes(times);
         }
-        return null;
+        setTextColor(titleTextView, timesTextView, times);
+        return normalTimes(times);
     }
 
     // Sets up the expanded view of the bus stop times
     private String expandedTimes(int[] times) {
-        BusTimesFragment.isExpBusStopIndexExpanded = true;
         long currentTime = new Date().getTime();
 
         // Build string of times
@@ -140,5 +139,9 @@ public class BusStopAdapter extends RecyclerView.Adapter<BusStopViewHolder> {
         } else {
             busStopTimes.setTextColor(Color.parseColor("#1565C0")); // Blue
         }
+    }
+
+    public static void setExpToggleRequest(boolean expToggleRequest) {
+        BusStopAdapter.expToggleRequest = expToggleRequest;
     }
 }

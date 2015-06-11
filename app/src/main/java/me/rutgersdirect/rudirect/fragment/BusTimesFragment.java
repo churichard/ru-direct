@@ -21,13 +21,8 @@ public class BusTimesFragment extends Fragment {
 
     private BusStopsActivity busStopsActivity;
     private Handler refreshHandler;
-    public SwipeRefreshLayout mSwipeRefreshLayout;
-
-    // Bus stop times expansion
-    public static boolean expansionRequest; // Whether or not the bus stop should be expanded
-    public static int expBusStopIndex; // Index of the bus stop to be expanded
-    public static int lastExpBusStopIndex; // Index of the last bus stop expanded
-    public static boolean isExpBusStopIndexExpanded; // Is the bus stop expanded already?
+    private SwipeRefreshLayout mSwipeRefreshLayout;
+    private RecyclerView busTimesRecyclerView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -40,6 +35,7 @@ public class BusTimesFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         setupRecyclerView();
         setupSwipeRefreshLayout();
+        mSwipeRefreshLayout.setRefreshing(true);
         updateBusTimes();
     }
 
@@ -50,7 +46,7 @@ public class BusTimesFragment extends Fragment {
         refreshHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                expansionRequest = false;
+                BusStopAdapter.setExpToggleRequest(false);
                 updateBusTimes();
                 refreshHandler.postDelayed(this, 60000);
             }
@@ -60,7 +56,6 @@ public class BusTimesFragment extends Fragment {
 
     // Updates the bus times
     private void updateBusTimes() {
-        mSwipeRefreshLayout.setRefreshing(true);
         new ShowBusStopsHelper().execute(busStopsActivity.getBusTag(), busStopsActivity, BusTimesFragment.this);
     }
 
@@ -70,7 +65,7 @@ public class BusTimesFragment extends Fragment {
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                expansionRequest = false;
+                BusStopAdapter.setExpToggleRequest(false);
                 updateBusTimes();
             }
         });
@@ -79,11 +74,8 @@ public class BusTimesFragment extends Fragment {
 
     // Set up RecyclerView
     private void setupRecyclerView() {
-        expBusStopIndex = -1;
-        isExpBusStopIndexExpanded = false;
-
         // Initialize recycler view
-        RecyclerView busTimesRecyclerView = (RecyclerView) busStopsActivity.findViewById(R.id.bus_times_recyclerview);
+        busTimesRecyclerView = (RecyclerView) busStopsActivity.findViewById(R.id.bus_times_recyclerview);
         // Set layout manager
         LinearLayoutManager layoutManager = new LinearLayoutManager(busStopsActivity);
         busTimesRecyclerView.setLayoutManager(layoutManager);
@@ -91,5 +83,13 @@ public class BusTimesFragment extends Fragment {
         busTimesRecyclerView.addItemDecoration(new DividerItemDecoration(busStopsActivity, LinearLayoutManager.VERTICAL));
         // Set adapter
         busTimesRecyclerView.setAdapter(new BusStopAdapter());
+    }
+
+    public SwipeRefreshLayout getSwipeRefreshLayout() {
+        return mSwipeRefreshLayout;
+    }
+
+    public RecyclerView getBusTimesRecyclerView() {
+        return busTimesRecyclerView;
     }
 }

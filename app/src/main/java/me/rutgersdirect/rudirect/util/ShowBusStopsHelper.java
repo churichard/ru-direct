@@ -49,9 +49,10 @@ public class ShowBusStopsHelper extends AsyncTask<Object, Void, Void> {
         ArrayList<BusStop> buses = getBusStops(busStopTitles, busStopTimes);
         if (fragment instanceof BusTimesFragment) {
             // Update items in RecyclerView
-            RecyclerView busTimesRecyclerView = (RecyclerView) activity.findViewById(R.id.bus_times_recyclerview);
+            BusTimesFragment busTimesFragment = ((BusTimesFragment) fragment);
+            RecyclerView busTimesRecyclerView = busTimesFragment.getBusTimesRecyclerView();
             busTimesRecyclerView.setAdapter(new BusStopAdapter(buses));
-            ((BusTimesFragment) fragment).mSwipeRefreshLayout.setRefreshing(false);
+            busTimesFragment.getSwipeRefreshLayout().setRefreshing(false);
         } else {
             // Start new activity to display bus stop titles and times
             Intent intent = new Intent(activity, BusStopsActivity.class);
