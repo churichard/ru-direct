@@ -7,6 +7,9 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -26,6 +29,7 @@ public class BusTimesFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        setHasOptionsMenu(true);
         busStopsActivity = (BusStopsActivity) getActivity();
         return inflater.inflate(R.layout.fragment_bus_times, container, false);
     }
@@ -91,5 +95,24 @@ public class BusTimesFragment extends Fragment {
 
     public RecyclerView getBusTimesRecyclerView() {
         return busTimesRecyclerView;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_bus_times, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.refresh) {
+            mSwipeRefreshLayout.setRefreshing(true);
+            updateBusTimes();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }

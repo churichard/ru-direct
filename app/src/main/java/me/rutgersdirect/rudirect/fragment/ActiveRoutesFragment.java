@@ -12,6 +12,9 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
@@ -24,7 +27,7 @@ import me.rutgersdirect.rudirect.api.NextBusAPI;
 import me.rutgersdirect.rudirect.ui.view.DividerItemDecoration;
 
 
-public class ActiveBusesFragment extends Fragment {
+public class ActiveRoutesFragment extends Fragment {
 
     private MainActivity mainActivity;
     private RelativeLayout rlLayout;
@@ -74,7 +77,7 @@ public class ActiveBusesFragment extends Fragment {
                 rlLayout.addView(errorView);
             } else {
                 // Set RecyclerView adapter
-                activeBusesRecyclerView.setAdapter(new BusRouteAdapter(activeBuses, mainActivity, ActiveBusesFragment.this));
+                activeBusesRecyclerView.setAdapter(new BusRouteAdapter(activeBuses, mainActivity, ActiveRoutesFragment.this));
             }
             mSwipeRefreshLayout.setRefreshing(false);
         }
@@ -87,9 +90,9 @@ public class ActiveBusesFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        setHasOptionsMenu(true);
         mainActivity = (MainActivity) getActivity();
-        rlLayout = (RelativeLayout) inflater.inflate(R.layout.fragment_active_buses, container, false);
-
+        rlLayout = (RelativeLayout) inflater.inflate(R.layout.fragment_active_routes, container, false);
         return rlLayout;
     }
 
@@ -130,5 +133,24 @@ public class ActiveBusesFragment extends Fragment {
             }
         });
         mSwipeRefreshLayout.setColorSchemeResources(R.color.primaryColor);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_active_routes, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.refresh) {
+            mSwipeRefreshLayout.setRefreshing(true);
+            updateRecyclerView();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }

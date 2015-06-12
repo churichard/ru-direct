@@ -66,19 +66,21 @@ public class BusStopAdapter extends RecyclerView.Adapter<BusStopViewHolder> {
         return 0;
     }
 
+    // Return the bus stop times
     private String getBusStopTimes(BusStop busStop, TextView titleTextView, TextView timesTextView) {
         int[] times = busStop.getTimes();
-        if (expToggleRequest && times[0] != -1) {
-            if (!busStop.isExpanded()) {
-                busStop.setIsExpanded(true);
-                setTextColor(titleTextView, timesTextView, times);
-                return expandedTimes(times);
-            } else {
-                busStop.setIsExpanded(false);
-            }
-        }
+        boolean isOffline = times[0] == -1;
         setTextColor(titleTextView, timesTextView, times);
-        return normalTimes(times);
+
+        if (expToggleRequest && !isOffline && !busStop.isExpanded() || !expToggleRequest && busStop.isExpanded()) {
+            expToggleRequest = false;
+            busStop.setIsExpanded(true);
+            return expandedTimes(times);
+        } else {
+            expToggleRequest = false;
+            busStop.setIsExpanded(false);
+            return normalTimes(times);
+        }
     }
 
     // Sets up the expanded view of the bus stop times

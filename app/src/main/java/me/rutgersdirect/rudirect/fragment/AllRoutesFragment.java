@@ -15,14 +15,14 @@ import me.rutgersdirect.rudirect.data.AppData;
 import me.rutgersdirect.rudirect.ui.view.DividerItemDecoration;
 
 
-public class AllBusesFragment extends Fragment {
+public class AllRoutesFragment extends Fragment {
 
     private MainActivity mainActivity;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mainActivity = (MainActivity) getActivity();
-        return inflater.inflate(R.layout.fragment_all_buses, container, false);
+        return inflater.inflate(R.layout.fragment_all_routes, container, false);
     }
 
     @Override
