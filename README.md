@@ -7,6 +7,7 @@ RU Direct is an Android app that provides a clean and easy to use interface for 
 - Add collapsing toolbar
 - Add in maps of the bus routes
 - Add directions from one bus stop to another
+- Add About page with contributors and Google Maps attribution
 - Publish the app on the Play Store and release it to the public
 
 ## Contributors
