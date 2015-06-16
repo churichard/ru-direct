@@ -19,7 +19,9 @@ import javax.xml.parsers.SAXParserFactory;
 import me.rutgersdirect.rudirect.R;
 import me.rutgersdirect.rudirect.data.AppData;
 
+
 public class NextBusAPI {
+
     private static final String TAG = NextBusAPI.class.getName();
 
     // Returns the input stream from the parameter url

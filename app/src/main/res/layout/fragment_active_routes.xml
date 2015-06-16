@@ -7,13 +7,12 @@
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/active_buses_swipe_refresh_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
 
-        <ListView
-            android:id="@+id/busList"
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/active_buses_recyclerview"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical" />
+            android:layout_height="match_parent" />
 
     </android.support.v4.widget.SwipeRefreshLayout>
 

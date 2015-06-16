@@ -4,14 +4,16 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.support.v13.app.FragmentPagerAdapter;
 
-import me.rutgersdirect.rudirect.fragment.ActiveBusesFragment;
-import me.rutgersdirect.rudirect.fragment.AllBusesFragment;
+import me.rutgersdirect.rudirect.fragment.BusMapFragment;
+import me.rutgersdirect.rudirect.fragment.BusTimesFragment;
 
-public class SlidingPagerAdapter extends FragmentPagerAdapter {
+
+public class BusStopsPagerAdapter extends FragmentPagerAdapter {
+
     private static final int NUM_ITEMS = 2;
-    private static final String[] titles = {"Active Buses", "All Buses"};
+    private static final String[] titles = {"Route", "Map"};
 
-    public SlidingPagerAdapter(FragmentManager fm) {
+    public BusStopsPagerAdapter(FragmentManager fm) {
         super(fm);
     }
 
@@ -24,9 +26,9 @@ public class SlidingPagerAdapter extends FragmentPagerAdapter {
     @Override
     public Fragment getItem(int position) {
         if (position == 0) {
-            return new ActiveBusesFragment();
+            return new BusTimesFragment();
         } else {
-            return new AllBusesFragment();
+            return new BusMapFragment();
         }
     }
 
