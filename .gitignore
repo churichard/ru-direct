@@ -1,8 +1,14 @@
+# Gradle
 .gradle
+
+# Ant
 /local.properties
-/.idea/workspace.xml
-/.idea/libraries
+
+# OS X
 .DS_Store
+
+# Android Studio
+.idea/*
 /build
 /captures
 *.iml
