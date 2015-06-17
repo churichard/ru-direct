@@ -24,6 +24,8 @@ public class BusStopsActivity extends AppCompatActivity {
     public static boolean active; // Whether or not the activity is active
     private String busTag; // Bus tag
     private ArrayList<BusStop> busStops;
+    private String[] latitudes;
+    private String[] longitudes;
 
     @Override
     @SuppressWarnings("unchecked")
@@ -35,6 +37,8 @@ public class BusStopsActivity extends AppCompatActivity {
         Intent intent = getIntent();
         busTag = intent.getStringExtra(AppData.BUS_TAG_MESSAGE);
         busStops = (ArrayList) intent.getParcelableArrayListExtra(AppData.BUS_STOPS_MESSAGE);
+        latitudes = intent.getStringArrayExtra(AppData.BUS_STOP_LATS_MESSAGE);
+        longitudes = intent.getStringArrayExtra(AppData.BUS_STOP_LONS_MESSAGE);
 
         // Sets the title to the name of the bus
         SharedPreferences tagsToBusesPref = getSharedPreferences(getString(R.string.tags_to_buses_key), Context.MODE_PRIVATE);
@@ -95,5 +99,15 @@ public class BusStopsActivity extends AppCompatActivity {
     // Returns the ArrayList of bus stops
     public ArrayList<BusStop> getBusStops() {
         return busStops;
+    }
+
+    // Get array of bus stop latitudes
+    public String[] getLatitudes() {
+        return latitudes;
+    }
+
+    // Get array of bus stop longitudes
+    public String[] getLongitudes() {
+        return longitudes;
     }
 }

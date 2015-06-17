@@ -15,20 +15,16 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.text.DateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 
 import me.rutgersdirect.rudirect.activity.BusStopsActivity;
-import me.rutgersdirect.rudirect.model.BusStop;
 
 
-public class BusMapFragment extends MapFragment implements
+public class DirectionsFragment extends MapFragment implements
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
     private static final String TAG = BusMapFragment.class.getSimpleName();
@@ -53,9 +49,6 @@ public class BusMapFragment extends MapFragment implements
 
         buildGoogleApiClient();
         createLocationRequest();
-        drawRoute();
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
-                getLatLng(busStopsActivity.getLatitudes()[0], busStopsActivity.getLongitudes()[0]), 13.0f));
     }
 
     @Override
@@ -63,11 +56,14 @@ public class BusMapFragment extends MapFragment implements
         Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         handleNewLocation(location);
         startLocationUpdates();
+        if (location != null) {
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(getLatLng(location), 12.0f));
+        }
     }
 
     @Override
     public void onConnectionSuspended(int i) {
-        mGoogleApiClient.connect();
+        Log.i(TAG, "Connection suspended");
     }
 
     @Override
@@ -126,47 +122,23 @@ public class BusMapFragment extends MapFragment implements
                 .setFastestInterval(FASTEST_REFRESH_INTERVAL);
     }
 
-    // Draws the bus route on the map
-    private void drawRoute() {
-        ArrayList<BusStop> busStops = busStopsActivity.getBusStops();
-        String[] latitudes = busStopsActivity.getLatitudes();
-        String[] longitudes = busStopsActivity.getLongitudes();
-
-        PolylineOptions polylineOptions = new PolylineOptions();
-
-        for (int i = 0; i < busStops.size(); i++) {
-            MarkerOptions markerOptions = new MarkerOptions()
-                    .position(getLatLng(latitudes[i], longitudes[i]))
-                    .title(busStops.get(i).getTitle());
-            mMap.addMarker(markerOptions);
-            polylineOptions.add(getLatLng(latitudes[i], longitudes[i]));
-        }
-
-        mMap.addPolyline(polylineOptions);
-    }
-
-    // Draws the current location on the map
     private void handleNewLocation(Location location) {
         String mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
 
         if (location != null) {
-            Log.d(TAG, "Last Update Time: " + mLastUpdateTime);
+            Log.d(TAG, "Latitude: " + location.getLatitude()
+                    + "\tLongitude: " + location.getLongitude()
+                    + "\tLast Update Time: " + mLastUpdateTime);
 
-            // Add current location to map
-            MarkerOptions markerOptions = new MarkerOptions()
+            MarkerOptions options = new MarkerOptions()
                     .position(getLatLng(location))
-                    .title("Your current location")
-                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
-            mMap.addMarker(markerOptions);
+                    .title("Current location");
+            mMap.addMarker(options);
         }
     }
 
     private LatLng getLatLng(Location location) {
         return new LatLng(location.getLatitude(), location.getLongitude());
-    }
-
-    private LatLng getLatLng(String latitude, String longitude) {
-        return new LatLng(Double.parseDouble(latitude), Double.parseDouble(longitude));
     }
 
     protected void startLocationUpdates() {
