@@ -26,6 +26,8 @@ public class ShowBusStopsHelper extends AsyncTask<Object, Void, Void> {
     private int[][] busStopTimes;
     private String[] busStopLats;
     private String[] busStopLons;
+    private String[] busPathLats;
+    private String[] busPathLons;
 
     @Override
     protected Void doInBackground(Object... objects) {
@@ -36,6 +38,9 @@ public class ShowBusStopsHelper extends AsyncTask<Object, Void, Void> {
         busStopTimes = NextBusAPI.getBusStopTimes(tag, activity);
         busStopLats = NextBusAPI.getBusStopLats(tag, activity);
         busStopLons = NextBusAPI.getBusStopLons(tag, activity);
+        busPathLats = NextBusAPI.getBusPathLats(tag, activity);
+        busPathLons = NextBusAPI.getBusPathLons(tag, activity);
+
         return null;
     }
 
@@ -64,6 +69,8 @@ public class ShowBusStopsHelper extends AsyncTask<Object, Void, Void> {
             intent.putParcelableArrayListExtra(AppData.BUS_STOPS_MESSAGE, buses);
             intent.putExtra(AppData.BUS_STOP_LATS_MESSAGE, busStopLats);
             intent.putExtra(AppData.BUS_STOP_LONS_MESSAGE, busStopLons);
+            intent.putExtra(AppData.BUS_PATH_LATS_MESSAGE, busPathLats);
+            intent.putExtra(AppData.BUS_PATH_LONS_MESSAGE, busPathLons);
             activity.startActivity(intent);
             activity.overridePendingTransition(R.anim.abc_grow_fade_in_from_bottom, 0);
         }

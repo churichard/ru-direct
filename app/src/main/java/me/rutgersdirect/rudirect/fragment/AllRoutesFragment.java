@@ -11,13 +11,13 @@ import android.view.ViewGroup;
 import me.rutgersdirect.rudirect.R;
 import me.rutgersdirect.rudirect.activity.MainActivity;
 import me.rutgersdirect.rudirect.adapter.BusRouteAdapter;
-import me.rutgersdirect.rudirect.data.AppData;
 import me.rutgersdirect.rudirect.ui.view.DividerItemDecoration;
 
 
 public class AllRoutesFragment extends Fragment {
 
     private MainActivity mainActivity;
+    public static RecyclerView allBusesRecyclerView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -34,13 +34,13 @@ public class AllRoutesFragment extends Fragment {
     // Set up RecyclerView
     private void setupRecyclerView() {
         // Initialize recycler view
-        RecyclerView allBusesRecyclerView = (RecyclerView) mainActivity.findViewById(R.id.all_buses_recyclerview);
+        allBusesRecyclerView = (RecyclerView) mainActivity.findViewById(R.id.all_buses_recyclerview);
         // Set layout manager
         LinearLayoutManager layoutManager = new LinearLayoutManager(mainActivity);
         allBusesRecyclerView.setLayoutManager(layoutManager);
         // Setup layout
         allBusesRecyclerView.addItemDecoration(new DividerItemDecoration(mainActivity, LinearLayoutManager.VERTICAL));
         // Set adapter
-        allBusesRecyclerView.setAdapter(new BusRouteAdapter(AppData.allBusNames, mainActivity, this));
+        AllRoutesFragment.allBusesRecyclerView.setAdapter(new BusRouteAdapter(mainActivity.getBusRoutes(), mainActivity, this));
     }
 }

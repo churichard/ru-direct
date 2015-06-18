@@ -24,6 +24,7 @@ import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
+import me.rutgersdirect.rudirect.R;
 import me.rutgersdirect.rudirect.activity.BusStopsActivity;
 import me.rutgersdirect.rudirect.model.BusStop;
 
@@ -45,17 +46,17 @@ public class BusMapFragment extends MapFragment implements
         super.onViewCreated(view, savedInstanceState);
         busStopsActivity = (BusStopsActivity) getActivity();
         mMap = getMap();
-    }
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
 
         buildGoogleApiClient();
         createLocationRequest();
         drawRoute();
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
                 getLatLng(busStopsActivity.getLatitudes()[0], busStopsActivity.getLongitudes()[0]), 13.0f));
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
     }
 
     @Override
@@ -131,15 +132,22 @@ public class BusMapFragment extends MapFragment implements
         ArrayList<BusStop> busStops = busStopsActivity.getBusStops();
         String[] latitudes = busStopsActivity.getLatitudes();
         String[] longitudes = busStopsActivity.getLongitudes();
+        String[] pathLats = busStopsActivity.getPathLats();
+        String[] pathLons = busStopsActivity.getPathLons();
 
         PolylineOptions polylineOptions = new PolylineOptions();
+        polylineOptions.color(getResources().getColor(R.color.polyline_color));
 
         for (int i = 0; i < busStops.size(); i++) {
             MarkerOptions markerOptions = new MarkerOptions()
                     .position(getLatLng(latitudes[i], longitudes[i]))
                     .title(busStops.get(i).getTitle());
             mMap.addMarker(markerOptions);
-            polylineOptions.add(getLatLng(latitudes[i], longitudes[i]));
+//            polylineOptions.add(getLatLng(latitudes[i], longitudes[i]));
+        }
+
+        for (int i = 0; i < pathLats.length; i++) {
+            polylineOptions.add(getLatLng(pathLats[i], pathLons[i]));
         }
 
         mMap.addPolyline(polylineOptions);

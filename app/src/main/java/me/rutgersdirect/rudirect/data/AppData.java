@@ -14,9 +14,11 @@ public class AppData {
     public static final String BUS_STOPS_MESSAGE = "Bus Stops";
     public static final String BUS_STOP_LATS_MESSAGE = "Bus Stop Latitudes";
     public static final String BUS_STOP_LONS_MESSAGE = "Bus Stop Longitudes";
+    public static final String BUS_PATH_LATS_MESSAGE = "Bus Path Latitudes";
+    public static final String BUS_PATH_LONS_MESSAGE = "Bus Path Longitudes";
     // All bus names and tags
-    public static final String[] allBusNames = {"A", "B", "C", "EE", "F", "H", "LX", "REX B", "REX L", "All Campuses", "New Brunsquick 1 Shuttle", "New Brunsquick 2 Shuttle", "Weekend 1", "Weekend 2"};
-    public static final String[] allBusTags = {"a", "b", "c", "ee", "f", "h", "lx", "rexb", "rexl", "s", "w1", "w2", "wknd1", "wknd2"};
+//    public static final String[] allBusNames = {"A", "B", "C", "EE", "F", "H", "LX", "REX B", "REX L", "All Campuses", "New Brunsquick 1 Shuttle", "New Brunsquick 2 Shuttle", "Weekend 1", "Weekend 2"};
+//    public static final String[] allBusTags = {"a", "b", "c", "ee", "f", "h", "lx", "rexb", "rexl", "s", "w1", "w2", "wknd1", "wknd2"};
     // HashMap of bus tags to bus stop times
     public static HashMap<String, int[][]> BUS_TAGS_TO_STOP_TIMES;
     // Array of active buses

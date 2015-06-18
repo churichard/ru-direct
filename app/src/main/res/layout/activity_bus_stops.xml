@@ -14,7 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/toolbar"
-        android:background="@color/primaryColor"
+        android:background="@color/primary_color"
         app:tabGravity="fill"
         app:tabIndicatorColor="@color/light_gray"
         app:tabSelectedTextColor="@android:color/white"

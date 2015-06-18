@@ -132,7 +132,7 @@ public class ActiveRoutesFragment extends Fragment {
                 updateRecyclerView();
             }
         });
-        mSwipeRefreshLayout.setColorSchemeResources(R.color.primaryColor);
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.primary_color);
     }
 
     @Override

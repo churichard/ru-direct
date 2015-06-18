@@ -9,12 +9,16 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Map;
 
 import me.rutgersdirect.rudirect.R;
+import me.rutgersdirect.rudirect.adapter.BusRouteAdapter;
 import me.rutgersdirect.rudirect.adapter.MainPagerAdapter;
 import me.rutgersdirect.rudirect.api.NextBusAPI;
 import me.rutgersdirect.rudirect.data.AppData;
+import me.rutgersdirect.rudirect.fragment.AllRoutesFragment;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -25,6 +29,20 @@ public class MainActivity extends AppCompatActivity {
             NextBusAPI.saveBusStops(getApplicationContext());
             return null;
         }
+
+        @Override
+        protected void onPostExecute(Void v) {
+            AllRoutesFragment.allBusesRecyclerView.setAdapter(new BusRouteAdapter(getBusRoutes(), MainActivity.this, null));
+        }
+    }
+
+    public String[] getBusRoutes() {
+        Map<String, ?> busesToTagsMap = getSharedPreferences(
+                getString(R.string.buses_to_tags_key), Context.MODE_PRIVATE).getAll();
+        Object[] busNamesObj = busesToTagsMap.keySet().toArray();
+        String[] busNames = Arrays.copyOf(busNamesObj, busNamesObj.length, String[].class);
+        Arrays.sort(busNames);
+        return busNames;
     }
 
     @Override
@@ -35,18 +53,19 @@ public class MainActivity extends AppCompatActivity {
         // Initialize shared preferences
         SharedPreferences tagsToBusesPref = getSharedPreferences(getString(R.string.tags_to_buses_key), Context.MODE_PRIVATE);
         SharedPreferences busesToTagsPref = getSharedPreferences(getString(R.string.buses_to_tags_key), Context.MODE_PRIVATE);
-        if (!tagsToBusesPref.contains(AppData.allBusTags[0])) {
+
+        if (tagsToBusesPref.getAll().size() == 0) {
             // Save bus routes
             new SetupBusRoutesTask().execute();
             // Save tags to buses and buses to tags hash maps
-            SharedPreferences.Editor tagsToBusesEdit = tagsToBusesPref.edit();
-            SharedPreferences.Editor busesToTagsEdit = busesToTagsPref.edit();
-            for (int i = 0; i < AppData.allBusNames.length; i++) {
-                tagsToBusesEdit.putString(AppData.allBusTags[i], AppData.allBusNames[i]);
-                busesToTagsEdit.putString(AppData.allBusNames[i], AppData.allBusTags[i]);
-            }
-            tagsToBusesEdit.apply();
-            busesToTagsEdit.apply();
+//            SharedPreferences.Editor tagsToBusesEdit = tagsToBusesPref.edit();
+//            SharedPreferences.Editor busesToTagsEdit = busesToTagsPref.edit();
+//            for (int i = 0; i < AppData.allBusNames.length; i++) {
+//                tagsToBusesEdit.putString(AppData.allBusTags[i], AppData.allBusNames[i]);
+//                busesToTagsEdit.putString(AppData.allBusNames[i], AppData.allBusTags[i]);
+//            }
+//            tagsToBusesEdit.apply();
+//            busesToTagsEdit.apply();
         }
         // Initialize bus tags to stop times hash map
         AppData.BUS_TAGS_TO_STOP_TIMES = new HashMap<>();

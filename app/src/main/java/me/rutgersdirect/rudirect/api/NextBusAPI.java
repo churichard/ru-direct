@@ -92,6 +92,16 @@ public class NextBusAPI {
         return loadArray(R.string.longitudes_key, busTag, context);
     }
 
+    // Takes in a bus tag and returns a list of the bus path latitudes
+    public static String[] getBusPathLats(String busTag, Context context) {
+        return loadArray(R.string.path_latitudes_key, busTag, context);
+    }
+
+    // Takes in a bus tag and returns a list of the bus path longitudes
+    public static String[] getBusPathLons(String busTag, Context context) {
+        return loadArray(R.string.path_longitudes_key, busTag, context);
+    }
+
     // Returns a list of the bus stop times
     public static int[][] getBusStopTimes(String busTag, Context context) {
         // If there is no Internet

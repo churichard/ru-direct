@@ -13,6 +13,8 @@
     <string name="bus_tags_to_stop_titles_key">me.rutgersdirect.rudirect.BUS_TAGS_TO_STOP_TITLES_KEY</string>
     <string name="latitudes_key">me.rutgersdirect.rudirect.LATITUDES_KEY</string>
     <string name="longitudes_key">me.rutgersdirect.rudirect.LONGITUDES_KEY</string>
+    <string name="path_latitudes_key">me.rutgersdirect.rudirect.PATH_LATITUDES_KEY</string>
+    <string name="path_longitudes_key">me.rutgersdirect.rudirect.PATH_LONGITUDES_KEY</string>
 
     <string name="going">Where are you going?</string>
     <string name="coming">Where are you?</string>

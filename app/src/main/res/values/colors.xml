@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="primaryColor">#d21034</color>
-    <color name="darkPrimaryColor">#8a140e</color>
+    <color name="primary_color">#d21034</color>
+    <color name="dark_primary_color">#8a140e</color>
     <color name="light_gray">#E0E0E0</color>
+    <color name="polyline_color">#B32196F3</color>
 </resources>

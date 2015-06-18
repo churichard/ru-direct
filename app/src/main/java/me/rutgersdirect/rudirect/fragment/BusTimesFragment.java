@@ -73,7 +73,7 @@ public class BusTimesFragment extends Fragment {
                 updateBusTimes();
             }
         });
-        mSwipeRefreshLayout.setColorSchemeResources(R.color.primaryColor);
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.primary_color);
     }
 
     // Set up RecyclerView
