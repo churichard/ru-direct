@@ -17,7 +17,7 @@ import me.rutgersdirect.rudirect.R;
 import me.rutgersdirect.rudirect.adapter.BusRouteAdapter;
 import me.rutgersdirect.rudirect.adapter.MainPagerAdapter;
 import me.rutgersdirect.rudirect.api.NextBusAPI;
-import me.rutgersdirect.rudirect.data.AppData;
+import me.rutgersdirect.rudirect.data.constants.AppData;
 import me.rutgersdirect.rudirect.fragment.AllRoutesFragment;
 
 

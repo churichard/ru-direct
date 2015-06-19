@@ -12,7 +12,7 @@ import java.util.Date;
 import java.util.List;
 
 import me.rutgersdirect.rudirect.R;
-import me.rutgersdirect.rudirect.model.BusStop;
+import me.rutgersdirect.rudirect.data.model.BusStop;
 import me.rutgersdirect.rudirect.ui.holder.BusStopViewHolder;
 
 

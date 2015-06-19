@@ -17,7 +17,7 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
 import me.rutgersdirect.rudirect.R;
-import me.rutgersdirect.rudirect.data.AppData;
+import me.rutgersdirect.rudirect.data.constants.AppData;
 
 
 public class NextBusAPI {
@@ -66,9 +66,25 @@ public class NextBusAPI {
     private static String[] loadArray(int preference, String arrayName, Context context) {
         SharedPreferences prefs = context.getSharedPreferences(context.getString(preference), Context.MODE_PRIVATE);
         int size = prefs.getInt(arrayName + "_size", 0);
-        String array[] = new String[size];
-        for (int i = 0; i < size; i++)
+        String[] array = new String[size];
+        for (int i = 0; i < size; i++) {
             array[i] = prefs.getString(arrayName + "_" + i, null);
+        }
+        return array;
+    }
+
+    // Loads a 2D string array from shared preferences
+    private static String[][] loadTwoDimenArray(int preference, String arrayName, Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(context.getString(preference), Context.MODE_PRIVATE);
+        int arraySize = prefs.getInt(arrayName + "_size", 0);
+        String[][] array = new String[arraySize][];
+        for (int i = 0; i < arraySize; i++) {
+            int size = prefs.getInt(arrayName + "_array_" + i + "_size", 0);
+            array[i] = new String[size];
+            for (int j = 0; j < size; j++) {
+                array[i][j] = prefs.getString(arrayName + "_array_" + i + "_element_" + j, null);
+            }
+        }
         return array;
     }
 
@@ -93,13 +109,13 @@ public class NextBusAPI {
     }
 
     // Takes in a bus tag and returns a list of the bus path latitudes
-    public static String[] getBusPathLats(String busTag, Context context) {
-        return loadArray(R.string.path_latitudes_key, busTag, context);
+    public static String[][] getBusPathLats(String busTag, Context context) {
+        return loadTwoDimenArray(R.string.path_latitudes_key, busTag, context);
     }
 
     // Takes in a bus tag and returns a list of the bus path longitudes
-    public static String[] getBusPathLons(String busTag, Context context) {
-        return loadArray(R.string.path_longitudes_key, busTag, context);
+    public static String[][] getBusPathLons(String busTag, Context context) {
+        return loadTwoDimenArray(R.string.path_longitudes_key, busTag, context);
     }
 
     // Returns a list of the bus stop times

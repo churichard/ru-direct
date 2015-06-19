@@ -26,7 +26,7 @@ import java.util.Date;
 
 import me.rutgersdirect.rudirect.R;
 import me.rutgersdirect.rudirect.activity.BusStopsActivity;
-import me.rutgersdirect.rudirect.model.BusStop;
+import me.rutgersdirect.rudirect.data.model.BusStop;
 
 
 public class BusMapFragment extends MapFragment implements
@@ -54,9 +54,12 @@ public class BusMapFragment extends MapFragment implements
                 getLatLng(busStopsActivity.getLatitudes()[0], busStopsActivity.getLongitudes()[0]), 13.0f));
     }
 
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
+    protected synchronized void buildGoogleApiClient() {
+        mGoogleApiClient = new GoogleApiClient.Builder(busStopsActivity)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
     }
 
     @Override
@@ -112,14 +115,6 @@ public class BusMapFragment extends MapFragment implements
         return super.onOptionsItemSelected(item);
     }
 
-    protected synchronized void buildGoogleApiClient() {
-        mGoogleApiClient = new GoogleApiClient.Builder(busStopsActivity)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(LocationServices.API)
-                .build();
-    }
-
     protected void createLocationRequest() {
         mLocationRequest = LocationRequest.create()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
@@ -132,25 +127,28 @@ public class BusMapFragment extends MapFragment implements
         ArrayList<BusStop> busStops = busStopsActivity.getBusStops();
         String[] latitudes = busStopsActivity.getLatitudes();
         String[] longitudes = busStopsActivity.getLongitudes();
-        String[] pathLats = busStopsActivity.getPathLats();
-        String[] pathLons = busStopsActivity.getPathLons();
-
-        PolylineOptions polylineOptions = new PolylineOptions();
-        polylineOptions.color(getResources().getColor(R.color.polyline_color));
+        String[][] pathLats = busStopsActivity.getPathLats();
+        String[][] pathLons = busStopsActivity.getPathLons();
+        int polyLineColor = getResources().getColor(R.color.polyline_color);
 
         for (int i = 0; i < busStops.size(); i++) {
             MarkerOptions markerOptions = new MarkerOptions()
                     .position(getLatLng(latitudes[i], longitudes[i]))
                     .title(busStops.get(i).getTitle());
             mMap.addMarker(markerOptions);
-//            polylineOptions.add(getLatLng(latitudes[i], longitudes[i]));
         }
 
         for (int i = 0; i < pathLats.length; i++) {
-            polylineOptions.add(getLatLng(pathLats[i], pathLons[i]));
-        }
+            PolylineOptions polylineOptions = new PolylineOptions();
+            polylineOptions.color(polyLineColor);
 
-        mMap.addPolyline(polylineOptions);
+            int size = pathLats[i].length;
+            for (int j = 0; j < size; j++) {
+                polylineOptions.add(getLatLng(pathLats[i][j], pathLons[i][j]));
+            }
+
+            mMap.addPolyline(polylineOptions);
+        }
     }
 
     // Draws the current location on the map

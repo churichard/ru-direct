@@ -7,7 +7,7 @@ import org.xml.sax.helpers.DefaultHandler;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import me.rutgersdirect.rudirect.data.AppData;
+import me.rutgersdirect.rudirect.data.constants.AppData;
 
 
 public class XMLBusTimesHandler extends DefaultHandler {

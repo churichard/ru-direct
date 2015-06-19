@@ -15,8 +15,10 @@ import me.rutgersdirect.rudirect.R;
 public class XMLBusStopHandler extends DefaultHandler {
 
     private Context context;
-    private boolean isGettingStops;
     private String busTag;
+    private boolean isGettingStops;
+    private boolean inPath;
+    private int pathSize;
 
     private ArrayList<String> busTags;
     private ArrayList<String> busTitles;
@@ -24,8 +26,8 @@ public class XMLBusStopHandler extends DefaultHandler {
     private ArrayList<String> stopTags;
     private ArrayList<String> latitudes;
     private ArrayList<String> longitudes;
-    private ArrayList<String> pathLats;
-    private ArrayList<String> pathLons;
+    private ArrayList<ArrayList<String>> pathLats;
+    private ArrayList<ArrayList<String>> pathLons;
 
     private SharedPreferences.Editor busTagsToStopTagsEdit;
     private SharedPreferences.Editor busTagsToStopTitlesEdit;
@@ -39,16 +41,26 @@ public class XMLBusStopHandler extends DefaultHandler {
     }
 
     // Saves a string array to shared preferences
-    private static void saveArray(SharedPreferences.Editor editor, String[] array, String arrayName) {
-        editor.putInt(arrayName + "_size", array.length);
-        for (int i = 0; i < array.length; i++)
-            editor.putString(arrayName + "_" + i, array[i]);
+    private static void saveArray(SharedPreferences.Editor editor, ArrayList<String> array, String arrayName) {
+        int size = array.size();
+        editor.putInt(arrayName + "_size", size);
+        for (int i = 0; i < size; i++)
+            editor.putString(arrayName + "_" + i, array.get(i));
         editor.apply();
     }
 
-    // Converts a string ArrayList to a string array
-    private static String[] arrayListToArray(ArrayList<String> arrayList) {
-        return arrayList.toArray(new String[arrayList.size()]);
+    // Saves a 2D string array to shared preferences
+    private static void saveTwoDimenArray(SharedPreferences.Editor editor, ArrayList<ArrayList<String>> array, String arrayName) {
+        int arraySize = array.size();
+        editor.putInt(arrayName + "_size", arraySize);
+        for (int i = 0; i < arraySize; i++) {
+            int size = array.get(i).size();
+            editor.putInt(arrayName + "_array_" + i + "_size", size);
+            for (int j = 0; j < size; j++) {
+                editor.putString(arrayName + "_array_" + i + "_element_" + j, array.get(i).get(j));
+            }
+        }
+        editor.apply();
     }
 
     public void startDocument() throws SAXException {
@@ -85,11 +97,13 @@ public class XMLBusStopHandler extends DefaultHandler {
         pathLons = new ArrayList<>();
 
         isGettingStops = false;
+        inPath = false;
+        pathSize = -1;
     }
 
     public void startElement(String namespaceURI, String localName, String qName, Attributes atts)
             throws SAXException {
-        if (qName.equalsIgnoreCase("route") && !isGettingStops) {
+        if (!isGettingStops && qName.equalsIgnoreCase("route")) {
             isGettingStops = true;
             busTag = atts.getValue("tag");
             busTags.add(busTag);
@@ -104,29 +118,39 @@ public class XMLBusStopHandler extends DefaultHandler {
         if (isGettingStops && qName.equalsIgnoreCase("direction")) {
             isGettingStops = false;
 
-            saveArray(busTagsToStopTagsEdit, arrayListToArray(stopTags), busTag);
-            saveArray(busTagsToStopTitlesEdit, arrayListToArray(stopTitles), busTag);
-            saveArray(latitudesEdit, arrayListToArray(latitudes), busTag);
-            saveArray(longitudesEdit, arrayListToArray(longitudes), busTag);
+            saveArray(busTagsToStopTagsEdit, stopTags, busTag);
+            saveArray(busTagsToStopTitlesEdit, stopTitles, busTag);
+            saveArray(latitudesEdit, latitudes, busTag);
+            saveArray(longitudesEdit, longitudes, busTag);
 
             stopTags.clear();
             stopTitles.clear();
             latitudes.clear();
             longitudes.clear();
         }
-        if (qName.equalsIgnoreCase("point")) {
-            pathLats.add(atts.getValue("lat"));
-            pathLons.add(atts.getValue("lon"));
+        if (!inPath && qName.equalsIgnoreCase("path")) {
+            inPath = true;
+            pathLats.add(new ArrayList<String>());
+            pathLons.add(new ArrayList<String>());
+            pathSize++;
+        }
+        if (inPath && qName.equalsIgnoreCase("point")) {
+            pathLats.get(pathSize).add(atts.getValue("lat"));
+            pathLons.get(pathSize).add(atts.getValue("lon"));
         }
     }
 
     public void endElement(String uri, String localName, String qName) throws SAXException {
+        if (inPath && qName.equalsIgnoreCase("path")) {
+            inPath = false;
+        }
         if (qName.equalsIgnoreCase("route")) {
-            saveArray(pathLatsEdit, arrayListToArray(pathLats), busTag);
-            saveArray(pathLonsEdit, arrayListToArray(pathLons), busTag);
+            saveTwoDimenArray(pathLatsEdit, pathLats, busTag);
+            saveTwoDimenArray(pathLonsEdit, pathLons, busTag);
 
             pathLats.clear();
             pathLons.clear();
+            pathSize = -1;
         }
     }
 

@@ -7,7 +7,7 @@ import org.xml.sax.helpers.DefaultHandler;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 
-import me.rutgersdirect.rudirect.data.AppData;
+import me.rutgersdirect.rudirect.data.constants.AppData;
 
 
 public class XMLActiveBusHandler extends DefaultHandler {

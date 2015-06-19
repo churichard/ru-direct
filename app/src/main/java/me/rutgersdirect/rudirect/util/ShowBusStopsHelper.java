@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -12,9 +13,9 @@ import me.rutgersdirect.rudirect.R;
 import me.rutgersdirect.rudirect.activity.BusStopsActivity;
 import me.rutgersdirect.rudirect.adapter.BusStopAdapter;
 import me.rutgersdirect.rudirect.api.NextBusAPI;
-import me.rutgersdirect.rudirect.data.AppData;
+import me.rutgersdirect.rudirect.data.constants.AppData;
 import me.rutgersdirect.rudirect.fragment.BusTimesFragment;
-import me.rutgersdirect.rudirect.model.BusStop;
+import me.rutgersdirect.rudirect.data.model.BusStop;
 
 
 public class ShowBusStopsHelper extends AsyncTask<Object, Void, Void> {
@@ -26,8 +27,8 @@ public class ShowBusStopsHelper extends AsyncTask<Object, Void, Void> {
     private int[][] busStopTimes;
     private String[] busStopLats;
     private String[] busStopLons;
-    private String[] busPathLats;
-    private String[] busPathLons;
+    private String[][] busPathLats;
+    private String[][] busPathLons;
 
     @Override
     protected Void doInBackground(Object... objects) {
@@ -65,12 +66,17 @@ public class ShowBusStopsHelper extends AsyncTask<Object, Void, Void> {
         } else {
             // Start new activity to display bus stop titles and times
             Intent intent = new Intent(activity, BusStopsActivity.class);
+
             intent.putExtra(AppData.BUS_TAG_MESSAGE, tag);
             intent.putParcelableArrayListExtra(AppData.BUS_STOPS_MESSAGE, buses);
             intent.putExtra(AppData.BUS_STOP_LATS_MESSAGE, busStopLats);
             intent.putExtra(AppData.BUS_STOP_LONS_MESSAGE, busStopLons);
-            intent.putExtra(AppData.BUS_PATH_LATS_MESSAGE, busPathLats);
-            intent.putExtra(AppData.BUS_PATH_LONS_MESSAGE, busPathLons);
+
+            Bundle mBundle = new Bundle();
+            mBundle.putSerializable(AppData.BUS_PATH_LATS_MESSAGE, busPathLats);
+            mBundle.putSerializable(AppData.BUS_PATH_LONS_MESSAGE, busPathLons);
+            intent.putExtras(mBundle);
+
             activity.startActivity(intent);
             activity.overridePendingTransition(R.anim.abc_grow_fade_in_from_bottom, 0);
         }

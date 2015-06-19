@@ -1,4 +1,4 @@
-package me.rutgersdirect.rudirect.model;
+package me.rutgersdirect.rudirect.data.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
