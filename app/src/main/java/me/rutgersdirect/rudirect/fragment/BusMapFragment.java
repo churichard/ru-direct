@@ -1,7 +1,9 @@
 package me.rutgersdirect.rudirect.fragment;
 
 import android.location.Location;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,15 +19,18 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 
 import me.rutgersdirect.rudirect.R;
 import me.rutgersdirect.rudirect.activity.BusStopsActivity;
+import me.rutgersdirect.rudirect.api.NextBusAPI;
 import me.rutgersdirect.rudirect.data.model.BusStop;
 
 
@@ -34,18 +39,22 @@ public class BusMapFragment extends MapFragment implements
 
     private static final String TAG = BusMapFragment.class.getSimpleName();
     private static final int REQUEST_CODE = 9000;
-    private static final int REFRESH_INTERVAL = 5000;
-    private static final int FASTEST_REFRESH_INTERVAL = 5000;
+    private static final int CURRENT_LOC_REFRESH_INTERVAL = 5000;
+    private static final int ACTIVE_BUS_REFRESH_INTERVAL = 10000;
+
     private GoogleMap mMap;
     private BusStopsActivity busStopsActivity;
     private GoogleApiClient mGoogleApiClient;
     private LocationRequest mLocationRequest;
+    private Handler refreshHandler;
+    private ArrayList<Marker> markers;
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         busStopsActivity = (BusStopsActivity) getActivity();
         mMap = getMap();
+        markers = new ArrayList<>();
 
         buildGoogleApiClient();
         createLocationRequest();
@@ -102,6 +111,16 @@ public class BusMapFragment extends MapFragment implements
     public void onResume() {
         super.onResume();
         mGoogleApiClient.connect();
+
+        // Auto refreshes active bus locations
+        refreshHandler = new Handler();
+        refreshHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                new UpdateActiveBusLocation().execute();
+                refreshHandler.postDelayed(this, ACTIVE_BUS_REFRESH_INTERVAL);
+            }
+        }, ACTIVE_BUS_REFRESH_INTERVAL);
     }
 
     @Override
@@ -118,8 +137,8 @@ public class BusMapFragment extends MapFragment implements
     protected void createLocationRequest() {
         mLocationRequest = LocationRequest.create()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-                .setInterval(REFRESH_INTERVAL)
-                .setFastestInterval(FASTEST_REFRESH_INTERVAL);
+                .setInterval(CURRENT_LOC_REFRESH_INTERVAL)
+                .setFastestInterval(CURRENT_LOC_REFRESH_INTERVAL);
     }
 
     // Draws the bus route on the map
@@ -130,6 +149,8 @@ public class BusMapFragment extends MapFragment implements
         String[][] pathLats = busStopsActivity.getPathLats();
         String[][] pathLons = busStopsActivity.getPathLons();
         int polyLineColor = getResources().getColor(R.color.polyline_color);
+
+        new UpdateActiveBusLocation().execute();
 
         for (int i = 0; i < busStops.size(); i++) {
             MarkerOptions markerOptions = new MarkerOptions()
@@ -181,5 +202,35 @@ public class BusMapFragment extends MapFragment implements
 
     protected void stopLocationUpdates() {
         LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
+    }
+
+    private class UpdateActiveBusLocation extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected Void doInBackground(Void... voids) {
+            NextBusAPI.updateActiveBuses();
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void v) {
+            HashMap<String, ArrayList<String>> activeLatsHashMap = NextBusAPI.activeLatsHashMap;
+            HashMap<String, ArrayList<String>> activeLonsHashMap = NextBusAPI.activeLonsHashMap;
+            ArrayList<String> activeLats = activeLatsHashMap.get(busStopsActivity.getBusTag());
+            ArrayList<String> activeLons = activeLonsHashMap.get(busStopsActivity.getBusTag());
+
+            // Clear map of active buses
+            for (int i = 0; i < markers.size(); i++) {
+                markers.get(i).remove();
+            }
+
+            // Add active buses
+            for (int i = 0; i < activeLats.size(); i++) {
+                MarkerOptions markerOptions = new MarkerOptions()
+                        .position(getLatLng(activeLats.get(i), activeLons.get(i)))
+                        .title("Active Bus")
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+                markers.add(mMap.addMarker(markerOptions));
+            }
+        }
     }
 }

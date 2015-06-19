@@ -22,6 +22,7 @@ import me.rutgersdirect.rudirect.util.ShowBusStopsHelper;
 
 public class BusTimesFragment extends Fragment {
 
+    private static final int REFRESH_INTERVAL = 60000;
     private BusStopsActivity busStopsActivity;
     private Handler refreshHandler;
     private SwipeRefreshLayout mSwipeRefreshLayout;
@@ -52,9 +53,9 @@ public class BusTimesFragment extends Fragment {
             public void run() {
                 BusStopAdapter.setExpToggleRequest(false);
                 updateBusTimes();
-                refreshHandler.postDelayed(this, 60000);
+                refreshHandler.postDelayed(this, REFRESH_INTERVAL);
             }
-        }, 60000);
+        }, REFRESH_INTERVAL);
         super.onResume();
     }
 

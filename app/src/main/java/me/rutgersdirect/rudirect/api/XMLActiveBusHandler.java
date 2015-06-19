@@ -4,7 +4,9 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 
 import me.rutgersdirect.rudirect.data.constants.AppData;
@@ -12,16 +14,35 @@ import me.rutgersdirect.rudirect.data.constants.AppData;
 
 public class XMLActiveBusHandler extends DefaultHandler {
 
-    private LinkedHashSet<String> activeBuses;
+    public static LinkedHashSet<String> activeBuses;
+    private String busTag;
+    private ArrayList<String> lats;
+    private ArrayList<String> lons;
 
     public void startDocument() throws SAXException {
         activeBuses = new LinkedHashSet<>();
+        NextBusAPI.activeLatsHashMap = new HashMap<>();
+        NextBusAPI.activeLonsHashMap = new HashMap<>();
+        lats = new ArrayList<>();
+        lons = new ArrayList<>();
     }
 
     public void startElement(String namespaceURI, String localName, String qName, Attributes atts)
             throws SAXException {
         if (qName.equalsIgnoreCase("vehicle")) {
-            activeBuses.add(atts.getValue("routeTag"));
+            busTag = atts.getValue("routeTag");
+            lats.add(atts.getValue("lat"));
+            lons.add(atts.getValue("lon"));
+            activeBuses.add(busTag);
+        }
+    }
+
+    public void endElement(String uri, String localName, String qName) throws SAXException {
+        if (qName.equalsIgnoreCase("vehicle")) {
+            NextBusAPI.activeLatsHashMap.put(busTag, lats);
+            NextBusAPI.activeLonsHashMap.put(busTag, lons);
+            lats = new ArrayList<>();
+            lons = new ArrayList<>();
         }
     }
 
