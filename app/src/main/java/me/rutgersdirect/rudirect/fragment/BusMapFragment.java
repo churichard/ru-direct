@@ -224,12 +224,14 @@ public class BusMapFragment extends MapFragment implements
             }
 
             // Add active buses
-            for (int i = 0; i < activeLats.size(); i++) {
-                MarkerOptions markerOptions = new MarkerOptions()
-                        .position(getLatLng(activeLats.get(i), activeLons.get(i)))
-                        .title("Active Bus")
-                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
-                markers.add(mMap.addMarker(markerOptions));
+            if (activeLats != null && activeLons != null) {
+                for (int i = 0; i < activeLats.size(); i++) {
+                    MarkerOptions markerOptions = new MarkerOptions()
+                            .position(getLatLng(activeLats.get(i), activeLons.get(i)))
+                            .title("Active Bus")
+                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+                    markers.add(mMap.addMarker(markerOptions));
+                }
             }
         }
     }
