@@ -23,9 +23,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 
-import java.text.DateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 
 import me.rutgersdirect.rudirect.R;
@@ -48,6 +46,7 @@ public class BusMapFragment extends MapFragment implements
     private LocationRequest mLocationRequest;
     private Handler refreshHandler;
     private ArrayList<Marker> markers;
+    private Marker currentLocation;
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
@@ -95,6 +94,7 @@ public class BusMapFragment extends MapFragment implements
 
     @Override
     public void onLocationChanged(Location location) {
+        currentLocation.remove();
         handleNewLocation(location);
     }
 
@@ -150,8 +150,10 @@ public class BusMapFragment extends MapFragment implements
         String[][] pathLons = busStopsActivity.getPathLons();
         int polyLineColor = getResources().getColor(R.color.polyline_color);
 
+        // Draws the active bus locations
         new UpdateActiveBusLocation().execute();
 
+        // Draws the bus stop markers
         for (int i = 0; i < busStops.size(); i++) {
             MarkerOptions markerOptions = new MarkerOptions()
                     .position(getLatLng(latitudes[i], longitudes[i]))
@@ -159,6 +161,7 @@ public class BusMapFragment extends MapFragment implements
             mMap.addMarker(markerOptions);
         }
 
+        // Draws the bus route
         for (int i = 0; i < pathLats.length; i++) {
             PolylineOptions polylineOptions = new PolylineOptions();
             polylineOptions.color(polyLineColor);
@@ -174,17 +177,13 @@ public class BusMapFragment extends MapFragment implements
 
     // Draws the current location on the map
     private void handleNewLocation(Location location) {
-        String mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
-
         if (location != null) {
-            Log.d(TAG, "Last Update Time: " + mLastUpdateTime);
-
             // Add current location to map
             MarkerOptions markerOptions = new MarkerOptions()
                     .position(getLatLng(location))
                     .title("Your current location")
                     .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
-            mMap.addMarker(markerOptions);
+            currentLocation = mMap.addMarker(markerOptions);
         }
     }
 
@@ -204,6 +203,7 @@ public class BusMapFragment extends MapFragment implements
         LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
     }
 
+    // Update active bus locations
     private class UpdateActiveBusLocation extends AsyncTask<Void, Void, Void> {
         @Override
         protected Void doInBackground(Void... voids) {
@@ -218,13 +218,13 @@ public class BusMapFragment extends MapFragment implements
             ArrayList<String> activeLats = activeLatsHashMap.get(busStopsActivity.getBusTag());
             ArrayList<String> activeLons = activeLonsHashMap.get(busStopsActivity.getBusTag());
 
-            // Clear map of active buses
-            for (int i = 0; i < markers.size(); i++) {
-                markers.get(i).remove();
-            }
-
-            // Add active buses
             if (activeLats != null && activeLons != null) {
+                // Clear map of active bus markers
+                for (int i = 0; i < markers.size(); i++) {
+                    markers.get(i).remove();
+                }
+
+                // Add active bus markers
                 for (int i = 0; i < activeLats.size(); i++) {
                     MarkerOptions markerOptions = new MarkerOptions()
                             .position(getLatLng(activeLats.get(i), activeLons.get(i)))
