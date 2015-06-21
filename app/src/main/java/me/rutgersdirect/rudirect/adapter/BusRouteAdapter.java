@@ -14,7 +14,6 @@ import me.rutgersdirect.rudirect.activity.BusStopsActivity;
 import me.rutgersdirect.rudirect.ui.holder.BusRouteViewHolder;
 import me.rutgersdirect.rudirect.util.ShowBusStopsHelper;
 
-
 public class BusRouteAdapter extends RecyclerView.Adapter<BusRouteViewHolder> {
 
     private String[] busRoutes;

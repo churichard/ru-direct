@@ -26,7 +26,6 @@ import me.rutgersdirect.rudirect.adapter.BusRouteAdapter;
 import me.rutgersdirect.rudirect.api.NextBusAPI;
 import me.rutgersdirect.rudirect.ui.view.DividerItemDecoration;
 
-
 public class ActiveRoutesFragment extends Fragment {
 
     private MainActivity mainActivity;

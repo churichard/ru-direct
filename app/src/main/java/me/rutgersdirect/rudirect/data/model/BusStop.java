@@ -3,7 +3,6 @@ package me.rutgersdirect.rudirect.data.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-
 public class BusStop implements Parcelable {
 
     private String tag;

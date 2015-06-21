@@ -19,7 +19,6 @@ import me.rutgersdirect.rudirect.adapter.BusStopAdapter;
 import me.rutgersdirect.rudirect.ui.view.DividerItemDecoration;
 import me.rutgersdirect.rudirect.util.ShowBusStopsHelper;
 
-
 public class BusTimesFragment extends Fragment {
 
     private static final int REFRESH_INTERVAL = 60000;

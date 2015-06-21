@@ -7,7 +7,6 @@ import android.support.v13.app.FragmentPagerAdapter;
 import me.rutgersdirect.rudirect.fragment.ActiveRoutesFragment;
 import me.rutgersdirect.rudirect.fragment.AllRoutesFragment;
 
-
 public class MainPagerAdapter extends FragmentPagerAdapter {
 
     private static final int NUM_ITEMS = 2;

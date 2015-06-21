@@ -21,7 +21,6 @@ import javax.xml.parsers.SAXParserFactory;
 import me.rutgersdirect.rudirect.R;
 import me.rutgersdirect.rudirect.data.constants.AppData;
 
-
 public class NextBusAPI {
 
     private static final String TAG = NextBusAPI.class.getName();

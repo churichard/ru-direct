@@ -23,7 +23,6 @@ import java.util.Date;
 
 import me.rutgersdirect.rudirect.activity.BusStopsActivity;
 
-
 public class DirectionsFragment extends MapFragment implements
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
 

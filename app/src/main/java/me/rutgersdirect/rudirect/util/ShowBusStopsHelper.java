@@ -17,7 +17,6 @@ import me.rutgersdirect.rudirect.data.constants.AppData;
 import me.rutgersdirect.rudirect.fragment.BusTimesFragment;
 import me.rutgersdirect.rudirect.data.model.BusStop;
 
-
 public class ShowBusStopsHelper extends AsyncTask<Object, Void, Void> {
 
     private String tag;

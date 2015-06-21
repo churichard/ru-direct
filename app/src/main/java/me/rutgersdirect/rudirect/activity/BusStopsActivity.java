@@ -18,7 +18,6 @@ import me.rutgersdirect.rudirect.adapter.BusStopsPagerAdapter;
 import me.rutgersdirect.rudirect.data.constants.AppData;
 import me.rutgersdirect.rudirect.data.model.BusStop;
 
-
 public class BusStopsActivity extends AppCompatActivity {
 
     public static boolean active; // Whether or not the activity is active

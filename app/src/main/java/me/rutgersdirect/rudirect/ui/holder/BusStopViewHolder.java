@@ -6,7 +6,6 @@ import android.widget.TextView;
 
 import me.rutgersdirect.rudirect.R;
 
-
 public class BusStopViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
     public TextView title;

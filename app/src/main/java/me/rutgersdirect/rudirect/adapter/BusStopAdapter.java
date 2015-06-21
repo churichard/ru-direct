@@ -15,7 +15,6 @@ import me.rutgersdirect.rudirect.R;
 import me.rutgersdirect.rudirect.data.model.BusStop;
 import me.rutgersdirect.rudirect.ui.holder.BusStopViewHolder;
 
-
 public class BusStopAdapter extends RecyclerView.Adapter<BusStopViewHolder> {
 
     private static final int MILLIS_IN_ONE_MINUTE = 60000;

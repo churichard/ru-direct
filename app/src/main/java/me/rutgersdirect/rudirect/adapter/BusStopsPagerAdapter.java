@@ -7,7 +7,6 @@ import android.support.v13.app.FragmentPagerAdapter;
 import me.rutgersdirect.rudirect.fragment.BusMapFragment;
 import me.rutgersdirect.rudirect.fragment.BusTimesFragment;
 
-
 public class BusStopsPagerAdapter extends FragmentPagerAdapter {
 
     private static final int NUM_ITEMS = 2;

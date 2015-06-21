@@ -13,7 +13,6 @@ import me.rutgersdirect.rudirect.activity.MainActivity;
 import me.rutgersdirect.rudirect.adapter.BusRouteAdapter;
 import me.rutgersdirect.rudirect.ui.view.DividerItemDecoration;
 
-
 public class AllRoutesFragment extends Fragment {
 
     private MainActivity mainActivity;

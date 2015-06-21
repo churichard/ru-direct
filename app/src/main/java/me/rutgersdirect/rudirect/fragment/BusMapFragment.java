@@ -31,7 +31,6 @@ import me.rutgersdirect.rudirect.activity.BusStopsActivity;
 import me.rutgersdirect.rudirect.api.NextBusAPI;
 import me.rutgersdirect.rudirect.data.model.BusStop;
 
-
 public class BusMapFragment extends MapFragment implements
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
@@ -215,22 +214,26 @@ public class BusMapFragment extends MapFragment implements
         protected void onPostExecute(Void v) {
             HashMap<String, ArrayList<String>> activeLatsHashMap = NextBusAPI.activeLatsHashMap;
             HashMap<String, ArrayList<String>> activeLonsHashMap = NextBusAPI.activeLonsHashMap;
-            ArrayList<String> activeLats = activeLatsHashMap.get(busStopsActivity.getBusTag());
-            ArrayList<String> activeLons = activeLonsHashMap.get(busStopsActivity.getBusTag());
+            String busTag = busStopsActivity.getBusTag();
 
-            if (activeLats != null && activeLons != null) {
-                // Clear map of active bus markers
-                for (int i = 0; i < markers.size(); i++) {
-                    markers.get(i).remove();
-                }
+            if (activeLatsHashMap != null && activeLonsHashMap != null) {
+                ArrayList<String> activeLats = activeLatsHashMap.get(busTag);
+                ArrayList<String> activeLons = activeLonsHashMap.get(busTag);
 
-                // Add active bus markers
-                for (int i = 0; i < activeLats.size(); i++) {
-                    MarkerOptions markerOptions = new MarkerOptions()
-                            .position(getLatLng(activeLats.get(i), activeLons.get(i)))
-                            .title("Active Bus")
-                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
-                    markers.add(mMap.addMarker(markerOptions));
+                if (activeLats != null && activeLons != null) {
+                    // Clear map of active bus markers
+                    for (int i = 0; i < markers.size(); i++) {
+                        markers.get(i).remove();
+                    }
+
+                    // Add active bus markers
+                    for (int i = 0; i < activeLats.size(); i++) {
+                        MarkerOptions markerOptions = new MarkerOptions()
+                                .position(getLatLng(activeLats.get(i), activeLons.get(i)))
+                                .title("Active Bus")
+                                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+                        markers.add(mMap.addMarker(markerOptions));
+                    }
                 }
             }
         }
