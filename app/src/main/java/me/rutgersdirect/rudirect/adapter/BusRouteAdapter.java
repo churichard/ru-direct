@@ -38,8 +38,11 @@ public class BusRouteAdapter extends RecyclerView.Adapter<BusRouteViewHolder> {
             public void onClick(View v, int position) {
                 if (!BusStopsActivity.active) {
                     String bus = busRoutes[position];
-                    SharedPreferences busesToTagsPref = activity.getSharedPreferences(activity.getString(R.string.buses_to_tags_key), Context.MODE_PRIVATE);
+
+                    SharedPreferences busesToTagsPref
+                            = activity.getSharedPreferences(activity.getString(R.string.buses_to_tags_key), Context.MODE_PRIVATE);
                     String busTag = busesToTagsPref.getString(bus, null);
+
                     if (busTag != null) {
                         BusStopsActivity.active = true;
                         new ShowBusStopsHelper().execute(busTag, activity, fragment);

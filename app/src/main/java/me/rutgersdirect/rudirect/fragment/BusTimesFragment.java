@@ -3,6 +3,7 @@ package me.rutgersdirect.rudirect.fragment;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.design.widget.AppBarLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -19,13 +20,14 @@ import me.rutgersdirect.rudirect.adapter.BusStopAdapter;
 import me.rutgersdirect.rudirect.ui.view.DividerItemDecoration;
 import me.rutgersdirect.rudirect.util.ShowBusStopsHelper;
 
-public class BusTimesFragment extends Fragment {
+public class BusTimesFragment extends Fragment implements AppBarLayout.OnOffsetChangedListener {
 
     private static final int REFRESH_INTERVAL = 60000;
     private BusStopsActivity busStopsActivity;
     private Handler refreshHandler;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private RecyclerView busTimesRecyclerView;
+    private AppBarLayout appBarLayout;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -41,11 +43,14 @@ public class BusTimesFragment extends Fragment {
         setupSwipeRefreshLayout();
         mSwipeRefreshLayout.setRefreshing(true);
         updateBusTimes();
+        appBarLayout = (AppBarLayout) busStopsActivity.findViewById(R.id.appbar);
     }
 
     @Override
     public void onResume() {
-        // Auto refreshes times every 60 seconds
+        super.onResume();
+
+        // Auto refreshes times every REFRESH_INTERVAL seconds
         refreshHandler = new Handler();
         refreshHandler.postDelayed(new Runnable() {
             @Override
@@ -55,7 +60,14 @@ public class BusTimesFragment extends Fragment {
                 refreshHandler.postDelayed(this, REFRESH_INTERVAL);
             }
         }, REFRESH_INTERVAL);
-        super.onResume();
+
+        appBarLayout.addOnOffsetChangedListener(this);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        appBarLayout.removeOnOffsetChangedListener(this);
     }
 
     // Updates the bus times
@@ -89,14 +101,6 @@ public class BusTimesFragment extends Fragment {
         busTimesRecyclerView.setAdapter(new BusStopAdapter());
     }
 
-    public SwipeRefreshLayout getSwipeRefreshLayout() {
-        return mSwipeRefreshLayout;
-    }
-
-    public RecyclerView getBusTimesRecyclerView() {
-        return busTimesRecyclerView;
-    }
-
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_bus_times, menu);
@@ -114,5 +118,22 @@ public class BusTimesFragment extends Fragment {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onOffsetChanged(AppBarLayout appBarLayout, int i) {
+        if (i == 0) {
+            mSwipeRefreshLayout.setEnabled(true);
+        } else {
+            mSwipeRefreshLayout.setEnabled(false);
+        }
+    }
+
+    public SwipeRefreshLayout getSwipeRefreshLayout() {
+        return mSwipeRefreshLayout;
+    }
+
+    public RecyclerView getBusTimesRecyclerView() {
+        return busTimesRecyclerView;
     }
 }

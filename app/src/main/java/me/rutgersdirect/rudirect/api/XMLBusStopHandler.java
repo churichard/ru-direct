@@ -160,8 +160,10 @@ public class XMLBusStopHandler extends DefaultHandler {
                 context.getString(R.string.buses_to_tags_key), Context.MODE_PRIVATE).edit();
 
         for (int i = 0; i < busTags.size(); i++) {
-            tagsToBusesEdit.putString(busTags.get(i), busTitles.get(i));
-            busesToTagsEdit.putString(busTitles.get(i), busTags.get(i));
+            String tag = busTags.get(i);
+            String title = busTitles.get(i);
+            tagsToBusesEdit.putString(tag, title);
+            busesToTagsEdit.putString(title, tag);
         }
 
         tagsToBusesEdit.apply();

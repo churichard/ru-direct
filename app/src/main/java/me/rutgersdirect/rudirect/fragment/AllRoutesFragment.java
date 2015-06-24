@@ -1,6 +1,8 @@
 package me.rutgersdirect.rudirect.fragment;
 
 import android.app.Fragment;
+import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -8,15 +10,33 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.Arrays;
+import java.util.Map;
+
 import me.rutgersdirect.rudirect.R;
 import me.rutgersdirect.rudirect.activity.MainActivity;
 import me.rutgersdirect.rudirect.adapter.BusRouteAdapter;
+import me.rutgersdirect.rudirect.api.NextBusAPI;
 import me.rutgersdirect.rudirect.ui.view.DividerItemDecoration;
 
 public class AllRoutesFragment extends Fragment {
 
     private MainActivity mainActivity;
     public static RecyclerView allBusesRecyclerView;
+
+    // Sets up the bus routes
+    private class SetupBusRoutesTask extends AsyncTask<Void, Void, Void> {
+        protected Void doInBackground(Void... voids) {
+            NextBusAPI.saveBusStops(mainActivity);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void v) {
+            AllRoutesFragment.allBusesRecyclerView.setAdapter(
+                    new BusRouteAdapter(getBusRoutes(), mainActivity, AllRoutesFragment.this));
+        }
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -30,6 +50,12 @@ public class AllRoutesFragment extends Fragment {
         setupRecyclerView();
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        new SetupBusRoutesTask().execute();
+    }
+
     // Set up RecyclerView
     private void setupRecyclerView() {
         // Initialize recycler view
@@ -40,6 +66,16 @@ public class AllRoutesFragment extends Fragment {
         // Setup layout
         allBusesRecyclerView.addItemDecoration(new DividerItemDecoration(mainActivity, LinearLayoutManager.VERTICAL));
         // Set adapter
-        AllRoutesFragment.allBusesRecyclerView.setAdapter(new BusRouteAdapter(mainActivity.getBusRoutes(), mainActivity, this));
+        AllRoutesFragment.allBusesRecyclerView.setAdapter(new BusRouteAdapter(getBusRoutes(), mainActivity, this));
+    }
+
+    // Returns an array of bus route names
+    public String[] getBusRoutes() {
+        Map<String, ?> busesToTagsMap = mainActivity.getSharedPreferences(
+                getString(R.string.buses_to_tags_key), Context.MODE_PRIVATE).getAll();
+        Object[] busNamesObj = busesToTagsMap.keySet().toArray();
+        String[] busNames = Arrays.copyOf(busNamesObj, busNamesObj.length, String[].class);
+        Arrays.sort(busNames);
+        return busNames;
     }
 }

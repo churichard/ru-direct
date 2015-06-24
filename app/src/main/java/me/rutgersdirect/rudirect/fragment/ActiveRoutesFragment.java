@@ -7,17 +7,16 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import me.rutgersdirect.rudirect.R;
@@ -26,13 +25,13 @@ import me.rutgersdirect.rudirect.adapter.BusRouteAdapter;
 import me.rutgersdirect.rudirect.api.NextBusAPI;
 import me.rutgersdirect.rudirect.ui.view.DividerItemDecoration;
 
-public class ActiveRoutesFragment extends Fragment {
+public class ActiveRoutesFragment extends Fragment implements AppBarLayout.OnOffsetChangedListener {
 
     private MainActivity mainActivity;
-    private RelativeLayout rlLayout;
-    private RecyclerView activeBusesRecyclerView;
     private TextView errorView;
+    private RecyclerView activeBusesRecyclerView;
     private SwipeRefreshLayout mSwipeRefreshLayout;
+    private AppBarLayout appBarLayout;
 
     private class UpdateRecyclerViewTask extends AsyncTask<Void, Void, String[]> {
         protected String[] doInBackground(Void... voids) {
@@ -53,31 +52,21 @@ public class ActiveRoutesFragment extends Fragment {
             for (int i = 0; i < activeBusTags.length; i++) {
                 activeBuses[i] = tagsToBusesPref.getString(activeBusTags[i], "Offline");
             }
-            if (errorView != null) {
-                rlLayout.removeView(errorView);
-            }
             if (activeBusTags.length == 1 && activeBuses[0].equals("Offline")) {
                 // Setup error message
-                errorView = new TextView(mainActivity);
-                errorView.setTextSize(24);
-
-                RelativeLayout.LayoutParams params
-                        = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
-                float scale = getResources().getDisplayMetrics().density;
-                int dpAsPixels = (int) (10 * scale + 0.5f);
-                errorView.setPadding(dpAsPixels, 0, dpAsPixels, 0);
-                errorView.setLayoutParams(params);
-                errorView.setGravity(Gravity.CENTER);
+                errorView.setVisibility(View.VISIBLE);
+                activeBusesRecyclerView.setAdapter(new BusRouteAdapter());
                 if (isNetworkAvailable()) {
                     errorView.setText("No active buses.");
                 } else {
                     errorView.setText("Unable to get active buses - check your Internet connection and try again.");
                 }
-                rlLayout.addView(errorView);
             } else {
-                // Set RecyclerView adapter
+                // Show active buses
+                errorView.setVisibility(View.GONE);
                 activeBusesRecyclerView.setAdapter(new BusRouteAdapter(activeBuses, mainActivity, ActiveRoutesFragment.this));
             }
+
             mSwipeRefreshLayout.setRefreshing(false);
         }
     }
@@ -91,8 +80,7 @@ public class ActiveRoutesFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         setHasOptionsMenu(true);
         mainActivity = (MainActivity) getActivity();
-        rlLayout = (RelativeLayout) inflater.inflate(R.layout.fragment_active_routes, container, false);
-        return rlLayout;
+        return inflater.inflate(R.layout.fragment_active_routes, container, false);
     }
 
     @Override
@@ -101,6 +89,8 @@ public class ActiveRoutesFragment extends Fragment {
 
         setupRecyclerView();
         setupSwipeRefreshLayout();
+        errorView = (TextView) mainActivity.findViewById(R.id.active_buses_error);
+        appBarLayout = (AppBarLayout) mainActivity.findViewById(R.id.appbar);
     }
 
     @Override
@@ -151,5 +141,26 @@ public class ActiveRoutesFragment extends Fragment {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onOffsetChanged(AppBarLayout appBarLayout, int i) {
+        if (i == 0) {
+            mSwipeRefreshLayout.setEnabled(true);
+        } else {
+            mSwipeRefreshLayout.setEnabled(false);
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        appBarLayout.addOnOffsetChangedListener(this);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        appBarLayout.removeOnOffsetChangedListener(this);
     }
 }
