@@ -182,13 +182,13 @@ public class BusMapFragment extends MapFragment implements
 
         @Override
         protected void onPostExecute(Void v) {
-            HashMap<String, ArrayList<String>> activeLatsHashMap = NextBusAPI.activeLatsHashMap;
-            HashMap<String, ArrayList<String>> activeLonsHashMap = NextBusAPI.activeLonsHashMap;
+            HashMap<String, String[]> activeLatsHashMap = NextBusAPI.activeLatsHashMap;
+            HashMap<String, String[]> activeLonsHashMap = NextBusAPI.activeLonsHashMap;
             String busTag = busStopsActivity.getBusTag();
 
             if (activeLatsHashMap != null && activeLonsHashMap != null) {
-                ArrayList<String> activeLats = activeLatsHashMap.get(busTag);
-                ArrayList<String> activeLons = activeLonsHashMap.get(busTag);
+                String[] activeLats = activeLatsHashMap.get(busTag);
+                String[] activeLons = activeLonsHashMap.get(busTag);
 
                 if (activeLats != null && activeLons != null) {
                     // Clear map of active bus markers
@@ -197,9 +197,9 @@ public class BusMapFragment extends MapFragment implements
                     }
 
                     // Add active bus markers
-                    for (int i = 0; i < activeLats.size(); i++) {
+                    for (int i = 0; i < activeLats.length; i++) {
                         MarkerOptions markerOptions = new MarkerOptions()
-                                .position(getLatLng(activeLats.get(i), activeLons.get(i)))
+                                .position(getLatLng(activeLats[i], activeLons[i]))
                                 .title("Active Bus")
                                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_bus));
                         activeBusMarkers.add(mMap.addMarker(markerOptions));

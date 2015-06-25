@@ -4,6 +4,7 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import java.util.AbstractCollection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -38,8 +39,8 @@ public class XMLActiveBusHandler extends DefaultHandler {
 
     public void endElement(String uri, String localName, String qName) throws SAXException {
         if (qName.equalsIgnoreCase("vehicle")) {
-            NextBusAPI.activeLatsHashMap.put(busTag, lats);
-            NextBusAPI.activeLonsHashMap.put(busTag, lons);
+            NextBusAPI.activeLatsHashMap.put(busTag, collectionToArray(lats));
+            NextBusAPI.activeLonsHashMap.put(busTag, collectionToArray(lons));
             lats = new ArrayList<>();
             lons = new ArrayList<>();
         }
@@ -47,8 +48,13 @@ public class XMLActiveBusHandler extends DefaultHandler {
 
     public void endDocument() throws SAXException {
         if (activeBuses.size() > 0) {
-            AppData.ACTIVE_BUSES = activeBuses.toArray(new String[activeBuses.size()]);
+            AppData.ACTIVE_BUSES = collectionToArray(activeBuses);
             Arrays.sort(AppData.ACTIVE_BUSES);
         }
+    }
+
+    // Returns an array representation of the given collection
+    private String[] collectionToArray(AbstractCollection<String> arrayList) {
+        return arrayList.toArray(new String[arrayList.size()]);
     }
 }
