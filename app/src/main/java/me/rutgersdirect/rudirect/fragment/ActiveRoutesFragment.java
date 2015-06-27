@@ -1,39 +1,30 @@
 package me.rutgersdirect.rudirect.fragment;
 
-import android.app.Fragment;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.design.widget.AppBarLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import me.rutgersdirect.rudirect.R;
-import me.rutgersdirect.rudirect.activity.MainActivity;
 import me.rutgersdirect.rudirect.adapter.BusRouteAdapter;
 import me.rutgersdirect.rudirect.api.NextBusAPI;
 import me.rutgersdirect.rudirect.ui.view.DividerItemDecoration;
 
-public class ActiveRoutesFragment extends Fragment implements AppBarLayout.OnOffsetChangedListener {
+public class ActiveRoutesFragment extends BaseRouteFragment {
 
-    private MainActivity mainActivity;
-    private TextView errorView;
     private RecyclerView activeBusesRecyclerView;
-    private SwipeRefreshLayout mSwipeRefreshLayout;
-    private AppBarLayout appBarLayout;
 
-    private class UpdateRecyclerViewTask extends AsyncTask<Void, Void, String[]> {
+    private class UpdateActiveRoutesTask extends AsyncTask<Void, Void, String[]> {
         protected String[] doInBackground(Void... voids) {
             return NextBusAPI.getActiveBusTags();
         }
@@ -59,7 +50,7 @@ public class ActiveRoutesFragment extends Fragment implements AppBarLayout.OnOff
                 if (isNetworkAvailable()) {
                     errorView.setText("No active buses.");
                 } else {
-                    errorView.setText("Unable to get active buses - check your Internet connection and try again.");
+                    errorView.setText("Unable to get active routes - check your Internet connection and try again.");
                 }
             } else {
                 // Show active buses
@@ -71,15 +62,14 @@ public class ActiveRoutesFragment extends Fragment implements AppBarLayout.OnOff
         }
     }
 
-    // Sets up the list view
-    public void updateRecyclerView() {
-        new UpdateRecyclerViewTask().execute();
+    // Sets up the RecyclerView
+    public void updateActiveRoutes() {
+        new UpdateActiveRoutesTask().execute();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         setHasOptionsMenu(true);
-        mainActivity = (MainActivity) getActivity();
         return inflater.inflate(R.layout.fragment_active_routes, container, false);
     }
 
@@ -90,13 +80,25 @@ public class ActiveRoutesFragment extends Fragment implements AppBarLayout.OnOff
         setupRecyclerView();
         setupSwipeRefreshLayout();
         errorView = (TextView) mainActivity.findViewById(R.id.active_buses_error);
-        appBarLayout = (AppBarLayout) mainActivity.findViewById(R.id.appbar);
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        updateRecyclerView();
+    public void onResume() {
+        super.onResume();
+        updateActiveRoutes();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.refresh) {
+            mSwipeRefreshLayout.setRefreshing(true);
+            updateActiveRoutes();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     // Set up RecyclerView
@@ -118,49 +120,9 @@ public class ActiveRoutesFragment extends Fragment implements AppBarLayout.OnOff
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                updateRecyclerView();
+                updateActiveRoutes();
             }
         });
         mSwipeRefreshLayout.setColorSchemeResources(R.color.primary_color);
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_active_routes, menu);
-        super.onCreateOptionsMenu(menu, inflater);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        if (id == R.id.refresh) {
-            mSwipeRefreshLayout.setRefreshing(true);
-            updateRecyclerView();
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onOffsetChanged(AppBarLayout appBarLayout, int i) {
-        if (i == 0) {
-            mSwipeRefreshLayout.setEnabled(true);
-        } else {
-            mSwipeRefreshLayout.setEnabled(false);
-        }
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        appBarLayout.addOnOffsetChangedListener(this);
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        appBarLayout.removeOnOffsetChangedListener(this);
     }
 }

@@ -103,7 +103,7 @@ public class BusTimesFragment extends Fragment implements AppBarLayout.OnOffsetC
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_bus_times, menu);
+        inflater.inflate(R.menu.menu_refresh, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
