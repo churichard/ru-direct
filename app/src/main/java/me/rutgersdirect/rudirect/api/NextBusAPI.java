@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -23,8 +24,8 @@ import me.rutgersdirect.rudirect.data.constants.AppData;
 public class NextBusAPI {
 
     private static final String TAG = NextBusAPI.class.getName();
-    public static HashMap<String, String[]> activeLatsHashMap;
-    public static HashMap<String, String[]> activeLonsHashMap;
+    public static HashMap<String, ArrayList<String>> activeLatsHashMap;
+    public static HashMap<String, ArrayList<String>> activeLonsHashMap;
 
     // Returns the input stream from the parameter url
     private static InputStream downloadUrl(String urlString) throws IOException {
