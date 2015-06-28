@@ -30,25 +30,34 @@ public class BusTimesFragment extends Fragment implements AppBarLayout.OnOffsetC
     private AppBarLayout appBarLayout;
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        busStopsActivity = (BusStopsActivity) getActivity();
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         setHasOptionsMenu(true);
-        busStopsActivity = (BusStopsActivity) getActivity();
         return inflater.inflate(R.layout.fragment_bus_times, container, false);
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        appBarLayout = (AppBarLayout) busStopsActivity.findViewById(R.id.appbar);
+
         setupRecyclerView();
         setupSwipeRefreshLayout();
         mSwipeRefreshLayout.setRefreshing(true);
         updateBusTimes();
-        appBarLayout = (AppBarLayout) busStopsActivity.findViewById(R.id.appbar);
     }
 
     @Override
     public void onResume() {
         super.onResume();
+
+        // Update bus times
+        updateBusTimes();
 
         // Auto refreshes times every REFRESH_INTERVAL seconds
         refreshHandler = new Handler();
@@ -113,6 +122,7 @@ public class BusTimesFragment extends Fragment implements AppBarLayout.OnOffsetC
 
         if (id == R.id.refresh) {
             mSwipeRefreshLayout.setRefreshing(true);
+            BusStopAdapter.setExpToggleRequest(false);
             updateBusTimes();
             return true;
         }

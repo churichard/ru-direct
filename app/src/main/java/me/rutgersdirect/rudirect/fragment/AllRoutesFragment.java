@@ -25,7 +25,6 @@ import me.rutgersdirect.rudirect.ui.view.DividerItemDecoration;
 public class AllRoutesFragment extends BaseRouteFragment {
 
     private RecyclerView allBusesRecyclerView;
-    private String[] busRoutes;
 
     // Sets up the bus routes
     private class UpdateAllRoutesTask extends AsyncTask<Void, Void, Void> {
@@ -43,16 +42,13 @@ public class AllRoutesFragment extends BaseRouteFragment {
 
         @Override
         protected void onPostExecute(Void v) {
-            if (busRoutes.length != 0) {
-                allBusesRecyclerView.getAdapter().notifyDataSetChanged();
-            } else if (!isNetworkAvailable()) {
+            if (!isNetworkAvailable()) {
                 errorView.setVisibility(View.VISIBLE);
                 errorView.setText("Unable to get routes - check your Internet connection and try again.");
             } else {
                 errorView.setVisibility(View.GONE);
-                busRoutes = getBusRoutes();
                 allBusesRecyclerView.setAdapter(
-                        new BusRouteAdapter(busRoutes, mainActivity, AllRoutesFragment.this));
+                        new BusRouteAdapter(getBusRoutes(), mainActivity, AllRoutesFragment.this));
             }
             mSwipeRefreshLayout.setRefreshing(false);
         }
@@ -107,8 +103,7 @@ public class AllRoutesFragment extends BaseRouteFragment {
         // Setup layout
         allBusesRecyclerView.addItemDecoration(new DividerItemDecoration(mainActivity, LinearLayoutManager.VERTICAL));
         // Set adapter
-        busRoutes = getBusRoutes();
-        allBusesRecyclerView.setAdapter(new BusRouteAdapter(busRoutes, mainActivity, this));
+        allBusesRecyclerView.setAdapter(new BusRouteAdapter(getBusRoutes(), mainActivity, this));
     }
 
     // Set up SwipeRefreshLayout

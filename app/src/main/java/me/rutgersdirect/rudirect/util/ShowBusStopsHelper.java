@@ -14,8 +14,8 @@ import me.rutgersdirect.rudirect.activity.BusStopsActivity;
 import me.rutgersdirect.rudirect.adapter.BusStopAdapter;
 import me.rutgersdirect.rudirect.api.NextBusAPI;
 import me.rutgersdirect.rudirect.data.constants.AppData;
-import me.rutgersdirect.rudirect.fragment.BusTimesFragment;
 import me.rutgersdirect.rudirect.data.model.BusStop;
+import me.rutgersdirect.rudirect.fragment.BusTimesFragment;
 
 public class ShowBusStopsHelper extends AsyncTask<Object, Void, Void> {
 
@@ -60,6 +60,7 @@ public class ShowBusStopsHelper extends AsyncTask<Object, Void, Void> {
             // Update items in RecyclerView
             BusTimesFragment busTimesFragment = ((BusTimesFragment) fragment);
             RecyclerView busTimesRecyclerView = busTimesFragment.getBusTimesRecyclerView();
+
             busTimesRecyclerView.setAdapter(new BusStopAdapter(buses));
             busTimesFragment.getSwipeRefreshLayout().setRefreshing(false);
         } else {
