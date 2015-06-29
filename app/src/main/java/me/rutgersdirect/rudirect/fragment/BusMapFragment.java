@@ -151,6 +151,10 @@ public class BusMapFragment extends MapFragment implements
             MarkerOptions markerOptions = new MarkerOptions()
                     .position(getLatLng(latitudes[i], longitudes[i]))
                     .title(busStops.get(i).getTitle());
+            int[] times = busStops.get(i).getTimes();
+            if (times.length == 1 && times[0] == -1) {
+                markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
+            }
             mMap.addMarker(markerOptions);
         }
 
