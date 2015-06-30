@@ -28,7 +28,8 @@ public class AllRoutesFragment extends BaseRouteFragment {
     // Sets up the bus routes
     private class UpdateAllRoutesTask extends AsyncTask<Void, Void, Void> {
         protected Void doInBackground(Void... voids) {
-            NextBusAPI.saveBusStops(mainActivity);
+            NextBusAPI.saveBusStops();
+            NextBusAPI.saveBusPaths();
             return null;
         }
 

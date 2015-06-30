@@ -29,6 +29,7 @@ import me.rutgersdirect.rudirect.R;
 import me.rutgersdirect.rudirect.activity.BusStopsActivity;
 import me.rutgersdirect.rudirect.api.NextBusAPI;
 import me.rutgersdirect.rudirect.data.model.BusStop;
+import me.rutgersdirect.rudirect.util.ShowBusPathHelper;
 
 public class BusMapFragment extends MapFragment implements
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, OnMapReadyCallback {
@@ -42,6 +43,11 @@ public class BusMapFragment extends MapFragment implements
     private GoogleApiClient mGoogleApiClient;
     private Handler refreshHandler;
     private ArrayList<Marker> activeBusMarkers;
+
+    public String[] latitudes;
+    public String[] longitudes;
+    public String[][] pathLats;
+    public String[][] pathLons;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -60,7 +66,7 @@ public class BusMapFragment extends MapFragment implements
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         buildGoogleApiClient();
-        getMapAsync(this);
+        new ShowBusPathHelper().execute(busStopsActivity.getBusTag(), busStopsActivity, this);
     }
 
     // Build the Google API Client
@@ -76,7 +82,7 @@ public class BusMapFragment extends MapFragment implements
     public void onMapReady(final GoogleMap map) {
         mMap = map;
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
-                getLatLng(busStopsActivity.getLatitudes()[0], busStopsActivity.getLongitudes()[0]), 13.0f));
+                getLatLng(latitudes[0], longitudes[0]), 13.0f));
         mMap.setMyLocationEnabled(true);
         drawRoute();
     }
@@ -137,10 +143,6 @@ public class BusMapFragment extends MapFragment implements
     // Draws the bus route on the map
     private void drawRoute() {
         ArrayList<BusStop> busStops = busStopsActivity.getBusStops();
-        String[] latitudes = busStopsActivity.getLatitudes();
-        String[] longitudes = busStopsActivity.getLongitudes();
-        String[][] pathLats = busStopsActivity.getPathLats();
-        String[][] pathLons = busStopsActivity.getPathLons();
         int polyLineColor = getResources().getColor(R.color.polyline_color);
 
         // Draws the active bus locations

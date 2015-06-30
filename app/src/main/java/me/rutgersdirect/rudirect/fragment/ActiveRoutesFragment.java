@@ -27,7 +27,8 @@ public class ActiveRoutesFragment extends BaseRouteFragment {
     private class UpdateActiveRoutesTask extends AsyncTask<Void, Void, String[]> {
         protected String[] doInBackground(Void... voids) {
             if (tagsToBusesPref.getAll().size() == 0) {
-                NextBusAPI.saveBusStops(mainActivity);
+                NextBusAPI.saveBusStops();
+                NextBusAPI.saveBusPaths();
             }
             return NextBusAPI.getActiveBusTags();
         }

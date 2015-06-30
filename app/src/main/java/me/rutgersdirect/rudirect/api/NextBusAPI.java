@@ -87,17 +87,26 @@ public class NextBusAPI {
     }
 
     // Saves the bus stops to shared preferences
-    public static void saveBusStops(Context context) {
-        parseXML(AppData.ALL_ROUTES_LINK, new XMLBusStopHandler(context));
+    public static void saveBusStops() {
+        parseXML(AppData.ALL_ROUTES_LINK, new XMLBusStopHandler());
+    }
+
+    // Saves the bus paths to shared preferences
+    public static void saveBusPaths() {
+        parseXML(AppData.ALL_ROUTES_LINK, new XMLBusPathHandler());
     }
 
     // Loads an array from shared preferences
     private static String[] loadArray(int preference, String arrayName, Context context) {
         SharedPreferences prefs = context.getSharedPreferences(context.getString(preference), Context.MODE_PRIVATE);
-        int size = prefs.getInt(arrayName + "_size", 0);
+        StringBuilder builder = new StringBuilder();
+        builder.append(arrayName).append("_size");
+        int size = prefs.getInt(builder.toString(), 0);
         String[] array = new String[size];
         for (int i = 0; i < size; i++) {
-            array[i] = prefs.getString(arrayName + "_" + i, null);
+            builder.delete(arrayName.length(), builder.length());
+            builder.append("_").append(i);
+            array[i] = prefs.getString(builder.toString(), null);
         }
         return array;
     }
@@ -105,13 +114,19 @@ public class NextBusAPI {
     // Loads a 2D string array from shared preferences
     private static String[][] loadTwoDimenArray(int preference, String arrayName, Context context) {
         SharedPreferences prefs = context.getSharedPreferences(context.getString(preference), Context.MODE_PRIVATE);
-        int arraySize = prefs.getInt(arrayName + "_size", 0);
+        StringBuilder builder = new StringBuilder();
+        builder.append(arrayName).append("_size");
+        int arraySize = prefs.getInt(builder.toString(), 0);
         String[][] array = new String[arraySize][];
         for (int i = 0; i < arraySize; i++) {
-            int size = prefs.getInt(arrayName + "_array_" + i + "_size", 0);
+            builder.delete(arrayName.length(), builder.length());
+            builder.append("_arr_").append(i).append("_size");
+            int size = prefs.getInt(builder.toString(), 0);
             array[i] = new String[size];
             for (int j = 0; j < size; j++) {
-                array[i][j] = prefs.getString(arrayName + "_array_" + i + "_element_" + j, null);
+                builder.delete(arrayName.length() + 3, builder.length());
+                builder.append(i).append("_ele_").append(j);
+                array[i][j] = prefs.getString(builder.toString(), null);
             }
         }
         return array;

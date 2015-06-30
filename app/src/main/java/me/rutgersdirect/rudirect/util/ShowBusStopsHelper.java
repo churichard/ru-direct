@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -24,10 +23,6 @@ public class ShowBusStopsHelper extends AsyncTask<Object, Void, Void> {
     private Fragment fragment;
     private String[] busStopTitles;
     private int[][] busStopTimes;
-    private String[] busStopLats;
-    private String[] busStopLons;
-    private String[][] busPathLats;
-    private String[][] busPathLons;
 
     @Override
     protected Void doInBackground(Object... objects) {
@@ -36,10 +31,6 @@ public class ShowBusStopsHelper extends AsyncTask<Object, Void, Void> {
         fragment = (Fragment) objects[2];
         busStopTitles = NextBusAPI.getBusStopTitles(tag, activity);
         busStopTimes = NextBusAPI.getBusStopTimes(tag, activity);
-        busStopLats = NextBusAPI.getBusStopLats(tag, activity);
-        busStopLons = NextBusAPI.getBusStopLons(tag, activity);
-        busPathLats = NextBusAPI.getBusPathLats(tag, activity);
-        busPathLons = NextBusAPI.getBusPathLons(tag, activity);
 
         return null;
     }
@@ -69,13 +60,6 @@ public class ShowBusStopsHelper extends AsyncTask<Object, Void, Void> {
 
             intent.putExtra(AppData.BUS_TAG_MESSAGE, tag);
             intent.putParcelableArrayListExtra(AppData.BUS_STOPS_MESSAGE, buses);
-            intent.putExtra(AppData.BUS_STOP_LATS_MESSAGE, busStopLats);
-            intent.putExtra(AppData.BUS_STOP_LONS_MESSAGE, busStopLons);
-
-            Bundle mBundle = new Bundle();
-            mBundle.putSerializable(AppData.BUS_PATH_LATS_MESSAGE, busPathLats);
-            mBundle.putSerializable(AppData.BUS_PATH_LONS_MESSAGE, busPathLons);
-            intent.putExtras(mBundle);
 
             activity.startActivity(intent);
             activity.overridePendingTransition(R.anim.abc_grow_fade_in_from_bottom, 0);
