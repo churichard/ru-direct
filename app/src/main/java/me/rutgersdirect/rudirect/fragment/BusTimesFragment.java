@@ -13,10 +13,12 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import me.rutgersdirect.rudirect.R;
 import me.rutgersdirect.rudirect.activity.BusStopsActivity;
 import me.rutgersdirect.rudirect.adapter.BusStopAdapter;
+import me.rutgersdirect.rudirect.data.constants.RUDirectApplication;
 import me.rutgersdirect.rudirect.ui.view.DividerItemDecoration;
 import me.rutgersdirect.rudirect.util.ShowBusStopsHelper;
 
@@ -81,7 +83,22 @@ public class BusTimesFragment extends Fragment implements AppBarLayout.OnOffsetC
 
     // Updates the bus times
     private void updateBusTimes() {
-        new ShowBusStopsHelper().execute(busStopsActivity.getBusTag(), busStopsActivity, BusTimesFragment.this);
+        TextView noInternetTextView = (TextView) busStopsActivity.findViewById(R.id.no_internet_textview);
+        if (RUDirectApplication.isNetworkAvailable()) {
+            if (noInternetTextView != null) {
+                noInternetTextView.setVisibility(View.GONE);
+            }
+            new ShowBusStopsHelper().execute(busStopsActivity.getBusTag(), busStopsActivity, BusTimesFragment.this);
+        } else {
+            if (noInternetTextView != null) {
+                noInternetTextView.setVisibility(View.VISIBLE);
+            }
+            if (busTimesRecyclerView.getAdapter().getItemCount() == 0) {
+                new ShowBusStopsHelper().execute(busStopsActivity.getBusTag(), busStopsActivity, BusTimesFragment.this);
+            } else {
+                mSwipeRefreshLayout.setRefreshing(false);
+            }
+        }
     }
 
     // Set up swipe refresh layout

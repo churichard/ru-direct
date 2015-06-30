@@ -1,8 +1,6 @@
 package me.rutgersdirect.rudirect.fragment;
 
 import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -20,6 +18,7 @@ import java.util.Map;
 import me.rutgersdirect.rudirect.R;
 import me.rutgersdirect.rudirect.adapter.BusRouteAdapter;
 import me.rutgersdirect.rudirect.api.NextBusAPI;
+import me.rutgersdirect.rudirect.data.constants.RUDirectApplication;
 import me.rutgersdirect.rudirect.ui.view.DividerItemDecoration;
 
 public class AllRoutesFragment extends BaseRouteFragment {
@@ -33,16 +32,9 @@ public class AllRoutesFragment extends BaseRouteFragment {
             return null;
         }
 
-        private boolean isNetworkAvailable() {
-            ConnectivityManager connectivityManager
-                    = (ConnectivityManager) mainActivity.getSystemService(Context.CONNECTIVITY_SERVICE);
-            NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-            return activeNetworkInfo != null && activeNetworkInfo.isConnectedOrConnecting();
-        }
-
         @Override
         protected void onPostExecute(Void v) {
-            if (!isNetworkAvailable()) {
+            if (!RUDirectApplication.isNetworkAvailable() && allBusesRecyclerView.getAdapter().getItemCount() == 0) {
                 errorView.setVisibility(View.VISIBLE);
                 errorView.setText("Unable to get routes - check your Internet connection and try again.");
             } else {
@@ -72,11 +64,6 @@ public class AllRoutesFragment extends BaseRouteFragment {
         setupRecyclerView();
         setupSwipeRefreshLayout();
         errorView = (TextView) mainActivity.findViewById(R.id.all_buses_error);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
         updateAllRoutes();
     }
 

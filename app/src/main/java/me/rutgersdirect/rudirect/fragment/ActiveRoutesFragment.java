@@ -2,8 +2,6 @@ package me.rutgersdirect.rudirect.fragment;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -18,28 +16,25 @@ import android.widget.TextView;
 import me.rutgersdirect.rudirect.R;
 import me.rutgersdirect.rudirect.adapter.BusRouteAdapter;
 import me.rutgersdirect.rudirect.api.NextBusAPI;
+import me.rutgersdirect.rudirect.data.constants.RUDirectApplication;
 import me.rutgersdirect.rudirect.ui.view.DividerItemDecoration;
 
 public class ActiveRoutesFragment extends BaseRouteFragment {
 
     private RecyclerView activeBusesRecyclerView;
+    private SharedPreferences tagsToBusesPref;
 
     private class UpdateActiveRoutesTask extends AsyncTask<Void, Void, String[]> {
         protected String[] doInBackground(Void... voids) {
+            if (tagsToBusesPref.getAll().size() == 0) {
+                NextBusAPI.saveBusStops(mainActivity);
+            }
             return NextBusAPI.getActiveBusTags();
-        }
-
-        private boolean isNetworkAvailable() {
-            ConnectivityManager connectivityManager
-                    = (ConnectivityManager) mainActivity.getSystemService(Context.CONNECTIVITY_SERVICE);
-            NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-            return activeNetworkInfo != null && activeNetworkInfo.isConnectedOrConnecting();
         }
 
         protected void onPostExecute(String[] activeBusTags) {
             // Fill active bus array with active bus names
             String[] activeBuses = new String[activeBusTags.length];
-            SharedPreferences tagsToBusesPref = mainActivity.getSharedPreferences(getString(R.string.tags_to_buses_key), Context.MODE_PRIVATE);
             for (int i = 0; i < activeBusTags.length; i++) {
                 activeBuses[i] = tagsToBusesPref.getString(activeBusTags[i], "Offline");
             }
@@ -47,7 +42,7 @@ public class ActiveRoutesFragment extends BaseRouteFragment {
                 // Setup error message
                 errorView.setVisibility(View.VISIBLE);
                 activeBusesRecyclerView.setAdapter(new BusRouteAdapter());
-                if (isNetworkAvailable()) {
+                if (RUDirectApplication.isNetworkAvailable()) {
                     errorView.setText("No active buses.");
                 } else {
                     errorView.setText("Unable to get active routes - check your Internet connection and try again.");
@@ -65,6 +60,12 @@ public class ActiveRoutesFragment extends BaseRouteFragment {
     // Sets up the RecyclerView
     public void updateActiveRoutes() {
         new UpdateActiveRoutesTask().execute();
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        tagsToBusesPref = mainActivity.getSharedPreferences(getString(R.string.tags_to_buses_key), Context.MODE_PRIVATE);
     }
 
     @Override

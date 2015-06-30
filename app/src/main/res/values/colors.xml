@@ -2,6 +2,9 @@
 <resources>
     <color name="primary_color">#d21034</color>
     <color name="dark_primary_color">#8a140e</color>
-    <color name="light_gray">#E0E0E0</color>
+    <color name="orange">#EF6C00</color>
+    <color name="blue">#1565C0</color>
     <color name="polyline_color">#B32196F3</color>
+    <color name="light_gray">#E0E0E0</color>
+    <color name="dark_gray">#9E9E9E</color>
 </resources>

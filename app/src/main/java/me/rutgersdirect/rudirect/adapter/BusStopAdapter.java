@@ -1,6 +1,6 @@
 package me.rutgersdirect.rudirect.adapter;
 
-import android.graphics.Color;
+import android.content.res.Resources;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +12,7 @@ import java.util.Date;
 import java.util.List;
 
 import me.rutgersdirect.rudirect.R;
+import me.rutgersdirect.rudirect.data.constants.RUDirectApplication;
 import me.rutgersdirect.rudirect.data.model.BusStop;
 import me.rutgersdirect.rudirect.ui.holder.BusStopViewHolder;
 
@@ -129,16 +130,17 @@ public class BusStopAdapter extends RecyclerView.Adapter<BusStopViewHolder> {
 
     // Change text color of the ListView items
     private void setTextColor(TextView busStopName, TextView busStopTimes, int[] times) {
-        busStopName.setTextColor(Color.parseColor("#000000")); // Black
+        Resources resources = RUDirectApplication.getContext().getResources();
+        busStopName.setTextColor(resources.getColor(android.R.color.black));
         if (times[0] == -1) {
-            busStopName.setTextColor(Color.parseColor("#9E9E9E")); // Grey
-            busStopTimes.setTextColor(Color.parseColor("#9E9E9E"));
+            busStopName.setTextColor(resources.getColor(R.color.dark_gray));
+            busStopTimes.setTextColor(resources.getColor(R.color.dark_gray));
         } else if (times[0] == 0 || times[0] == 1) {
-            busStopTimes.setTextColor(Color.parseColor("#C62828")); // Red
+            busStopTimes.setTextColor(resources.getColor(R.color.primary_color));
         } else if (times[0] > 1 && times[0] <= 5) {
-            busStopTimes.setTextColor(Color.parseColor("#EF6C00")); // Orange
+            busStopTimes.setTextColor(resources.getColor(R.color.orange));
         } else {
-            busStopTimes.setTextColor(Color.parseColor("#1565C0")); // Blue
+            busStopTimes.setTextColor(resources.getColor(R.color.blue));
         }
     }
 
