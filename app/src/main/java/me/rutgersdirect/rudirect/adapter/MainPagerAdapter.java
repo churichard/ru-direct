@@ -6,11 +6,12 @@ import android.support.v13.app.FragmentPagerAdapter;
 
 import me.rutgersdirect.rudirect.fragment.ActiveRoutesFragment;
 import me.rutgersdirect.rudirect.fragment.AllRoutesFragment;
+import me.rutgersdirect.rudirect.fragment.DirectionsFragment;
 
 public class MainPagerAdapter extends FragmentPagerAdapter {
 
-    private static final int NUM_ITEMS = 2;
-    private static final String[] titles = {"Active Routes", "All Routes"};
+    private static final String[] titles = {"Active Routes", "Directions", "All Routes"};
+    private static final int NUM_ITEMS = titles.length;
 
     public MainPagerAdapter(FragmentManager fm) {
         super(fm);
@@ -26,6 +27,8 @@ public class MainPagerAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
         if (position == 0) {
             return new ActiveRoutesFragment();
+        } else if (position == 1) {
+            return new DirectionsFragment();
         } else {
             return new AllRoutesFragment();
         }

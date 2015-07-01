@@ -16,8 +16,8 @@ import android.widget.TextView;
 import me.rutgersdirect.rudirect.R;
 import me.rutgersdirect.rudirect.adapter.BusRouteAdapter;
 import me.rutgersdirect.rudirect.api.NextBusAPI;
-import me.rutgersdirect.rudirect.data.constants.RUDirectApplication;
 import me.rutgersdirect.rudirect.ui.view.DividerItemDecoration;
+import me.rutgersdirect.rudirect.util.RUDirectUtil;
 
 public class ActiveRoutesFragment extends BaseRouteFragment {
 
@@ -43,7 +43,7 @@ public class ActiveRoutesFragment extends BaseRouteFragment {
                 // Setup error message
                 errorView.setVisibility(View.VISIBLE);
                 activeBusesRecyclerView.setAdapter(new BusRouteAdapter());
-                if (RUDirectApplication.isNetworkAvailable()) {
+                if (RUDirectUtil.isNetworkAvailable()) {
                     errorView.setText("No active buses.");
                 } else {
                     errorView.setText("Unable to get active routes - check your Internet connection and try again.");

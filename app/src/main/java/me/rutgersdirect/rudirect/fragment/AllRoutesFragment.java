@@ -18,8 +18,8 @@ import java.util.Map;
 import me.rutgersdirect.rudirect.R;
 import me.rutgersdirect.rudirect.adapter.BusRouteAdapter;
 import me.rutgersdirect.rudirect.api.NextBusAPI;
-import me.rutgersdirect.rudirect.data.constants.RUDirectApplication;
 import me.rutgersdirect.rudirect.ui.view.DividerItemDecoration;
+import me.rutgersdirect.rudirect.util.RUDirectUtil;
 
 public class AllRoutesFragment extends BaseRouteFragment {
 
@@ -35,7 +35,7 @@ public class AllRoutesFragment extends BaseRouteFragment {
 
         @Override
         protected void onPostExecute(Void v) {
-            if (!RUDirectApplication.isNetworkAvailable() && allBusesRecyclerView.getAdapter().getItemCount() == 0) {
+            if (!RUDirectUtil.isNetworkAvailable() && allBusesRecyclerView.getAdapter().getItemCount() == 0) {
                 errorView.setVisibility(View.VISIBLE);
                 errorView.setText("Unable to get routes - check your Internet connection and try again.");
             } else {
@@ -48,7 +48,7 @@ public class AllRoutesFragment extends BaseRouteFragment {
     }
 
     // Sets up the RecyclerView
-    public void updateAllRoutes() {
+    private void updateAllRoutes() {
         new UpdateAllRoutesTask().execute();
     }
 
@@ -107,7 +107,7 @@ public class AllRoutesFragment extends BaseRouteFragment {
     }
 
     // Returns an array of bus route names
-    public String[] getBusRoutes() {
+    private String[] getBusRoutes() {
         Map<String, ?> busesToTagsMap = mainActivity.getSharedPreferences(
                 getString(R.string.buses_to_tags_key), Context.MODE_PRIVATE).getAll();
         Object[] busNamesObj = busesToTagsMap.keySet().toArray();

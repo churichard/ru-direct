@@ -1,6 +1,5 @@
 package me.rutgersdirect.rudirect.util;
 
-import android.app.Activity;
 import android.os.AsyncTask;
 
 import me.rutgersdirect.rudirect.api.NextBusAPI;
@@ -17,12 +16,11 @@ public class ShowBusPathHelper extends AsyncTask<Object, Void, Void> {
     @Override
     protected Void doInBackground(Object... objects) {
         String tag = (String) objects[0];
-        Activity activity = (Activity) objects[1];
-        busMapFragment = (BusMapFragment) objects[2];
-        busStopLats = NextBusAPI.getBusStopLats(tag, activity);
-        busStopLons = NextBusAPI.getBusStopLons(tag, activity);
-        busPathLats = NextBusAPI.getBusPathLats(tag, activity);
-        busPathLons = NextBusAPI.getBusPathLons(tag, activity);
+        busMapFragment = (BusMapFragment) objects[1];
+        busStopLats = NextBusAPI.getBusStopLats(tag);
+        busStopLons = NextBusAPI.getBusStopLons(tag);
+        busPathLats = NextBusAPI.getBusPathLats(tag);
+        busPathLons = NextBusAPI.getBusPathLons(tag);
 
         return null;
     }

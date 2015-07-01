@@ -1,16 +1,11 @@
 package me.rutgersdirect.rudirect.api;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.util.Log;
 
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -20,6 +15,7 @@ import javax.xml.parsers.SAXParserFactory;
 
 import me.rutgersdirect.rudirect.R;
 import me.rutgersdirect.rudirect.data.constants.AppData;
+import me.rutgersdirect.rudirect.util.RUDirectUtil;
 
 public class NextBusAPI {
 
@@ -27,25 +23,12 @@ public class NextBusAPI {
     public static HashMap<String, ArrayList<String>> activeLatsHashMap;
     public static HashMap<String, ArrayList<String>> activeLonsHashMap;
 
-    // Returns the input stream from the parameter url
-    private static InputStream downloadUrl(String urlString) throws IOException {
-        URL url = new URL(urlString);
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        conn.setReadTimeout(10000); // milliseconds
-        conn.setConnectTimeout(15000);
-        conn.setRequestMethod("GET");
-        conn.setDoInput(true);
-        // Starts the query
-        conn.connect();
-        return conn.getInputStream();
-    }
-
     // Setups the SAX parser and parses the XML from the url
     private static void parseXML(String urlString, DefaultHandler handler) {
         try {
             SAXParserFactory factory = SAXParserFactory.newInstance();
             SAXParser saxParser = factory.newSAXParser();
-            saxParser.parse(downloadUrl(urlString), handler);
+            saxParser.parse(urlString, handler);
         } catch (IOException | SAXException | ParserConfigurationException e) {
             Log.e(TAG, e.toString());
         }
@@ -66,16 +49,16 @@ public class NextBusAPI {
     }
 
     // Returns a list of the bus stop times
-    public static int[][] getBusStopTimes(String busTag, Context context) {
+    public static int[][] getBusStopTimes(String busTag) {
         // If there is no Internet
-        int length = loadArray(R.string.bus_tags_to_stop_tags_key, busTag, context).length;
+        int length = RUDirectUtil.loadArray(R.string.bus_tags_to_stop_tags_key, busTag).length;
         int[][] defaultTime = new int[length][1];
         for (int i = 0; i < length; i++) {
             defaultTime[i][0] = -1;
         }
         AppData.BUS_TAGS_TO_STOP_TIMES.put(busTag, defaultTime);
 
-        String[] busStopTags = getBusStopTags(busTag, context);
+        String[] busStopTags = getBusStopTags(busTag);
         StringBuilder link = new StringBuilder(AppData.PREDICTIONS_LINK);
         for (String stopTag : busStopTags) {
             String stop = "&stops=" + busTag + "|null|" + stopTag;
@@ -96,69 +79,33 @@ public class NextBusAPI {
         parseXML(AppData.ALL_ROUTES_LINK, new XMLBusPathHandler());
     }
 
-    // Loads an array from shared preferences
-    private static String[] loadArray(int preference, String arrayName, Context context) {
-        SharedPreferences prefs = context.getSharedPreferences(context.getString(preference), Context.MODE_PRIVATE);
-        StringBuilder builder = new StringBuilder();
-        builder.append(arrayName).append("_size");
-        int size = prefs.getInt(builder.toString(), 0);
-        String[] array = new String[size];
-        for (int i = 0; i < size; i++) {
-            builder.delete(arrayName.length(), builder.length());
-            builder.append("_").append(i);
-            array[i] = prefs.getString(builder.toString(), null);
-        }
-        return array;
-    }
-
-    // Loads a 2D string array from shared preferences
-    private static String[][] loadTwoDimenArray(int preference, String arrayName, Context context) {
-        SharedPreferences prefs = context.getSharedPreferences(context.getString(preference), Context.MODE_PRIVATE);
-        StringBuilder builder = new StringBuilder();
-        builder.append(arrayName).append("_size");
-        int arraySize = prefs.getInt(builder.toString(), 0);
-        String[][] array = new String[arraySize][];
-        for (int i = 0; i < arraySize; i++) {
-            builder.delete(arrayName.length(), builder.length());
-            builder.append("_arr_").append(i).append("_size");
-            int size = prefs.getInt(builder.toString(), 0);
-            array[i] = new String[size];
-            for (int j = 0; j < size; j++) {
-                builder.delete(arrayName.length() + 3, builder.length());
-                builder.append(i).append("_ele_").append(j);
-                array[i][j] = prefs.getString(builder.toString(), null);
-            }
-        }
-        return array;
-    }
-
     // Takes in a bus tag and returns a list of the bus stop titles
-    public static String[] getBusStopTitles(String busTag, Context context) {
-        return loadArray(R.string.bus_tags_to_stop_titles_key, busTag, context);
+    public static String[] getBusStopTitles(String busTag) {
+        return RUDirectUtil.loadArray(R.string.bus_tags_to_stop_titles_key, busTag);
     }
 
     // Takes in a bus tag and returns a list of the bus stop tags
-    public static String[] getBusStopTags(String busTag, Context context) {
-        return loadArray(R.string.bus_tags_to_stop_tags_key, busTag, context);
+    public static String[] getBusStopTags(String busTag) {
+        return RUDirectUtil.loadArray(R.string.bus_tags_to_stop_tags_key, busTag);
     }
 
     // Takes in a bus tag and returns a list of the bus stop latitudes
-    public static String[] getBusStopLats(String busTag, Context context) {
-        return loadArray(R.string.latitudes_key, busTag, context);
+    public static String[] getBusStopLats(String busTag) {
+        return RUDirectUtil.loadArray(R.string.latitudes_key, busTag);
     }
 
     // Takes in a bus tag and returns a list of the bus stop longitudes
-    public static String[] getBusStopLons(String busTag, Context context) {
-        return loadArray(R.string.longitudes_key, busTag, context);
+    public static String[] getBusStopLons(String busTag) {
+        return RUDirectUtil.loadArray(R.string.longitudes_key, busTag);
     }
 
     // Takes in a bus tag and returns a list of the bus path latitudes
-    public static String[][] getBusPathLats(String busTag, Context context) {
-        return loadTwoDimenArray(R.string.path_latitudes_key, busTag, context);
+    public static String[][] getBusPathLats(String busTag) {
+        return RUDirectUtil.loadTwoDimenArray(R.string.path_latitudes_key, busTag);
     }
 
     // Takes in a bus tag and returns a list of the bus path longitudes
-    public static String[][] getBusPathLons(String busTag, Context context) {
-        return loadTwoDimenArray(R.string.path_longitudes_key, busTag, context);
+    public static String[][] getBusPathLons(String busTag) {
+        return RUDirectUtil.loadTwoDimenArray(R.string.path_longitudes_key, busTag);
     }
 }

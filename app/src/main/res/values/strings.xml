@@ -17,6 +17,7 @@
     <string name="path_latitudes_key">me.rutgersdirect.rudirect.PATH_LATITUDES_KEY</string>
     <string name="path_longitudes_key">me.rutgersdirect.rudirect.PATH_LONGITUDES_KEY</string>
 
-    <string name="going">Where are you going?</string>
-    <string name="coming">Where are you?</string>
+    <string name="origin_text">Choose starting point</string>
+    <string name="destination_text">Choose destination</string>
+    <string name="find_route">Find route</string>
 </resources>

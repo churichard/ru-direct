@@ -5,7 +5,6 @@ RU Direct is an Android app that provides a clean and easy to use interface for 
 
 ## Things to Do
 - Update app icon
-- Add in caching of the bus times and put a notification of when the times were last updated
 - Add directions from one bus stop to another
 - Add About page with contributors and Google Maps attribution
 - Publish the app on the Play Store and release it to the public

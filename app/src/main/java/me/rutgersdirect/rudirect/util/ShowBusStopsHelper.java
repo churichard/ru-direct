@@ -29,8 +29,8 @@ public class ShowBusStopsHelper extends AsyncTask<Object, Void, Void> {
         tag = (String) objects[0];
         activity = (Activity) objects[1];
         fragment = (Fragment) objects[2];
-        busStopTitles = NextBusAPI.getBusStopTitles(tag, activity);
-        busStopTimes = NextBusAPI.getBusStopTimes(tag, activity);
+        busStopTitles = NextBusAPI.getBusStopTitles(tag);
+        busStopTimes = NextBusAPI.getBusStopTimes(tag);
 
         return null;
     }

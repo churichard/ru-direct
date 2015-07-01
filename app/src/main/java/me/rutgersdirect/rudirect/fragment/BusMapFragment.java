@@ -66,7 +66,7 @@ public class BusMapFragment extends MapFragment implements
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         buildGoogleApiClient();
-        new ShowBusPathHelper().execute(busStopsActivity.getBusTag(), busStopsActivity, this);
+        new ShowBusPathHelper().execute(busStopsActivity.getBusTag(), this);
     }
 
     // Build the Google API Client

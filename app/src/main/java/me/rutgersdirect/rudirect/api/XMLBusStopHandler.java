@@ -11,6 +11,7 @@ import java.util.ArrayList;
 
 import me.rutgersdirect.rudirect.R;
 import me.rutgersdirect.rudirect.data.constants.RUDirectApplication;
+import me.rutgersdirect.rudirect.util.RUDirectUtil;
 
 public class XMLBusStopHandler extends DefaultHandler {
 
@@ -25,20 +26,6 @@ public class XMLBusStopHandler extends DefaultHandler {
 
     private SharedPreferences.Editor busTagsToStopTagsEdit;
     private SharedPreferences.Editor busTagsToStopTitlesEdit;
-
-    // Saves a string array to shared preferences
-    private static void saveArray(SharedPreferences.Editor editor, ArrayList<String> array, String arrayName) {
-        int size = array.size();
-        StringBuilder builder = new StringBuilder();
-        builder.append(arrayName).append("_size");
-        editor.putInt(builder.toString(), size);
-        for (int i = 0; i < size; i++) {
-            builder.delete(arrayName.length(), builder.length());
-            builder.append("_").append(i);
-            editor.putString(builder.toString(), array.get(i));
-        }
-        editor.apply();
-    }
 
     public void startDocument() throws SAXException {
         context = RUDirectApplication.getContext();
@@ -77,8 +64,8 @@ public class XMLBusStopHandler extends DefaultHandler {
         if (isGettingStops && qName.equalsIgnoreCase("direction")) {
             isGettingStops = false;
 
-            saveArray(busTagsToStopTagsEdit, stopTags, busTag);
-            saveArray(busTagsToStopTitlesEdit, stopTitles, busTag);
+            RUDirectUtil.saveArray(busTagsToStopTagsEdit, stopTags, busTag);
+            RUDirectUtil.saveArray(busTagsToStopTitlesEdit, stopTitles, busTag);
 
             stopTags.clear();
             stopTitles.clear();

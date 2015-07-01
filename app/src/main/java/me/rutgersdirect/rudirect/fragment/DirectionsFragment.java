@@ -1,150 +1,85 @@
 package me.rutgersdirect.rudirect.fragment;
 
-import android.location.Location;
+import android.app.Fragment;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.MenuItem;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationListener;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.Map;
 
-import java.text.DateFormat;
-import java.util.Date;
+import me.rutgersdirect.rudirect.R;
+import me.rutgersdirect.rudirect.activity.MainActivity;
+import me.rutgersdirect.rudirect.util.RUDirectUtil;
 
-import me.rutgersdirect.rudirect.activity.BusStopsActivity;
+public class DirectionsFragment extends Fragment {
 
-public class DirectionsFragment extends MapFragment implements
-        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
+    private static final String TAG = DirectionsFragment.class.getSimpleName();
+    private MainActivity mainActivity;
 
-    private static final String TAG = BusMapFragment.class.getSimpleName();
-    private static final int REQUEST_CODE = 9000;
-    private static final int REFRESH_INTERVAL = 5000;
-    private static final int FASTEST_REFRESH_INTERVAL = 5000;
-    private GoogleMap mMap;
-    private BusStopsActivity busStopsActivity;
-    private GoogleApiClient mGoogleApiClient;
-    private LocationRequest mLocationRequest;
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mainActivity = (MainActivity) getActivity();
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_directions, container, false);
+    }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        busStopsActivity = (BusStopsActivity) getActivity();
-        mMap = getMap();
+        setupAutoCompleteTextViews();
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
-        buildGoogleApiClient();
-        createLocationRequest();
     }
 
-    @Override
-    public void onConnected(Bundle connectionHint) {
-        Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-        handleNewLocation(location);
-        startLocationUpdates();
-        if (location != null) {
-            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(getLatLng(location), 12.0f));
+    public void setupAutoCompleteTextViews() {
+        // Get a reference to the AutoCompleteTextView in the layout
+        AutoCompleteTextView originTextView = (AutoCompleteTextView) mainActivity.findViewById(R.id.origin_textview);
+        AutoCompleteTextView destTextView = (AutoCompleteTextView) mainActivity.findViewById(R.id.destination_textview);
+
+        // Get the string array
+        SharedPreferences busTagsToStopTitlesPref = mainActivity.getSharedPreferences(
+                mainActivity.getString(R.string.bus_tags_to_stop_titles_key), Context.MODE_PRIVATE);
+        Map<String, ?> busTagsToStopTitlesMap = busTagsToStopTitlesPref.getAll();
+
+        if (busTagsToStopTitlesMap.size() != 0) {
+            // Create list of bus stops
+            LinkedHashSet<String> busStops = new LinkedHashSet<>();
+            String[] busTags = getBusTags();
+            for (String busTag : busTags) {
+                String[] stops = RUDirectUtil.loadArray(busTagsToStopTitlesPref, busTag);
+                Collections.addAll(busStops, stops);
+            }
+
+            // Create the adapter and set it to the AutoCompleteTextViews
+            ArrayAdapter<String> adapter =
+                    new ArrayAdapter<>(mainActivity, android.R.layout.simple_list_item_1, busStops.toArray(new String[busStops.size()]));
+            originTextView.setAdapter(adapter);
+            destTextView.setAdapter(adapter);
         }
     }
 
-    @Override
-    public void onConnectionSuspended(int i) {
-        Log.i(TAG, "Connection suspended");
-    }
-
-    @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
-        int status = GooglePlayServicesUtil.isGooglePlayServicesAvailable(busStopsActivity);
-        if (status != ConnectionResult.SUCCESS) {
-            GooglePlayServicesUtil.getErrorDialog(connectionResult.getErrorCode(), busStopsActivity, REQUEST_CODE);
-        } else {
-            Log.i(TAG, "Location services connection failed with code " + connectionResult.getErrorCode());
-        }
-    }
-
-    @Override
-    public void onLocationChanged(Location location) {
-        handleNewLocation(location);
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        if (mGoogleApiClient.isConnected()) {
-            stopLocationUpdates();
-            mGoogleApiClient.disconnect();
-        }
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        mGoogleApiClient.connect();
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        if (id == android.R.id.home) {
-            busStopsActivity.onBackPressed();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    protected synchronized void buildGoogleApiClient() {
-        mGoogleApiClient = new GoogleApiClient.Builder(busStopsActivity)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(LocationServices.API)
-                .build();
-    }
-
-    protected void createLocationRequest() {
-        mLocationRequest = LocationRequest.create()
-                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-                .setInterval(REFRESH_INTERVAL)
-                .setFastestInterval(FASTEST_REFRESH_INTERVAL);
-    }
-
-    private void handleNewLocation(Location location) {
-        String mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
-
-        if (location != null) {
-            Log.d(TAG, "Latitude: " + location.getLatitude()
-                    + "\tLongitude: " + location.getLongitude()
-                    + "\tLast Update Time: " + mLastUpdateTime);
-
-            MarkerOptions options = new MarkerOptions()
-                    .position(getLatLng(location))
-                    .title("Current location");
-            mMap.addMarker(options);
-        }
-    }
-
-    private LatLng getLatLng(Location location) {
-        return new LatLng(location.getLatitude(), location.getLongitude());
-    }
-
-    protected void startLocationUpdates() {
-        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
-    }
-
-    protected void stopLocationUpdates() {
-        LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
+    // Returns an array of bus route tags
+    private String[] getBusTags() {
+        Map<String, ?> tagsToBusesMap = mainActivity.getSharedPreferences(
+                getString(R.string.tags_to_buses_key), Context.MODE_PRIVATE).getAll();
+        Object[] busNamesObj = tagsToBusesMap.keySet().toArray();
+        String[] busNames = Arrays.copyOf(busNamesObj, busNamesObj.length, String[].class);
+        Arrays.sort(busNames);
+        return busNames;
     }
 }
