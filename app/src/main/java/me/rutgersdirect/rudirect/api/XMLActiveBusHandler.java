@@ -6,18 +6,17 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import java.util.AbstractCollection;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
+import java.util.TreeSet;
 
 import me.rutgersdirect.rudirect.data.constants.AppData;
 
 public class XMLActiveBusHandler extends DefaultHandler {
 
-    public static LinkedHashSet<String> activeBuses;
+    public static TreeSet<String> activeBuses;
 
     public void startDocument() throws SAXException {
-        activeBuses = new LinkedHashSet<>();
+        activeBuses = new TreeSet<>();
         NextBusAPI.activeLatsHashMap = new HashMap<>();
         NextBusAPI.activeLonsHashMap = new HashMap<>();
     }
@@ -50,7 +49,6 @@ public class XMLActiveBusHandler extends DefaultHandler {
     public void endDocument() throws SAXException {
         if (activeBuses.size() > 0) {
             AppData.ACTIVE_BUSES = collectionToArray(activeBuses);
-            Arrays.sort(AppData.ACTIVE_BUSES);
         }
     }
 

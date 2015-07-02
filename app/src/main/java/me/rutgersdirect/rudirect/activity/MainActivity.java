@@ -11,8 +11,12 @@ import java.util.HashMap;
 import me.rutgersdirect.rudirect.R;
 import me.rutgersdirect.rudirect.adapter.MainPagerAdapter;
 import me.rutgersdirect.rudirect.data.constants.AppData;
+import me.rutgersdirect.rudirect.fragment.DirectionsFragment;
+import me.rutgersdirect.rudirect.interfaces.UpdateBusStopsListener;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements UpdateBusStopsListener {
+
+    private ViewPager viewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,11 +31,19 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         // Set up viewpager
-        ViewPager viewPager = (ViewPager) findViewById(R.id.main_viewpager);
+        viewPager = (ViewPager) findViewById(R.id.main_viewpager);
         viewPager.setAdapter(new MainPagerAdapter(getFragmentManager()));
+        viewPager.setOffscreenPageLimit(2);
 
         // Set up tab layout
         TabLayout tabLayout = (TabLayout) findViewById(R.id.sliding_tabs);
         tabLayout.setupWithViewPager(viewPager);
+    }
+
+    @Override
+    public void onBusStopsUpdate() {
+        MainPagerAdapter adapter = (MainPagerAdapter) viewPager.getAdapter();
+        DirectionsFragment directionsFragment = (DirectionsFragment) adapter.getRegisteredFragment(1);
+        directionsFragment.setupAutoCompleteTextViews();
     }
 }

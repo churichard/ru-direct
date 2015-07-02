@@ -18,39 +18,13 @@ import java.util.Map;
 import me.rutgersdirect.rudirect.R;
 import me.rutgersdirect.rudirect.adapter.BusRouteAdapter;
 import me.rutgersdirect.rudirect.api.NextBusAPI;
+import me.rutgersdirect.rudirect.interfaces.UpdateBusStopsListener;
 import me.rutgersdirect.rudirect.ui.view.DividerItemDecoration;
 import me.rutgersdirect.rudirect.util.RUDirectUtil;
 
 public class AllRoutesFragment extends BaseRouteFragment {
 
     private RecyclerView allBusesRecyclerView;
-
-    // Sets up the bus routes
-    private class UpdateAllRoutesTask extends AsyncTask<Void, Void, Void> {
-        protected Void doInBackground(Void... voids) {
-            NextBusAPI.saveBusStops();
-            NextBusAPI.saveBusPaths();
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void v) {
-            if (!RUDirectUtil.isNetworkAvailable() && allBusesRecyclerView.getAdapter().getItemCount() == 0) {
-                errorView.setVisibility(View.VISIBLE);
-                errorView.setText("Unable to get routes - check your Internet connection and try again.");
-            } else {
-                errorView.setVisibility(View.GONE);
-                allBusesRecyclerView.setAdapter(
-                        new BusRouteAdapter(getBusRoutes(), mainActivity, AllRoutesFragment.this));
-            }
-            mSwipeRefreshLayout.setRefreshing(false);
-        }
-    }
-
-    // Sets up the RecyclerView
-    private void updateAllRoutes() {
-        new UpdateAllRoutesTask().execute();
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -114,5 +88,41 @@ public class AllRoutesFragment extends BaseRouteFragment {
         String[] busNames = Arrays.copyOf(busNamesObj, busNamesObj.length, String[].class);
         Arrays.sort(busNames);
         return busNames;
+    }
+
+    // Sets up the RecyclerView
+    private void updateAllRoutes() {
+        new UpdateAllRoutesTask().execute(mainActivity);
+    }
+
+    // Sets up the bus routes
+    private class UpdateAllRoutesTask extends AsyncTask<UpdateBusStopsListener, Void, Void> {
+        private UpdateBusStopsListener listener;
+
+        protected Void doInBackground(UpdateBusStopsListener... listeners) {
+            if (listeners.length != 0) {
+                listener = listeners[0];
+            }
+            NextBusAPI.saveBusStops();
+            NextBusAPI.saveBusPaths();
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void v) {
+            if (!RUDirectUtil.isNetworkAvailable() && allBusesRecyclerView.getAdapter().getItemCount() == 0) {
+                errorView.setVisibility(View.VISIBLE);
+                errorView.setText("Unable to get routes - check your Internet connection and try again.");
+            } else {
+                errorView.setVisibility(View.GONE);
+                allBusesRecyclerView.setAdapter(
+                        new BusRouteAdapter(getBusRoutes(), mainActivity, AllRoutesFragment.this));
+            }
+            mSwipeRefreshLayout.setRefreshing(false);
+
+            if (listener != null) {
+                listener.onBusStopsUpdate();
+            }
+        }
     }
 }

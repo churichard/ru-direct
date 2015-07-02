@@ -9,8 +9,8 @@ import me.rutgersdirect.rudirect.fragment.BusTimesFragment;
 
 public class BusStopsPagerAdapter extends FragmentPagerAdapter {
 
-    private static final String[] titles = {"Route", "Map"};
-    private static final int NUM_ITEMS = titles.length;
+    private static final String[] TITLES = {"Route", "Map"};
+    private static final int NUM_ITEMS = TITLES.length;
 
     public BusStopsPagerAdapter(FragmentManager fm) {
         super(fm);
@@ -33,6 +33,6 @@ public class BusStopsPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public String getPageTitle(int position) {
-        return titles[position];
+        return TITLES[position];
     }
 }

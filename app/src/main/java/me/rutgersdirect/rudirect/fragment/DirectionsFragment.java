@@ -4,25 +4,28 @@ import android.app.Fragment;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
+import android.widget.Spinner;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.TreeSet;
 
 import me.rutgersdirect.rudirect.R;
 import me.rutgersdirect.rudirect.activity.MainActivity;
 import me.rutgersdirect.rudirect.util.RUDirectUtil;
 
-public class DirectionsFragment extends Fragment {
+public class DirectionsFragment extends Fragment implements AdapterView.OnItemSelectedListener {
 
     private static final String TAG = DirectionsFragment.class.getSimpleName();
     private MainActivity mainActivity;
+    private String[] busStopArray;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -41,15 +44,9 @@ public class DirectionsFragment extends Fragment {
         setupAutoCompleteTextViews();
     }
 
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-    }
-
     public void setupAutoCompleteTextViews() {
-        // Get a reference to the AutoCompleteTextView in the layout
-        AutoCompleteTextView originTextView = (AutoCompleteTextView) mainActivity.findViewById(R.id.origin_textview);
-        AutoCompleteTextView destTextView = (AutoCompleteTextView) mainActivity.findViewById(R.id.destination_textview);
+        Spinner originSpinner = (Spinner) mainActivity.findViewById(R.id.origin_spinner);
+        Spinner destSpinner = (Spinner) mainActivity.findViewById(R.id.destination_spinner);
 
         // Get the string array
         SharedPreferences busTagsToStopTitlesPref = mainActivity.getSharedPreferences(
@@ -58,18 +55,20 @@ public class DirectionsFragment extends Fragment {
 
         if (busTagsToStopTitlesMap.size() != 0) {
             // Create list of bus stops
-            LinkedHashSet<String> busStops = new LinkedHashSet<>();
+            TreeSet<String> busStops = new TreeSet<>();
             String[] busTags = getBusTags();
             for (String busTag : busTags) {
-                String[] stops = RUDirectUtil.loadArray(busTagsToStopTitlesPref, busTag);
-                Collections.addAll(busStops, stops);
+                Collections.addAll(busStops, RUDirectUtil.loadArray(busTagsToStopTitlesPref, busTag));
             }
+            busStopArray = busStops.toArray(new String[busStops.size()]);
 
             // Create the adapter and set it to the AutoCompleteTextViews
             ArrayAdapter<String> adapter =
-                    new ArrayAdapter<>(mainActivity, android.R.layout.simple_list_item_1, busStops.toArray(new String[busStops.size()]));
-            originTextView.setAdapter(adapter);
-            destTextView.setAdapter(adapter);
+                    new ArrayAdapter<>(mainActivity, android.R.layout.simple_list_item_1, busStopArray);
+            originSpinner.setAdapter(adapter);
+            originSpinner.setOnItemSelectedListener(this);
+            destSpinner.setAdapter(adapter);
+            destSpinner.setOnItemSelectedListener(this);
         }
     }
 
@@ -82,4 +81,12 @@ public class DirectionsFragment extends Fragment {
         Arrays.sort(busNames);
         return busNames;
     }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        Log.d(TAG, busStopArray[position] + " was selected");
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) { /* Do nothing */ }
 }

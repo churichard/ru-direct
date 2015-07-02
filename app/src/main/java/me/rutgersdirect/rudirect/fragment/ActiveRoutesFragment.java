@@ -16,6 +16,7 @@ import android.widget.TextView;
 import me.rutgersdirect.rudirect.R;
 import me.rutgersdirect.rudirect.adapter.BusRouteAdapter;
 import me.rutgersdirect.rudirect.api.NextBusAPI;
+import me.rutgersdirect.rudirect.interfaces.UpdateBusStopsListener;
 import me.rutgersdirect.rudirect.ui.view.DividerItemDecoration;
 import me.rutgersdirect.rudirect.util.RUDirectUtil;
 
@@ -23,45 +24,6 @@ public class ActiveRoutesFragment extends BaseRouteFragment {
 
     private RecyclerView activeBusesRecyclerView;
     private SharedPreferences tagsToBusesPref;
-
-    private class UpdateActiveRoutesTask extends AsyncTask<Void, Void, String[]> {
-        protected String[] doInBackground(Void... voids) {
-            if (tagsToBusesPref.getAll().size() == 0) {
-                NextBusAPI.saveBusStops();
-                NextBusAPI.saveBusPaths();
-            }
-            return NextBusAPI.getActiveBusTags();
-        }
-
-        protected void onPostExecute(String[] activeBusTags) {
-            // Fill active bus array with active bus names
-            String[] activeBuses = new String[activeBusTags.length];
-            for (int i = 0; i < activeBusTags.length; i++) {
-                activeBuses[i] = tagsToBusesPref.getString(activeBusTags[i], "Offline");
-            }
-            if (activeBusTags.length == 1 && activeBuses[0].equals("Offline")) {
-                // Setup error message
-                errorView.setVisibility(View.VISIBLE);
-                activeBusesRecyclerView.setAdapter(new BusRouteAdapter());
-                if (RUDirectUtil.isNetworkAvailable()) {
-                    errorView.setText("No active buses.");
-                } else {
-                    errorView.setText("Unable to get active routes - check your Internet connection and try again.");
-                }
-            } else {
-                // Show active buses
-                errorView.setVisibility(View.GONE);
-                activeBusesRecyclerView.setAdapter(new BusRouteAdapter(activeBuses, mainActivity, ActiveRoutesFragment.this));
-            }
-
-            mSwipeRefreshLayout.setRefreshing(false);
-        }
-    }
-
-    // Sets up the RecyclerView
-    public void updateActiveRoutes() {
-        new UpdateActiveRoutesTask().execute();
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -126,5 +88,52 @@ public class ActiveRoutesFragment extends BaseRouteFragment {
             }
         });
         mSwipeRefreshLayout.setColorSchemeResources(R.color.primary_color);
+    }
+
+    // Sets up the RecyclerView
+    public void updateActiveRoutes() {
+        new UpdateActiveRoutesTask().execute(mainActivity);
+    }
+
+    private class UpdateActiveRoutesTask extends AsyncTask<UpdateBusStopsListener, Void, String[]> {
+        private UpdateBusStopsListener listener;
+
+        protected String[] doInBackground(UpdateBusStopsListener... listeners) {
+            if (listeners.length != 0) {
+                listener = listeners[0];
+            }
+            if (tagsToBusesPref.getAll().size() == 0) {
+                NextBusAPI.saveBusStops();
+                NextBusAPI.saveBusPaths();
+            }
+            return NextBusAPI.getActiveBusTags();
+        }
+
+        protected void onPostExecute(String[] activeBusTags) {
+            // Fill active bus array with active bus names
+            String[] activeBuses = new String[activeBusTags.length];
+            for (int i = 0; i < activeBusTags.length; i++) {
+                activeBuses[i] = tagsToBusesPref.getString(activeBusTags[i], "Offline");
+            }
+            if (activeBusTags.length == 1 && activeBuses[0].equals("Offline")) {
+                // Setup error message
+                errorView.setVisibility(View.VISIBLE);
+                activeBusesRecyclerView.setAdapter(new BusRouteAdapter());
+                if (RUDirectUtil.isNetworkAvailable()) {
+                    errorView.setText("No active buses.");
+                } else {
+                    errorView.setText("Unable to get active routes - check your Internet connection and try again.");
+                }
+            } else {
+                // Show active buses
+                errorView.setVisibility(View.GONE);
+                activeBusesRecyclerView.setAdapter(new BusRouteAdapter(activeBuses, mainActivity, ActiveRoutesFragment.this));
+            }
+            mSwipeRefreshLayout.setRefreshing(false);
+
+            if (listener != null) {
+                listener.onBusStopsUpdate();
+            }
+        }
     }
 }

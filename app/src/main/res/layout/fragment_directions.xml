@@ -1,35 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:paddingBottom="@dimen/directions_padding"
     android:paddingLeft="@dimen/directions_padding"
     android:paddingRight="@dimen/directions_padding"
     android:paddingTop="@dimen/directions_padding">
 
-    <AutoCompleteTextView
+    <TextView
         android:id="@+id/origin_textview"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
+        style="@style/TextViewStyle"
         android:layout_marginBottom="10dp"
-        android:hint="@string/origin_text"
-        android:inputType="text" />
+        android:layout_marginTop="15dp"
+        android:text="@string/origin_text" />
 
-    <AutoCompleteTextView
-        android:id="@+id/destination_textview"
+    <Spinner
+        android:id="@+id/origin_spinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/origin_textview"
         android:layout_centerHorizontal="true"
+        android:layout_marginBottom="20dp"
+        android:background="@drawable/spinner_outline" />
+
+    <View
+        android:id="@+id/divider_line"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@id/origin_spinner"
+        android:background="@android:color/darker_gray" />
+
+    <TextView
+        android:id="@+id/destination_textview"
+        style="@style/TextViewStyle"
+        android:layout_below="@id/divider_line"
         android:layout_marginBottom="10dp"
-        android:hint="@string/destination_text"
-        android:inputType="text" />
+        android:layout_marginTop="15dp"
+        android:text="@string/destination_text" />
+
+    <Spinner
+        android:id="@+id/destination_spinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/destination_textview"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="40dp"
+        android:background="@drawable/spinner_outline" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/destination_textview"
+        android:layout_below="@id/destination_spinner"
         android:layout_centerHorizontal="true"
         android:background="@color/primary_color"
         android:text="@string/find_route"
