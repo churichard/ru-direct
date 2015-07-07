@@ -17,6 +17,11 @@ public class BusStop implements Parcelable {
         this.isExpanded = false;
     }
 
+    public BusStop(String tag, String title) {
+        this.tag = tag;
+        this.title = title;
+    }
+
     private BusStop(Parcel in) {
         tag = in.readString();
         title = in.readString();

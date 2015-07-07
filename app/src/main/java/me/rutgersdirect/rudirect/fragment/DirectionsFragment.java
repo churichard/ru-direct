@@ -2,14 +2,15 @@ package me.rutgersdirect.rudirect.fragment;
 
 import android.app.Fragment;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.Spinner;
 
 import java.util.Arrays;
@@ -18,14 +19,21 @@ import java.util.Map;
 import java.util.TreeSet;
 
 import me.rutgersdirect.rudirect.R;
+import me.rutgersdirect.rudirect.activity.DirectionsActivity;
 import me.rutgersdirect.rudirect.activity.MainActivity;
+import me.rutgersdirect.rudirect.interfaces.UpdateBusStopsListener;
 import me.rutgersdirect.rudirect.util.RUDirectUtil;
 
-public class DirectionsFragment extends Fragment implements AdapterView.OnItemSelectedListener {
+public class DirectionsFragment extends Fragment
+        implements AdapterView.OnItemSelectedListener, UpdateBusStopsListener {
 
     private static final String TAG = DirectionsFragment.class.getSimpleName();
     private MainActivity mainActivity;
-    private String[] busStopArray;
+
+    private Spinner originSpinner;
+    private Spinner destSpinner;
+    private String origin;
+    private String destination;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -45,8 +53,8 @@ public class DirectionsFragment extends Fragment implements AdapterView.OnItemSe
     }
 
     public void setupAutoCompleteTextViews() {
-        Spinner originSpinner = (Spinner) mainActivity.findViewById(R.id.origin_spinner);
-        Spinner destSpinner = (Spinner) mainActivity.findViewById(R.id.destination_spinner);
+        originSpinner = (Spinner) mainActivity.findViewById(R.id.origin_spinner);
+        destSpinner = (Spinner) mainActivity.findViewById(R.id.destination_spinner);
 
         // Get the string array
         SharedPreferences busTagsToStopTitlesPref = mainActivity.getSharedPreferences(
@@ -60,7 +68,11 @@ public class DirectionsFragment extends Fragment implements AdapterView.OnItemSe
             for (String busTag : busTags) {
                 Collections.addAll(busStops, RUDirectUtil.loadArray(busTagsToStopTitlesPref, busTag));
             }
-            busStopArray = busStops.toArray(new String[busStops.size()]);
+            String[] busStopArray = busStops.toArray(new String[busStops.size()]);
+
+            // Initialize origin and destination
+            origin = busStopArray[0];
+            destination = busStopArray[0];
 
             // Create the adapter and set it to the AutoCompleteTextViews
             ArrayAdapter<String> adapter =
@@ -70,6 +82,19 @@ public class DirectionsFragment extends Fragment implements AdapterView.OnItemSe
             destSpinner.setAdapter(adapter);
             destSpinner.setOnItemSelectedListener(this);
         }
+
+        Button findRouteButton = (Button) mainActivity.findViewById(R.id.find_route_button);
+        findRouteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (origin != null && destination != null) {
+                    Intent intent = new Intent(mainActivity, DirectionsActivity.class);
+                    intent.putExtra(getString(R.string.intent_origin_text), origin);
+                    intent.putExtra(getString(R.string.intent_destination_text), destination);
+                    startActivity(intent);
+                }
+            }
+        });
     }
 
     // Returns an array of bus route tags
@@ -84,9 +109,18 @@ public class DirectionsFragment extends Fragment implements AdapterView.OnItemSe
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        Log.d(TAG, busStopArray[position] + " was selected");
+        if (parent == originSpinner) {
+            origin = (String) parent.getItemAtPosition(position);
+        } else {
+            destination = (String) parent.getItemAtPosition(position);
+        }
     }
 
     @Override
     public void onNothingSelected(AdapterView<?> parent) { /* Do nothing */ }
+
+    @Override
+    public void onBusStopsUpdate() {
+        setupAutoCompleteTextViews();
+    }
 }

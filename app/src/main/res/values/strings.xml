@@ -1,13 +1,17 @@
 <resources>
+    <!-- App -->
     <string name="app_name">RU Direct</string>
     <string name="active_buses">Active Buses</string>
     <string name="bus_times">Bus Stops</string>
     <string name="all_buses">All Buses</string>
+    <string name="directions_activity_name">Directions</string>
 
+    <!-- Misc -->
     <string name="refresh">Refresh</string>
     <string name="no_internet_text">No Internet Connection</string>
     <string name="action_settings">Settings</string>
 
+    <!-- SharedPreferences keys -->
     <string name="tags_to_buses_key">me.rutgersdirect.rudirect.TAGS_TO_BUSES_KEY</string>
     <string name="buses_to_tags_key">me.rutgersdirect.rudirect.BUSES_TO_TAGS_KEY</string>
     <string name="bus_tags_to_stop_tags_key">me.rutgersdirect.rudirect.BUS_TAGS_TO_STOP_TAGS_KEY</string>
@@ -17,7 +21,12 @@
     <string name="path_latitudes_key">me.rutgersdirect.rudirect.PATH_LATITUDES_KEY</string>
     <string name="path_longitudes_key">me.rutgersdirect.rudirect.PATH_LONGITUDES_KEY</string>
 
-    <string name="origin_text">Select your starting point:</string>
-    <string name="destination_text">Select your destination:</string>
+    <!-- Directions -->
+    <string name="select_origin_text">Select your starting point:</string>
+    <string name="select_destination_text">Select your destination:</string>
     <string name="find_route">Find route</string>
+
+    <!-- Intents -->
+    <string name="intent_origin_text">Origin</string>
+    <string name="intent_destination_text">Destination</string>
 </resources>

@@ -16,7 +16,6 @@ import android.widget.TextView;
 import me.rutgersdirect.rudirect.R;
 import me.rutgersdirect.rudirect.adapter.BusRouteAdapter;
 import me.rutgersdirect.rudirect.api.NextBusAPI;
-import me.rutgersdirect.rudirect.interfaces.UpdateBusStopsListener;
 import me.rutgersdirect.rudirect.ui.view.DividerItemDecoration;
 import me.rutgersdirect.rudirect.util.RUDirectUtil;
 
@@ -92,16 +91,12 @@ public class ActiveRoutesFragment extends BaseRouteFragment {
 
     // Sets up the RecyclerView
     public void updateActiveRoutes() {
-        new UpdateActiveRoutesTask().execute(mainActivity);
+        new UpdateActiveRoutesTask().execute();
     }
 
-    private class UpdateActiveRoutesTask extends AsyncTask<UpdateBusStopsListener, Void, String[]> {
-        private UpdateBusStopsListener listener;
+    private class UpdateActiveRoutesTask extends AsyncTask<Void, Void, String[]> {
 
-        protected String[] doInBackground(UpdateBusStopsListener... listeners) {
-            if (listeners.length != 0) {
-                listener = listeners[0];
-            }
+        protected String[] doInBackground(Void... voids) {
             if (tagsToBusesPref.getAll().size() == 0) {
                 NextBusAPI.saveBusStops();
                 NextBusAPI.saveBusPaths();
@@ -130,10 +125,6 @@ public class ActiveRoutesFragment extends BaseRouteFragment {
                 activeBusesRecyclerView.setAdapter(new BusRouteAdapter(activeBuses, mainActivity, ActiveRoutesFragment.this));
             }
             mSwipeRefreshLayout.setRefreshing(false);
-
-            if (listener != null) {
-                listener.onBusStopsUpdate();
-            }
         }
     }
 }

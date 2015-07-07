@@ -27,4 +27,5 @@ dependencies {
     compile 'com.android.support:support-v4:22.2.0' // Android Support v4
     compile 'com.android.support:design:22.2.0' // Android Design
     compile 'com.android.support:recyclerview-v7:22.2.0' // RecyclerView
+    compile 'org.jgrapht:jgrapht-core:0.9.1' // JGraphT
 }

@@ -17,6 +17,7 @@ import java.util.Map;
 
 import me.rutgersdirect.rudirect.R;
 import me.rutgersdirect.rudirect.adapter.BusRouteAdapter;
+import me.rutgersdirect.rudirect.adapter.MainPagerAdapter;
 import me.rutgersdirect.rudirect.api.NextBusAPI;
 import me.rutgersdirect.rudirect.interfaces.UpdateBusStopsListener;
 import me.rutgersdirect.rudirect.ui.view.DividerItemDecoration;
@@ -92,16 +93,18 @@ public class AllRoutesFragment extends BaseRouteFragment {
 
     // Sets up the RecyclerView
     private void updateAllRoutes() {
-        new UpdateAllRoutesTask().execute(mainActivity);
+        MainPagerAdapter adapter = (MainPagerAdapter) mainActivity.getViewPager().getAdapter();
+        DirectionsFragment directionsFragment = (DirectionsFragment) adapter.getRegisteredFragment(1);
+        new UpdateBusStopsAndPaths().execute(directionsFragment);
     }
 
     // Sets up the bus routes
-    private class UpdateAllRoutesTask extends AsyncTask<UpdateBusStopsListener, Void, Void> {
+    private class UpdateBusStopsAndPaths extends AsyncTask<UpdateBusStopsListener, Void, Void> {
         private UpdateBusStopsListener listener;
 
         protected Void doInBackground(UpdateBusStopsListener... listeners) {
             if (listeners.length != 0) {
-                listener = listeners[0];
+                this.listener = listeners[0];
             }
             NextBusAPI.saveBusStops();
             NextBusAPI.saveBusPaths();

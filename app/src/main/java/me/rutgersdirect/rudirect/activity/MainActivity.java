@@ -11,10 +11,8 @@ import java.util.HashMap;
 import me.rutgersdirect.rudirect.R;
 import me.rutgersdirect.rudirect.adapter.MainPagerAdapter;
 import me.rutgersdirect.rudirect.data.constants.AppData;
-import me.rutgersdirect.rudirect.fragment.DirectionsFragment;
-import me.rutgersdirect.rudirect.interfaces.UpdateBusStopsListener;
 
-public class MainActivity extends AppCompatActivity implements UpdateBusStopsListener {
+public class MainActivity extends AppCompatActivity {
 
     private ViewPager viewPager;
 
@@ -40,10 +38,7 @@ public class MainActivity extends AppCompatActivity implements UpdateBusStopsLis
         tabLayout.setupWithViewPager(viewPager);
     }
 
-    @Override
-    public void onBusStopsUpdate() {
-        MainPagerAdapter adapter = (MainPagerAdapter) viewPager.getAdapter();
-        DirectionsFragment directionsFragment = (DirectionsFragment) adapter.getRegisteredFragment(1);
-        directionsFragment.setupAutoCompleteTextViews();
+    public ViewPager getViewPager() {
+        return viewPager;
     }
 }

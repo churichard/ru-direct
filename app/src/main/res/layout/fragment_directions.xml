@@ -8,17 +8,17 @@
     android:paddingTop="@dimen/directions_padding">
 
     <TextView
-        android:id="@+id/origin_textview"
+        android:id="@+id/select_origin_textview"
         style="@style/TextViewStyle"
         android:layout_marginBottom="10dp"
         android:layout_marginTop="15dp"
-        android:text="@string/origin_text" />
+        android:text="@string/select_origin_text" />
 
     <Spinner
         android:id="@+id/origin_spinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/origin_textview"
+        android:layout_below="@id/select_origin_textview"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="20dp"
         android:background="@drawable/spinner_outline" />
@@ -31,23 +31,24 @@
         android:background="@android:color/darker_gray" />
 
     <TextView
-        android:id="@+id/destination_textview"
+        android:id="@+id/select_destination_textview"
         style="@style/TextViewStyle"
         android:layout_below="@id/divider_line"
         android:layout_marginBottom="10dp"
         android:layout_marginTop="15dp"
-        android:text="@string/destination_text" />
+        android:text="@string/select_destination_text" />
 
     <Spinner
         android:id="@+id/destination_spinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/destination_textview"
+        android:layout_below="@id/select_destination_textview"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="40dp"
         android:background="@drawable/spinner_outline" />
 
     <Button
+        android:id="@+id/find_route_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/destination_spinner"
