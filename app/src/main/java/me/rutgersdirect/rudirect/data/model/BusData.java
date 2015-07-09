@@ -7,6 +7,8 @@ import java.util.HashMap;
 
 public class BusData {
 
+    @DatabaseField(id = true)
+    private final int ID = 9000;
     @DatabaseField(dataType = DataType.SERIALIZABLE)
     private HashMap<String, String> busTagsToBusTitles;
     @DatabaseField(dataType = DataType.SERIALIZABLE)
@@ -38,6 +40,10 @@ public class BusData {
         busTagToStopLongitudes = null;
         busTagToPathLatitudes = null;
         busTagToPathLongitudes = null;
+    }
+
+    public int getID() {
+        return ID;
     }
 
     public HashMap<String, String> getBusTagsToBusTitles() {

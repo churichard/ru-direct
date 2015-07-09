@@ -40,10 +40,13 @@ public class RUDirectUtil {
 
     // Returns a sorted array of keys given a map
     public static String[] mapKeySetToSortedArray(Map<String, String> map) {
-        Object[] busNamesObj = map.keySet().toArray();
-        String[] busNames = Arrays.copyOf(busNamesObj, busNamesObj.length, String[].class);
-        Arrays.sort(busNames);
-        return busNames;
+        if (map != null) {
+            Object[] busNamesObj = map.keySet().toArray();
+            String[] busNames = Arrays.copyOf(busNamesObj, busNamesObj.length, String[].class);
+            Arrays.sort(busNames);
+            return busNames;
+        }
+        return null;
     }
 
     // Return an ArrayList of BusStops given the titles and the times

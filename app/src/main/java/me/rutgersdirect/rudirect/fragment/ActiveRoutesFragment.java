@@ -102,8 +102,10 @@ public class ActiveRoutesFragment extends BaseRouteFragment {
             // Fill active bus array with active bus names
             String[] activeBuses = new String[activeBusTags.length];
             HashMap<String, String> busTagsToBusTitles = RUDirectApplication.getBusData().getBusTagsToBusTitles();
-            for (int i = 0; i < activeBusTags.length; i++) {
-                activeBuses[i] = busTagsToBusTitles.get(activeBusTags[i]);
+            if (busTagsToBusTitles != null) {
+                for (int i = 0; i < activeBusTags.length; i++) {
+                    activeBuses[i] = busTagsToBusTitles.get(activeBusTags[i]);
+                }
             }
             if (activeBusTags.length == 1 && activeBuses[0] == null) {
                 // Setup error message

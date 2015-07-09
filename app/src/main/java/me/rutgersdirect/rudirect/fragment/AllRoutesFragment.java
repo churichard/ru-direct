@@ -63,7 +63,8 @@ public class AllRoutesFragment extends BaseRouteFragment {
         // Setup layout
         allBusesRecyclerView.addItemDecoration(new DividerItemDecoration(mainActivity, LinearLayoutManager.VERTICAL));
         // Set adapter
-        allBusesRecyclerView.setAdapter(new BusRouteAdapter());
+        allBusesRecyclerView.setAdapter(new BusRouteAdapter(RUDirectUtil.mapKeySetToSortedArray(
+                RUDirectApplication.getBusData().getBusTitlesToBusTags()), mainActivity, this));
     }
 
     // Set up SwipeRefreshLayout
