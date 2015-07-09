@@ -89,8 +89,13 @@ public class XMLBusStopHandler extends DefaultHandler {
 
         busData.setBusTagsToStopTags(busTagsToStopTagsHashMap);
         busData.setBusTagsToStopTitles(busTagsToStopTitlesHashMap);
-        busData.setStopTitlesToStopTags(stopTitlesToStopTagsHashMap);
         busData.setBusTagsToBusTitles(busTagsToBusTitlesHashMap);
         busData.setBusTitlesToBusTags(busTitlesToBusTagsHashMap);
+
+        HashMap<String, String[]> stopTitlesToStopTags = new HashMap<>();
+        for (String busTag : stopTitlesToStopTagsHashMap.keySet()) {
+            stopTitlesToStopTags.put(busTag, RUDirectUtil.arrayListToArray(stopTitlesToStopTagsHashMap.get(busTag)));
+        }
+        busData.setStopTitlesToStopTags(stopTitlesToStopTags);
     }
 }

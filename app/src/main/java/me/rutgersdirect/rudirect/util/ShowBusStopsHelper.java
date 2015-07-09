@@ -35,18 +35,9 @@ public class ShowBusStopsHelper extends AsyncTask<Object, Void, Void> {
         return null;
     }
 
-    // Return an ArrayList of BusStops given the titles and the times
-    private ArrayList<BusStop> getBusStopArrayList(String[] titles, int[][] times) {
-        ArrayList<BusStop> buses = new ArrayList<>(busStopTitles.length);
-        for (int i = 0; i < busStopTitles.length; i++) {
-            buses.add(new BusStop(tag, titles[i], times[i]));
-        }
-        return buses;
-    }
-
     @Override
     protected void onPostExecute(Void v) {
-        ArrayList<BusStop> buses = getBusStopArrayList(busStopTitles, busStopTimes);
+        ArrayList<BusStop> buses = RUDirectUtil.getBusStopArrayList(tag, busStopTitles, busStopTimes);
         if (fragment instanceof BusTimesFragment) {
             // Update items in RecyclerView
             BusTimesFragment busTimesFragment = ((BusTimesFragment) fragment);

@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.Map;
 
 import me.rutgersdirect.rudirect.data.constants.RUDirectApplication;
+import me.rutgersdirect.rudirect.data.model.BusStop;
 
 public class RUDirectUtil {
 
@@ -43,5 +44,14 @@ public class RUDirectUtil {
         String[] busNames = Arrays.copyOf(busNamesObj, busNamesObj.length, String[].class);
         Arrays.sort(busNames);
         return busNames;
+    }
+
+    // Return an ArrayList of BusStops given the titles and the times
+    public static ArrayList<BusStop> getBusStopArrayList(String tag, String[] titles, int[][] times) {
+        ArrayList<BusStop> buses = new ArrayList<>(titles.length);
+        for (int i = 0; i < titles.length; i++) {
+            buses.add(new BusStop(tag, titles[i], times[i]));
+        }
+        return buses;
     }
 }

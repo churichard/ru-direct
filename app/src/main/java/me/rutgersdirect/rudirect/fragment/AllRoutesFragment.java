@@ -80,6 +80,7 @@ public class AllRoutesFragment extends BaseRouteFragment {
 
     // Sets up the RecyclerView
     private void updateAllRoutes() {
+        mSwipeRefreshLayout.setRefreshing(true);
         MainPagerAdapter adapter = (MainPagerAdapter) mainActivity.getViewPager().getAdapter();
         DirectionsFragment directionsFragment = (DirectionsFragment) adapter.getRegisteredFragment(1);
         new UpdateBusStopsAndPaths().execute(directionsFragment);

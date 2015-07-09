@@ -3,7 +3,6 @@ package me.rutgersdirect.rudirect.data.model;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 public class BusData {
@@ -18,7 +17,7 @@ public class BusData {
     private HashMap<String, String[]> busTagsToStopTitles;
 
     @DatabaseField(dataType = DataType.SERIALIZABLE)
-    private HashMap<String, ArrayList<String>> stopTitlesToStopTags;
+    private HashMap<String, String[]> stopTitlesToStopTags;
 
     @DatabaseField(dataType = DataType.SERIALIZABLE)
     private HashMap<String, String[]> busTagToStopLatitudes;
@@ -73,11 +72,11 @@ public class BusData {
         this.busTagsToStopTitles = busTagsToStopTitles;
     }
 
-    public HashMap<String, ArrayList<String>> getStopTitlesToStopTags() {
+    public HashMap<String, String[]> getStopTitlesToStopTags() {
         return stopTitlesToStopTags;
     }
 
-    public void setStopTitlesToStopTags(HashMap<String, ArrayList<String>> stopTitlesToStopTags) {
+    public void setStopTitlesToStopTags(HashMap<String, String[]> stopTitlesToStopTags) {
         this.stopTitlesToStopTags = stopTitlesToStopTags;
     }
 

@@ -50,8 +50,6 @@ public class BusTimesFragment extends Fragment implements AppBarLayout.OnOffsetC
 
         setupRecyclerView();
         setupSwipeRefreshLayout();
-        mSwipeRefreshLayout.setRefreshing(true);
-        updateBusTimes();
     }
 
     @Override
@@ -59,6 +57,8 @@ public class BusTimesFragment extends Fragment implements AppBarLayout.OnOffsetC
         super.onResume();
 
         // Update bus times
+        BusStopAdapter.setExpToggleRequest(false);
+        mSwipeRefreshLayout.setRefreshing(true);
         updateBusTimes();
 
         // Auto refreshes times every REFRESH_INTERVAL seconds

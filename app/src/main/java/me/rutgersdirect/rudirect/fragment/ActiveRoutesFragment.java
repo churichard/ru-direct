@@ -11,6 +11,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.util.HashMap;
+
 import me.rutgersdirect.rudirect.R;
 import me.rutgersdirect.rudirect.adapter.BusRouteAdapter;
 import me.rutgersdirect.rudirect.api.NextBusAPI;
@@ -83,6 +85,7 @@ public class ActiveRoutesFragment extends BaseRouteFragment {
 
     // Sets up the RecyclerView
     public void updateActiveRoutes() {
+        mSwipeRefreshLayout.setRefreshing(true);
         new UpdateActiveRoutesTask().execute();
     }
 
@@ -98,8 +101,9 @@ public class ActiveRoutesFragment extends BaseRouteFragment {
         protected void onPostExecute(String[] activeBusTags) {
             // Fill active bus array with active bus names
             String[] activeBuses = new String[activeBusTags.length];
+            HashMap<String, String> busTagsToBusTitles = RUDirectApplication.getBusData().getBusTagsToBusTitles();
             for (int i = 0; i < activeBusTags.length; i++) {
-                activeBuses[i] = RUDirectApplication.getBusData().getBusTagsToBusTitles().get(activeBusTags[i]);
+                activeBuses[i] = busTagsToBusTitles.get(activeBusTags[i]);
             }
             if (activeBusTags.length == 1 && activeBuses[0] == null) {
                 // Setup error message
