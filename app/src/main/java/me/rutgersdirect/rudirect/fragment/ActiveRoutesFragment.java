@@ -1,7 +1,5 @@
 package me.rutgersdirect.rudirect.fragment;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -16,19 +14,13 @@ import android.widget.TextView;
 import me.rutgersdirect.rudirect.R;
 import me.rutgersdirect.rudirect.adapter.BusRouteAdapter;
 import me.rutgersdirect.rudirect.api.NextBusAPI;
+import me.rutgersdirect.rudirect.data.constants.RUDirectApplication;
 import me.rutgersdirect.rudirect.ui.view.DividerItemDecoration;
 import me.rutgersdirect.rudirect.util.RUDirectUtil;
 
 public class ActiveRoutesFragment extends BaseRouteFragment {
 
     private RecyclerView activeBusesRecyclerView;
-    private SharedPreferences tagsToBusesPref;
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        tagsToBusesPref = mainActivity.getSharedPreferences(getString(R.string.tags_to_buses_key), Context.MODE_PRIVATE);
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -97,9 +89,8 @@ public class ActiveRoutesFragment extends BaseRouteFragment {
     private class UpdateActiveRoutesTask extends AsyncTask<Void, Void, String[]> {
 
         protected String[] doInBackground(Void... voids) {
-            if (tagsToBusesPref.getAll().size() == 0) {
+            if (RUDirectApplication.getBusData().getBusTagsToBusTitles() == null) {
                 NextBusAPI.saveBusStops();
-                NextBusAPI.saveBusPaths();
             }
             return NextBusAPI.getActiveBusTags();
         }
@@ -108,9 +99,9 @@ public class ActiveRoutesFragment extends BaseRouteFragment {
             // Fill active bus array with active bus names
             String[] activeBuses = new String[activeBusTags.length];
             for (int i = 0; i < activeBusTags.length; i++) {
-                activeBuses[i] = tagsToBusesPref.getString(activeBusTags[i], "Offline");
+                activeBuses[i] = RUDirectApplication.getBusData().getBusTagsToBusTitles().get(activeBusTags[i]);
             }
-            if (activeBusTags.length == 1 && activeBuses[0].equals("Offline")) {
+            if (activeBusTags.length == 1 && activeBuses[0] == null) {
                 // Setup error message
                 errorView.setVisibility(View.VISIBLE);
                 activeBusesRecyclerView.setAdapter(new BusRouteAdapter());

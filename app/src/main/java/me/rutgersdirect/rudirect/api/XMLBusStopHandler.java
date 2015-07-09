@@ -1,44 +1,38 @@
 package me.rutgersdirect.rudirect.api;
 
-import android.content.Context;
-import android.content.SharedPreferences;
-
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
-import me.rutgersdirect.rudirect.R;
 import me.rutgersdirect.rudirect.data.constants.RUDirectApplication;
+import me.rutgersdirect.rudirect.data.model.BusData;
 import me.rutgersdirect.rudirect.util.RUDirectUtil;
 
 public class XMLBusStopHandler extends DefaultHandler {
 
-    private Context context;
     private String busTag;
     private boolean isGettingStops;
+    private BusData busData;
+
+    private HashMap<String, String[]> busTagsToStopTagsHashMap;
+    private HashMap<String, String[]> busTagsToStopTitlesHashMap;
+    private HashMap<String, ArrayList<String>> stopTitlesToStopTagsHashMap;
 
     private ArrayList<String> busTags;
     private ArrayList<String> busTitles;
     private ArrayList<String> stopTitles;
     private ArrayList<String> stopTags;
 
-    private SharedPreferences.Editor busTagsToStopTagsEdit;
-    private SharedPreferences.Editor busTagsToStopTitlesEdit;
-
     public void startDocument() throws SAXException {
-        context = RUDirectApplication.getContext();
+        busData = RUDirectApplication.getBusData();
 
-        // Initialize SharedPreferences
-        SharedPreferences busTagsToStopTagsPref = context.getSharedPreferences(
-                context.getString(R.string.bus_tags_to_stop_tags_key), Context.MODE_PRIVATE);
-        SharedPreferences busTagsToStopTitlesPref = context.getSharedPreferences(
-                context.getString(R.string.bus_tags_to_stop_titles_key), Context.MODE_PRIVATE);
-
-        // Initialize SharedPreference editors
-        busTagsToStopTagsEdit = busTagsToStopTagsPref.edit();
-        busTagsToStopTitlesEdit = busTagsToStopTitlesPref.edit();
+        // Initialize HashMaps
+        busTagsToStopTagsHashMap = new HashMap<>();
+        busTagsToStopTitlesHashMap = new HashMap<>();
+        stopTitlesToStopTagsHashMap = new HashMap<>();
 
         // Initialize ArrayLists
         busTags = new ArrayList<>();
@@ -58,14 +52,24 @@ public class XMLBusStopHandler extends DefaultHandler {
             busTitles.add(atts.getValue("title"));
         }
         if (isGettingStops && qName.equalsIgnoreCase("stop")) {
-            stopTitles.add(atts.getValue("title"));
-            stopTags.add(atts.getValue("tag"));
+            String title = atts.getValue("title");
+            String tag = atts.getValue("tag");
+
+            stopTitles.add(title);
+            stopTags.add(tag);
+
+            ArrayList<String> arrayList = stopTitlesToStopTagsHashMap.get(title);
+            if (arrayList == null) {
+                arrayList = new ArrayList<>();
+                stopTitlesToStopTagsHashMap.put(atts.getValue("title"), arrayList);
+            }
+            arrayList.add(tag);
         }
         if (isGettingStops && qName.equalsIgnoreCase("direction")) {
             isGettingStops = false;
 
-            RUDirectUtil.saveArray(busTagsToStopTagsEdit, stopTags, busTag);
-            RUDirectUtil.saveArray(busTagsToStopTitlesEdit, stopTitles, busTag);
+            busTagsToStopTagsHashMap.put(busTag, RUDirectUtil.arrayListToArray(stopTags));
+            busTagsToStopTitlesHashMap.put(busTag, RUDirectUtil.arrayListToArray(stopTitles));
 
             stopTags.clear();
             stopTitles.clear();
@@ -73,19 +77,20 @@ public class XMLBusStopHandler extends DefaultHandler {
     }
 
     public void endDocument() throws SAXException {
-        SharedPreferences.Editor tagsToBusesEdit = context.getSharedPreferences(
-                context.getString(R.string.tags_to_buses_key), Context.MODE_PRIVATE).edit();
-        SharedPreferences.Editor busesToTagsEdit = context.getSharedPreferences(
-                context.getString(R.string.buses_to_tags_key), Context.MODE_PRIVATE).edit();
+        HashMap<String, String> busTagsToBusTitlesHashMap = new HashMap<>();
+        HashMap<String, String> busTitlesToBusTagsHashMap = new HashMap<>();
 
         for (int i = 0; i < busTags.size(); i++) {
             String tag = busTags.get(i);
             String title = busTitles.get(i);
-            tagsToBusesEdit.putString(tag, title);
-            busesToTagsEdit.putString(title, tag);
+            busTagsToBusTitlesHashMap.put(tag, title);
+            busTitlesToBusTagsHashMap.put(title, tag);
         }
 
-        tagsToBusesEdit.apply();
-        busesToTagsEdit.apply();
+        busData.setBusTagsToStopTags(busTagsToStopTagsHashMap);
+        busData.setBusTagsToStopTitles(busTagsToStopTitlesHashMap);
+        busData.setStopTitlesToStopTags(stopTitlesToStopTagsHashMap);
+        busData.setBusTagsToBusTitles(busTagsToBusTitlesHashMap);
+        busData.setBusTitlesToBusTags(busTitlesToBusTagsHashMap);
     }
 }

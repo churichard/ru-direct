@@ -6,22 +6,17 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
-import me.rutgersdirect.rudirect.R;
 import me.rutgersdirect.rudirect.data.constants.AppData;
-import me.rutgersdirect.rudirect.util.RUDirectUtil;
+import me.rutgersdirect.rudirect.data.constants.RUDirectApplication;
 
 public class NextBusAPI {
 
     private static final String TAG = NextBusAPI.class.getName();
-    public static HashMap<String, ArrayList<String>> activeLatsHashMap;
-    public static HashMap<String, ArrayList<String>> activeLonsHashMap;
 
     // Setups the SAX parser and parses the XML from the url
     private static void parseXML(String urlString, DefaultHandler handler) {
@@ -36,7 +31,7 @@ public class NextBusAPI {
 
     // Updates active buses
     public static void updateActiveBuses() {
-        parseXML(AppData.VEHICLE_LOCATIONS_LINK, new XMLActiveBusHandler());
+        parseXML(AppData.VEHICLE_LOCATIONS_URL, new XMLActiveBusHandler());
     }
 
     // Returns a list of the active buses
@@ -51,7 +46,7 @@ public class NextBusAPI {
     // Returns a list of the bus stop times
     public static int[][] getBusStopTimes(String busTag) {
         // If there is no Internet
-        int length = RUDirectUtil.loadArray(R.string.bus_tags_to_stop_tags_key, busTag).length;
+        int length = RUDirectApplication.getBusData().getBusTagsToStopTags().get(busTag).length;
         int[][] defaultTime = new int[length][1];
         for (int i = 0; i < length; i++) {
             defaultTime[i][0] = -1;
@@ -59,7 +54,7 @@ public class NextBusAPI {
         AppData.BUS_TAGS_TO_STOP_TIMES.put(busTag, defaultTime);
 
         String[] busStopTags = getBusStopTags(busTag);
-        StringBuilder link = new StringBuilder(AppData.PREDICTIONS_LINK);
+        StringBuilder link = new StringBuilder(AppData.PREDICTIONS_URL);
         for (String stopTag : busStopTags) {
             String stop = "&stops=" + busTag + "|null|" + stopTag;
             link.append(stop);
@@ -71,41 +66,41 @@ public class NextBusAPI {
 
     // Saves the bus stops to shared preferences
     public static void saveBusStops() {
-        parseXML(AppData.ALL_ROUTES_LINK, new XMLBusStopHandler());
+        parseXML(AppData.ALL_ROUTES_URL, new XMLBusStopHandler());
     }
 
     // Saves the bus paths to shared preferences
     public static void saveBusPaths() {
-        parseXML(AppData.ALL_ROUTES_LINK, new XMLBusPathHandler());
+        parseXML(AppData.ALL_ROUTES_URL, new XMLBusPathHandler());
     }
 
     // Takes in a bus tag and returns a list of the bus stop titles
     public static String[] getBusStopTitles(String busTag) {
-        return RUDirectUtil.loadArray(R.string.bus_tags_to_stop_titles_key, busTag);
+        return RUDirectApplication.getBusData().getBusTagsToStopTitles().get(busTag);
     }
 
     // Takes in a bus tag and returns a list of the bus stop tags
     public static String[] getBusStopTags(String busTag) {
-        return RUDirectUtil.loadArray(R.string.bus_tags_to_stop_tags_key, busTag);
+        return RUDirectApplication.getBusData().getBusTagsToStopTags().get(busTag);
     }
 
     // Takes in a bus tag and returns a list of the bus stop latitudes
     public static String[] getBusStopLats(String busTag) {
-        return RUDirectUtil.loadArray(R.string.latitudes_key, busTag);
+        return RUDirectApplication.getBusData().getBusTagToStopLatitudes().get(busTag);
     }
 
     // Takes in a bus tag and returns a list of the bus stop longitudes
     public static String[] getBusStopLons(String busTag) {
-        return RUDirectUtil.loadArray(R.string.longitudes_key, busTag);
+        return RUDirectApplication.getBusData().getBusTagToStopLongitudes().get(busTag);
     }
 
     // Takes in a bus tag and returns a list of the bus path latitudes
     public static String[][] getBusPathLats(String busTag) {
-        return RUDirectUtil.loadTwoDimenArray(R.string.path_latitudes_key, busTag);
+        return RUDirectApplication.getBusData().getBusTagToPathLatitudes().get(busTag);
     }
 
     // Takes in a bus tag and returns a list of the bus path longitudes
     public static String[][] getBusPathLons(String busTag) {
-        return RUDirectUtil.loadTwoDimenArray(R.string.path_longitudes_key, busTag);
+        return RUDirectApplication.getBusData().getBusTagToPathLongitudes().get(busTag);
     }
 }

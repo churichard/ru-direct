@@ -1,51 +1,41 @@
 package me.rutgersdirect.rudirect.api;
 
-import android.content.Context;
-import android.content.SharedPreferences;
-
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
-import me.rutgersdirect.rudirect.R;
 import me.rutgersdirect.rudirect.data.constants.RUDirectApplication;
+import me.rutgersdirect.rudirect.data.model.BusData;
 import me.rutgersdirect.rudirect.util.RUDirectUtil;
 
 public class XMLBusPathHandler extends DefaultHandler {
 
+    private BusData busData;
     private String busTag;
     private boolean isGettingStops;
     private boolean inPath;
     private int pathSize;
+
+    private HashMap<String, String[]> latitudeHashMap;
+    private HashMap<String, String[]> longitudeHashMap;
+    private HashMap<String, String[][]> pathLatsHashMap;
+    private HashMap<String, String[][]> pathLonsHashMap;
 
     private ArrayList<String> latitudes;
     private ArrayList<String> longitudes;
     private ArrayList<ArrayList<String>> pathLats;
     private ArrayList<ArrayList<String>> pathLons;
 
-    private SharedPreferences.Editor latitudesEdit;
-    private SharedPreferences.Editor longitudesEdit;
-    private SharedPreferences.Editor pathLatsEdit;
-    private SharedPreferences.Editor pathLonsEdit;
-
     public void startDocument() throws SAXException {
-        Context context = RUDirectApplication.getContext();
+        busData = RUDirectApplication.getBusData();
 
-        SharedPreferences latitudesPref = context.getSharedPreferences(
-                context.getString(R.string.latitudes_key), Context.MODE_PRIVATE);
-        SharedPreferences longitudesPref = context.getSharedPreferences(
-                context.getString(R.string.longitudes_key), Context.MODE_PRIVATE);
-        SharedPreferences pathLatsPref = context.getSharedPreferences(
-                context.getString(R.string.path_latitudes_key), Context.MODE_PRIVATE);
-        SharedPreferences pathLonsPref = context.getSharedPreferences(
-                context.getString(R.string.path_longitudes_key), Context.MODE_PRIVATE);
-
-        latitudesEdit = latitudesPref.edit();
-        longitudesEdit = longitudesPref.edit();
-        pathLatsEdit = pathLatsPref.edit();
-        pathLonsEdit = pathLonsPref.edit();
+        latitudeHashMap = new HashMap<>();
+        longitudeHashMap = new HashMap<>();
+        pathLatsHashMap = new HashMap<>();
+        pathLonsHashMap = new HashMap<>();
 
         latitudes = new ArrayList<>();
         longitudes = new ArrayList<>();
@@ -70,8 +60,8 @@ public class XMLBusPathHandler extends DefaultHandler {
         if (isGettingStops && qName.equalsIgnoreCase("direction")) {
             isGettingStops = false;
 
-            RUDirectUtil.saveArray(latitudesEdit, latitudes, busTag);
-            RUDirectUtil.saveArray(longitudesEdit, longitudes, busTag);
+            latitudeHashMap.put(busTag, RUDirectUtil.arrayListToArray(latitudes));
+            longitudeHashMap.put(busTag, RUDirectUtil.arrayListToArray(longitudes));
 
             latitudes.clear();
             longitudes.clear();
@@ -93,12 +83,19 @@ public class XMLBusPathHandler extends DefaultHandler {
             inPath = false;
         }
         if (qName.equalsIgnoreCase("route")) {
-            RUDirectUtil.saveTwoDimenArray(pathLatsEdit, pathLats, busTag);
-            RUDirectUtil.saveTwoDimenArray(pathLonsEdit, pathLons, busTag);
+            pathLatsHashMap.put(busTag, RUDirectUtil.arrayListToTwoDimenArray(pathLats));
+            pathLonsHashMap.put(busTag, RUDirectUtil.arrayListToTwoDimenArray(pathLons));
 
             pathLats.clear();
             pathLons.clear();
             pathSize = -1;
         }
+    }
+
+    public void endDocument() throws SAXException {
+        busData.setBusTagToStopLatitudes(latitudeHashMap);
+        busData.setBusTagToStopLongitudes(longitudeHashMap);
+        busData.setBusTagToPathLatitudes(pathLatsHashMap);
+        busData.setBusTagToPathLongitudes(pathLonsHashMap);
     }
 }

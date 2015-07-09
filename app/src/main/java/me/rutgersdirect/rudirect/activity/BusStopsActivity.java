@@ -1,8 +1,6 @@
 package me.rutgersdirect.rudirect.activity;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.content.res.ResourcesCompat;
@@ -17,12 +15,13 @@ import java.util.ArrayList;
 import me.rutgersdirect.rudirect.R;
 import me.rutgersdirect.rudirect.adapter.BusStopsPagerAdapter;
 import me.rutgersdirect.rudirect.data.constants.AppData;
+import me.rutgersdirect.rudirect.data.constants.RUDirectApplication;
 import me.rutgersdirect.rudirect.data.model.BusStop;
 
 public class BusStopsActivity extends AppCompatActivity {
 
     public static boolean active; // Whether or not the activity is active
-    private String busTag; // Bus tag
+    private String busTag;
     private ArrayList<BusStop> busStops;
 
     @Override
@@ -36,9 +35,9 @@ public class BusStopsActivity extends AppCompatActivity {
         busTag = intent.getStringExtra(AppData.BUS_TAG_MESSAGE);
         busStops = (ArrayList) intent.getParcelableArrayListExtra(AppData.BUS_STOPS_MESSAGE);
 
-        // Sets the title to the name of the bus
-        SharedPreferences tagsToBusesPref = getSharedPreferences(getString(R.string.tags_to_buses_key), Context.MODE_PRIVATE);
-        setTitle(tagsToBusesPref.getString(busTag, "Bus Stops"));
+        // Setup the database and set the title to the name of the bus
+        setupDatabase();
+        setTitle(RUDirectApplication.getBusData().getBusTagsToBusTitles().get(busTag));
 
         // Setup the toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -56,6 +55,11 @@ public class BusStopsActivity extends AppCompatActivity {
         // Set up tab layout
         TabLayout tabLayout = (TabLayout) findViewById(R.id.sliding_tabs);
         tabLayout.setupWithViewPager(viewPager);
+    }
+
+    // Initialize database helper and database
+    private void setupDatabase() {
+        RUDirectApplication.getBusData();
     }
 
     @Override

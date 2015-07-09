@@ -1,6 +1,5 @@
 package me.rutgersdirect.rudirect.fragment;
 
-import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -12,13 +11,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import java.util.Arrays;
-import java.util.Map;
-
 import me.rutgersdirect.rudirect.R;
 import me.rutgersdirect.rudirect.adapter.BusRouteAdapter;
 import me.rutgersdirect.rudirect.adapter.MainPagerAdapter;
 import me.rutgersdirect.rudirect.api.NextBusAPI;
+import me.rutgersdirect.rudirect.data.constants.RUDirectApplication;
 import me.rutgersdirect.rudirect.interfaces.UpdateBusStopsListener;
 import me.rutgersdirect.rudirect.ui.view.DividerItemDecoration;
 import me.rutgersdirect.rudirect.util.RUDirectUtil;
@@ -66,7 +63,7 @@ public class AllRoutesFragment extends BaseRouteFragment {
         // Setup layout
         allBusesRecyclerView.addItemDecoration(new DividerItemDecoration(mainActivity, LinearLayoutManager.VERTICAL));
         // Set adapter
-        allBusesRecyclerView.setAdapter(new BusRouteAdapter(getBusRoutes(), mainActivity, this));
+        allBusesRecyclerView.setAdapter(new BusRouteAdapter());
     }
 
     // Set up SwipeRefreshLayout
@@ -79,16 +76,6 @@ public class AllRoutesFragment extends BaseRouteFragment {
             }
         });
         mSwipeRefreshLayout.setColorSchemeResources(R.color.primary_color);
-    }
-
-    // Returns an array of bus route names
-    private String[] getBusRoutes() {
-        Map<String, ?> busesToTagsMap = mainActivity.getSharedPreferences(
-                getString(R.string.buses_to_tags_key), Context.MODE_PRIVATE).getAll();
-        Object[] busNamesObj = busesToTagsMap.keySet().toArray();
-        String[] busNames = Arrays.copyOf(busNamesObj, busNamesObj.length, String[].class);
-        Arrays.sort(busNames);
-        return busNames;
     }
 
     // Sets up the RecyclerView
@@ -118,8 +105,8 @@ public class AllRoutesFragment extends BaseRouteFragment {
                 errorView.setText("Unable to get routes - check your Internet connection and try again.");
             } else {
                 errorView.setVisibility(View.GONE);
-                allBusesRecyclerView.setAdapter(
-                        new BusRouteAdapter(getBusRoutes(), mainActivity, AllRoutesFragment.this));
+                allBusesRecyclerView.setAdapter(new BusRouteAdapter(RUDirectUtil.mapKeySetToSortedArray(
+                                RUDirectApplication.getBusData().getBusTitlesToBusTags()), mainActivity, AllRoutesFragment.this));
             }
             mSwipeRefreshLayout.setRefreshing(false);
 

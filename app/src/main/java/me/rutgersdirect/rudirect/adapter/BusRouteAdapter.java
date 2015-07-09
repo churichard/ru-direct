@@ -2,8 +2,6 @@ package me.rutgersdirect.rudirect.adapter;
 
 import android.app.Activity;
 import android.app.Fragment;
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +9,8 @@ import android.view.ViewGroup;
 
 import me.rutgersdirect.rudirect.R;
 import me.rutgersdirect.rudirect.activity.BusStopsActivity;
+import me.rutgersdirect.rudirect.data.constants.RUDirectApplication;
+import me.rutgersdirect.rudirect.data.model.BusData;
 import me.rutgersdirect.rudirect.ui.holder.BusRouteViewHolder;
 import me.rutgersdirect.rudirect.util.ShowBusStopsHelper;
 
@@ -38,10 +38,14 @@ public class BusRouteAdapter extends RecyclerView.Adapter<BusRouteViewHolder> {
             public void onClick(View v, int position) {
                 if (!BusStopsActivity.active) {
                     String bus = busRoutes[position];
+                    String busTag = null;
 
-                    SharedPreferences busesToTagsPref
-                            = activity.getSharedPreferences(activity.getString(R.string.buses_to_tags_key), Context.MODE_PRIVATE);
-                    String busTag = busesToTagsPref.getString(bus, null);
+                    BusData busData = RUDirectApplication.getBusData();
+                    if (busData != null) {
+                        busTag = busData
+                                .getBusTitlesToBusTags()
+                                .get(bus);
+                    }
 
                     if (busTag != null) {
                         BusStopsActivity.active = true;

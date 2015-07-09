@@ -28,6 +28,7 @@ import java.util.HashMap;
 import me.rutgersdirect.rudirect.R;
 import me.rutgersdirect.rudirect.activity.BusStopsActivity;
 import me.rutgersdirect.rudirect.api.NextBusAPI;
+import me.rutgersdirect.rudirect.data.constants.AppData;
 import me.rutgersdirect.rudirect.data.model.BusStop;
 import me.rutgersdirect.rudirect.util.ShowBusPathHelper;
 
@@ -188,9 +189,9 @@ public class BusMapFragment extends MapFragment implements
 
         @Override
         protected void onPostExecute(Void v) {
-            if (NextBusAPI.activeLatsHashMap != null && NextBusAPI.activeLonsHashMap != null) {
-                HashMap<String, ArrayList<String>> activeLatsHashMap = NextBusAPI.activeLatsHashMap;
-                HashMap<String, ArrayList<String>> activeLonsHashMap = NextBusAPI.activeLonsHashMap;
+            if (AppData.activeLatsHashMap != null && AppData.activeLonsHashMap != null) {
+                HashMap<String, ArrayList<String>> activeLatsHashMap = AppData.activeLatsHashMap;
+                HashMap<String, ArrayList<String>> activeLonsHashMap = AppData.activeLonsHashMap;
                 String busTag = busStopsActivity.getBusTag();
 
                 ArrayList<String> activeLats = activeLatsHashMap.get(busTag);

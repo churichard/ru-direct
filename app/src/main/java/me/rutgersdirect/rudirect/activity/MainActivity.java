@@ -11,6 +11,7 @@ import java.util.HashMap;
 import me.rutgersdirect.rudirect.R;
 import me.rutgersdirect.rudirect.adapter.MainPagerAdapter;
 import me.rutgersdirect.rudirect.data.constants.AppData;
+import me.rutgersdirect.rudirect.data.constants.RUDirectApplication;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -20,6 +21,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        setupDatabase();
 
         // Initialize bus tags to stop times hash map
         AppData.BUS_TAGS_TO_STOP_TIMES = new HashMap<>();
@@ -36,6 +39,11 @@ public class MainActivity extends AppCompatActivity {
         // Set up tab layout
         TabLayout tabLayout = (TabLayout) findViewById(R.id.sliding_tabs);
         tabLayout.setupWithViewPager(viewPager);
+    }
+
+    // Initialize database helper and database
+    private void setupDatabase() {
+        RUDirectApplication.getBusData();
     }
 
     public ViewPager getViewPager() {

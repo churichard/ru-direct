@@ -17,8 +17,8 @@ public class XMLActiveBusHandler extends DefaultHandler {
 
     public void startDocument() throws SAXException {
         activeBuses = new TreeSet<>();
-        NextBusAPI.activeLatsHashMap = new HashMap<>();
-        NextBusAPI.activeLonsHashMap = new HashMap<>();
+        AppData.activeLatsHashMap = new HashMap<>();
+        AppData.activeLonsHashMap = new HashMap<>();
     }
 
     public void startElement(String namespaceURI, String localName, String qName, Attributes atts)
@@ -29,20 +29,20 @@ public class XMLActiveBusHandler extends DefaultHandler {
             activeBuses.add(busTag);
 
             // Add to lats
-            ArrayList<String> lats = NextBusAPI.activeLatsHashMap.get(busTag);
+            ArrayList<String> lats = AppData.activeLatsHashMap.get(busTag);
             if (lats == null) {
                 lats = new ArrayList<>();
             }
             lats.add(atts.getValue("lat"));
-            NextBusAPI.activeLatsHashMap.put(busTag, lats);
+            AppData.activeLatsHashMap.put(busTag, lats);
 
             // Add to lons
-            ArrayList<String> lons = NextBusAPI.activeLonsHashMap.get(busTag);
+            ArrayList<String> lons = AppData.activeLonsHashMap.get(busTag);
             if (lons == null) {
                 lons = new ArrayList<>();
             }
             lons.add(atts.getValue("lon"));
-            NextBusAPI.activeLonsHashMap.put(busTag, lons);
+            AppData.activeLonsHashMap.put(busTag, lons);
         }
     }
 
