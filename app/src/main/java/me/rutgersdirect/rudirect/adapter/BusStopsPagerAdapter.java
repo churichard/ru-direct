@@ -9,8 +9,8 @@ import me.rutgersdirect.rudirect.fragment.BusTimesFragment;
 
 public class BusStopsPagerAdapter extends FragmentPagerAdapter {
 
-    private static final String[] TITLES = {"Route", "Map"};
-    private static final int NUM_ITEMS = TITLES.length;
+    public static final String[] TITLES = {"Route", "Map"};
+    public static final int NUM_OF_ITEMS = TITLES.length;
 
     public BusStopsPagerAdapter(FragmentManager fm) {
         super(fm);
@@ -18,7 +18,7 @@ public class BusStopsPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public int getCount() {
-        return NUM_ITEMS;
+        return NUM_OF_ITEMS;
     }
 
     // Returns the fragment for the each position in the ViewPager

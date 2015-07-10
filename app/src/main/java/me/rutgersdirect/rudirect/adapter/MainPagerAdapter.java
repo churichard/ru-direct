@@ -13,7 +13,7 @@ import me.rutgersdirect.rudirect.fragment.DirectionsFragment;
 public class MainPagerAdapter extends FragmentPagerAdapter {
 
     public static final String[] TITLES = {"Active Routes", "Directions", "All Routes"};
-    private static final int NUM_ITEMS = TITLES.length;
+    private static final int NUM_OF_ITEMS = TITLES.length;
     SparseArray<Fragment> registeredFragments = new SparseArray<>();
 
     public MainPagerAdapter(FragmentManager fm) {
@@ -22,7 +22,7 @@ public class MainPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public int getCount() {
-        return NUM_ITEMS;
+        return NUM_OF_ITEMS;
     }
 
     // Returns the fragment for the each position in the ViewPager

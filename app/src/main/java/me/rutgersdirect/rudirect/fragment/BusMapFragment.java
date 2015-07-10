@@ -3,18 +3,12 @@ package me.rutgersdirect.rudirect.fragment;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
@@ -32,16 +26,12 @@ import me.rutgersdirect.rudirect.data.constants.AppData;
 import me.rutgersdirect.rudirect.data.model.BusStop;
 import me.rutgersdirect.rudirect.util.ShowBusPathHelper;
 
-public class BusMapFragment extends MapFragment implements
-        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, OnMapReadyCallback {
+public class BusMapFragment extends MapFragment implements OnMapReadyCallback {
 
-    private static final String TAG = BusMapFragment.class.getSimpleName();
-    private static final int REQUEST_CODE = 9000;
     private static final int ACTIVE_BUS_REFRESH_INTERVAL = 10000;
 
     private GoogleMap mMap;
     private BusStopsActivity busStopsActivity;
-    private GoogleApiClient mGoogleApiClient;
     private Handler refreshHandler;
     private ArrayList<Marker> activeBusMarkers;
 
@@ -54,29 +44,13 @@ public class BusMapFragment extends MapFragment implements
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         busStopsActivity = (BusStopsActivity) getActivity();
-        MapsInitializer.initialize(busStopsActivity);
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         activeBusMarkers = new ArrayList<>();
-    }
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        buildGoogleApiClient();
         new ShowBusPathHelper().execute(busStopsActivity.getBusTag(), this);
-    }
-
-    // Build the Google API Client
-    protected synchronized void buildGoogleApiClient() {
-        mGoogleApiClient = new GoogleApiClient.Builder(busStopsActivity)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(LocationServices.API)
-                .build();
     }
 
     @Override
@@ -89,42 +63,17 @@ public class BusMapFragment extends MapFragment implements
     }
 
     @Override
-    public void onConnected(Bundle connectionHint) { /* Do nothing */}
-
-    @Override
-    public void onConnectionSuspended(int i) {
-        mGoogleApiClient.connect();
-    }
-
-    @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
-        int status = GooglePlayServicesUtil.isGooglePlayServicesAvailable(busStopsActivity);
-        if (status != ConnectionResult.SUCCESS) {
-            GooglePlayServicesUtil.getErrorDialog(connectionResult.getErrorCode(), busStopsActivity, REQUEST_CODE);
-        } else {
-            Log.i(TAG, "Location services connection failed with code " + connectionResult.getErrorCode());
-        }
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        if (mGoogleApiClient.isConnected()) {
-            mGoogleApiClient.disconnect();
-        }
-    }
-
-    @Override
     public void onResume() {
         super.onResume();
-        mGoogleApiClient.connect();
 
         // Auto refreshes active bus locations
         refreshHandler = new Handler();
         refreshHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                new UpdateActiveBusLocation().execute();
+                if (mMap != null) {
+                    new UpdateActiveBusLocation().execute();
+                }
                 refreshHandler.postDelayed(this, ACTIVE_BUS_REFRESH_INTERVAL);
             }
         }, ACTIVE_BUS_REFRESH_INTERVAL);

@@ -85,7 +85,6 @@ public class ActiveRoutesFragment extends BaseRouteFragment {
 
     // Sets up the RecyclerView
     public void updateActiveRoutes() {
-        mSwipeRefreshLayout.setRefreshing(true);
         new UpdateActiveRoutesTask().execute();
     }
 
