@@ -36,7 +36,7 @@ public class BusRouteAdapter extends RecyclerView.Adapter<BusRouteViewHolder> {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_bus_routes, parent, false);
         return new BusRouteViewHolder(v, new BusRouteViewHolder.BusRouteViewHolderClick() {
             public void onClick(View v, int position) {
-                if (!BusStopsActivity.active) {
+                if (!BusStopsActivity.isActive()) {
                     String bus = busRoutes[position];
                     String busTag = null;
 
@@ -48,7 +48,7 @@ public class BusRouteAdapter extends RecyclerView.Adapter<BusRouteViewHolder> {
                     }
 
                     if (busTag != null) {
-                        BusStopsActivity.active = true;
+                        BusStopsActivity.setIsActive(true);
                         new ShowBusStopsHelper().execute(busTag, activity, fragment);
                     }
                 }

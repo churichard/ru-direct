@@ -6,11 +6,6 @@
     <string name="all_buses">All Buses</string>
     <string name="directions_activity_name">Directions</string>
 
-    <!-- Misc -->
-    <string name="refresh">Refresh</string>
-    <string name="no_internet_text">No Internet Connection</string>
-    <string name="action_settings">Settings</string>
-
     <!-- Directions -->
     <string name="select_origin_text">Select your starting point:</string>
     <string name="select_destination_text">Select your destination:</string>
@@ -19,4 +14,15 @@
     <!-- Intents -->
     <string name="intent_origin_text">Origin</string>
     <string name="intent_destination_text">Destination</string>
+
+    <!-- Misc -->
+    <string name="refresh">Refresh</string>
+    <string name="no_internet_text">No Internet Connection</string>
+    <string name="action_settings">Settings</string>
+
+    <!-- Google Play Services error messages -->
+    <string name="common_google_play_services_install_text_phone" msgid="2122112764540849864">
+        You need Google Play Services in order to view route maps.</string>
+    <string name="common_google_play_services_install_text_tablet" msgid="7351599665250191022">
+        You need Google Play Services in order to view route maps.</string>
 </resources>
