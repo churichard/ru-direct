@@ -29,6 +29,7 @@ dependencies {
     compile 'com.android.support:design:22.2.0' // Android Design
     compile 'com.android.support:recyclerview-v7:22.2.0' // RecyclerView
     compile 'org.jgrapht:jgrapht-core:0.9.1' // JGraphT
+    compile 'com.squareup.okhttp:okhttp:2.4.0' // OkHttp
     compile files('libs/ormlite-core-4.48.jar') // Ormlite Core
     compile files('libs/ormlite-android-4.48.jar') // Ormlite Android
 }

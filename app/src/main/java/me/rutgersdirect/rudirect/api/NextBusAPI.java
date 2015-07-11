@@ -2,10 +2,15 @@ package me.rutgersdirect.rudirect.api;
 
 import android.util.Log;
 
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.Response;
+
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -16,14 +21,36 @@ import me.rutgersdirect.rudirect.data.constants.RUDirectApplication;
 
 public class NextBusAPI {
 
-    private static final String TAG = NextBusAPI.class.getName();
+    private static final String TAG = NextBusAPI.class.getSimpleName();
+    private static OkHttpClient okHttpClient;
+    private static SAXParser saxParser;
+
+    private static InputStream downloadUrl(String url) {
+        if (okHttpClient == null) {
+            okHttpClient = new OkHttpClient();
+        }
+
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
+        try {
+            Response response = okHttpClient.newCall(request).execute();
+            return response.body().byteStream();
+        } catch (IOException e) {
+            Log.e(TAG, e.toString(), e);
+        }
+
+        return null;
+    }
 
     // Setups the SAX parser and parses the XML from the url
-    private static void parseXML(String urlString, DefaultHandler handler) {
+    private static void parseXML(String url, DefaultHandler handler) {
         try {
-            SAXParserFactory factory = SAXParserFactory.newInstance();
-            SAXParser saxParser = factory.newSAXParser();
-            saxParser.parse(urlString, handler);
+            if (saxParser == null) {
+                SAXParserFactory factory = SAXParserFactory.newInstance();
+                saxParser = factory.newSAXParser();
+            }
+            saxParser.parse(downloadUrl(url), handler);
         } catch (IOException | SAXException | ParserConfigurationException e) {
             Log.e(TAG, e.toString());
         }
@@ -36,9 +63,7 @@ public class NextBusAPI {
 
     // Returns a list of the active buses
     public static String[] getActiveBusTags() {
-        // Default value if there is no Internet or there are no active buses
-        AppData.ACTIVE_BUSES = new String[1];
-
+        AppData.ACTIVE_BUSES = new String[1]; // Default value if no Internet / no active buses
         updateActiveBuses();
         return AppData.ACTIVE_BUSES;
     }
@@ -56,8 +81,7 @@ public class NextBusAPI {
         String[] busStopTags = getBusStopTags(busTag);
         StringBuilder link = new StringBuilder(AppData.PREDICTIONS_URL);
         for (String stopTag : busStopTags) {
-            String stop = "&stops=" + busTag + "|null|" + stopTag;
-            link.append(stop);
+            link.append("&stops=").append(busTag).append("%7Cnull%7C").append(stopTag);
         }
         parseXML(link.toString(), new XMLBusTimesHandler(busTag));
 
