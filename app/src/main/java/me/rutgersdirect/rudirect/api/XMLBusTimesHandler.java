@@ -1,18 +1,24 @@
 package me.rutgersdirect.rudirect.api;
 
+import android.util.Log;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 import me.rutgersdirect.rudirect.data.constants.RUDirectApplication;
+import me.rutgersdirect.rudirect.data.model.BusData;
 import me.rutgersdirect.rudirect.data.model.BusStop;
 
 public class XMLBusTimesHandler extends DefaultHandler {
 
+    private static final String TAG = XMLBusTimesHandler.class.getSimpleName();
     private String busTag;
     private boolean inBusTag;
+    private BusData busData;
     private BusStop[] busStops;
     private ArrayList<Integer> times;
     private int currentStopIndex;
@@ -22,7 +28,8 @@ public class XMLBusTimesHandler extends DefaultHandler {
     }
 
     public void startDocument() throws SAXException {
-        busStops = RUDirectApplication.getBusData().getBusTagToBusStops().get(busTag);
+        busData = RUDirectApplication.getBusData();
+        busStops = busData.getBusTagToBusStops().get(busTag);
         inBusTag = false;
         currentStopIndex = 0;
     }
@@ -55,6 +62,15 @@ public class XMLBusTimesHandler extends DefaultHandler {
 
             busStops[currentStopIndex].setTimes(timesTemp);
             currentStopIndex++;
+        }
+    }
+
+    public void endDocument() throws SAXException {
+        // Update bus data
+        try {
+            RUDirectApplication.getDatabaseHelper().getDao().createOrUpdate(busData);
+        } catch (SQLException e) {
+            Log.e(TAG, e.toString(), e);
         }
     }
 }

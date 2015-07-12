@@ -1,9 +1,12 @@
 package me.rutgersdirect.rudirect.api;
 
+import android.util.Log;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -14,6 +17,7 @@ import me.rutgersdirect.rudirect.util.RUDirectUtil;
 
 public class XMLBusStopHandler extends DefaultHandler {
 
+    private static final String TAG = XMLBusStopHandler.class.getSimpleName();
     private BusData busData;
     private String busTag;
     private boolean isGettingStops;
@@ -159,5 +163,12 @@ public class XMLBusStopHandler extends DefaultHandler {
             stopTitlesToStopTags.put(busTag, RUDirectUtil.arrayListToArray(stopTitlesToStopTagsHashMap.get(busTag)));
         }
         busData.setStopTitlesToStopTags(stopTitlesToStopTags);
+
+        // Update bus data
+        try {
+            RUDirectApplication.getDatabaseHelper().getDao().createOrUpdate(busData);
+        } catch (SQLException e) {
+            Log.e(TAG, e.toString(), e);
+        }
     }
 }

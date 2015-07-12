@@ -103,7 +103,7 @@ public class BusMapFragment extends MapFragment implements OnMapReadyCallback {
                     .position(getLatLng(stop.getLatitude(), stop.getLongitude()))
                     .title(stop.getTitle());
             int[] times = stop.getTimes();
-            if (times.length == 1 && times[0] == -1) {
+            if (times == null || (times.length == 1 && times[0] == -1)) {
                 markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
             }
             mMap.addMarker(markerOptions);
