@@ -18,8 +18,8 @@ import me.rutgersdirect.rudirect.ui.holder.BusStopViewHolder;
 public class BusStopAdapter extends RecyclerView.Adapter<BusStopViewHolder> {
 
     private static final int MILLIS_IN_ONE_MINUTE = 60000;
-    private BusStop[] busStops;
     private static boolean expToggleRequest; // Whether or not the bus stop should be expanded/retracted
+    private BusStop[] busStops;
 
     public BusStopAdapter(BusStop[] busStops) {
         this.busStops = busStops;

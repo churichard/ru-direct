@@ -21,7 +21,6 @@ import java.util.Arrays;
 
 import me.rutgersdirect.rudirect.R;
 import me.rutgersdirect.rudirect.adapter.BusStopsPagerAdapter;
-import me.rutgersdirect.rudirect.data.constants.AppData;
 import me.rutgersdirect.rudirect.data.constants.RUDirectApplication;
 import me.rutgersdirect.rudirect.data.model.BusStop;
 
@@ -46,12 +45,12 @@ public class BusStopsActivity extends AppCompatActivity
 
         // Gets the bus tag, stop titles, and stop times
         Intent intent = getIntent();
-        busTag = intent.getStringExtra(AppData.BUS_TAG_MESSAGE);
-        Parcelable[] busStopParceArray = intent.getParcelableArrayExtra(AppData.BUS_STOPS_MESSAGE);
+        busTag = intent.getStringExtra(getString(R.string.bus_tag_message));
+        Parcelable[] busStopParceArray = intent.getParcelableArrayExtra(getString(R.string.bus_stops_message));
         busStops = Arrays.copyOf(busStopParceArray, busStopParceArray.length, BusStop[].class);
 
         // Set the title to the name of the bus
-        setTitle(RUDirectApplication.getBusData().getBusTagsToBusTitles().get(busTag));
+        setTitle(RUDirectApplication.getBusData().getBusTagToBusTitle().get(busTag));
 
         setupToolbar();
         setupViewPagerAndTabLayout();
@@ -130,7 +129,7 @@ public class BusStopsActivity extends AppCompatActivity
     }
 
     @Override
-    public void onStart() {
+    protected void onStart() {
         super.onStart();
         if (!mResolvingError) {
             mGoogleApiClient.connect();
@@ -144,7 +143,7 @@ public class BusStopsActivity extends AppCompatActivity
     }
 
     @Override
-    public void onResume() {
+    protected void onResume() {
         isActive = true;
         super.onResume();
     }

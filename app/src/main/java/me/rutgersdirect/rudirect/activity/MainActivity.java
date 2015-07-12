@@ -12,13 +12,12 @@ import me.rutgersdirect.rudirect.data.constants.RUDirectApplication;
 
 public class MainActivity extends AppCompatActivity {
 
-    private ViewPager viewPager;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Setup database
         setupDatabase();
 
         // Setup the toolbar
@@ -26,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         // Set up viewpager
-        viewPager = (ViewPager) findViewById(R.id.main_viewpager);
+        ViewPager viewPager = (ViewPager) findViewById(R.id.main_viewpager);
         viewPager.setAdapter(new MainPagerAdapter(getFragmentManager()));
         viewPager.setOffscreenPageLimit(2);
 
@@ -38,9 +37,5 @@ public class MainActivity extends AppCompatActivity {
     // Initialize database helper and database
     private void setupDatabase() {
         RUDirectApplication.getBusData();
-    }
-
-    public ViewPager getViewPager() {
-        return viewPager;
     }
 }

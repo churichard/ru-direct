@@ -22,9 +22,10 @@ public class DirectionsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_directions);
 
+        // Get origin and destination
         Intent intent = getIntent();
-        origin = intent.getParcelableExtra(getString(R.string.intent_origin_text));
-        destination = intent.getParcelableExtra(getString(R.string.intent_destination_text));
+        origin = intent.getParcelableExtra(getString(R.string.origin_text_message));
+        destination = intent.getParcelableExtra(getString(R.string.destination_text_message));
 
         // Setup the toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -36,6 +37,7 @@ public class DirectionsActivity extends AppCompatActivity {
                     R.drawable.ic_action_toolbar_back, getTheme()));
         }
 
+        // Setup origin and destination textviews
         TextView originTextView = (TextView) findViewById(R.id.origin_textview);
         TextView destinationTextView = (TextView) findViewById(R.id.destination_textview);
         originTextView.setText(origin.getTitle());

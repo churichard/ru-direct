@@ -3,16 +3,15 @@ package me.rutgersdirect.rudirect.data.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.io.IOException;
 import java.io.Serializable;
 
 public class BusStop implements Parcelable, Serializable, Comparable<BusStop> {
 
     private String tag;
     private String title;
-    private int[] times;
     private String latitude;
     private String longitude;
+    private transient int[] times;
 
     private boolean isExpanded;
 
@@ -61,20 +60,6 @@ public class BusStop implements Parcelable, Serializable, Comparable<BusStop> {
             return new BusStop[size];
         }
     };
-
-    private void writeObject(java.io.ObjectOutputStream out) throws IOException {
-        out.writeObject(tag);
-        out.writeObject(title);
-        out.writeObject(latitude);
-        out.writeObject(longitude);
-    }
-
-    private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {
-        tag = (String) in.readObject();
-        title = (String) in.readObject();
-        latitude = (String) in.readObject();
-        longitude = (String) in.readObject();
-    }
 
     public String getTag() {
         return tag;

@@ -12,9 +12,9 @@ import me.rutgersdirect.rudirect.fragment.DirectionsFragment;
 
 public class MainPagerAdapter extends FragmentPagerAdapter {
 
-    public static final String[] TITLES = {"Active Routes", "Directions", "All Routes"};
+    private static final String[] TITLES = {"Active Routes", "Directions", "All Routes"};
     private static final int NUM_OF_ITEMS = TITLES.length;
-    SparseArray<Fragment> registeredFragments = new SparseArray<>();
+    private static SparseArray<Fragment> registeredFragments = new SparseArray<>();
 
     public MainPagerAdapter(FragmentManager fm) {
         super(fm);
@@ -55,7 +55,7 @@ public class MainPagerAdapter extends FragmentPagerAdapter {
         super.destroyItem(container, position, object);
     }
 
-    public Fragment getRegisteredFragment(int position) {
+    public static Fragment getRegisteredFragment(int position) {
         return registeredFragments.get(position);
     }
 }

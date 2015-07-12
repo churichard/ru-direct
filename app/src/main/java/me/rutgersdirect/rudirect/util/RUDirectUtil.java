@@ -4,6 +4,7 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
@@ -21,20 +22,9 @@ public class RUDirectUtil {
     }
 
     // Returns an array from an ArrayList
-    public static String[] arrayListToArray(ArrayList<String> arrayList) {
-        return arrayList.toArray(new String[arrayList.size()]);
-    }
-
-    // Returns a 2D array from an ArrayList of ArrayLists
-    public static String[][] arrayListToTwoDimenArray(ArrayList<ArrayList<String>> arrayList) {
-        int size = arrayList.size();
-        String[][] array = new String[size][];
-
-        for (int i = 0; i < size; i++) {
-            array[i] = arrayListToArray(arrayList.get(i));
-        }
-
-        return array;
+    @SuppressWarnings("unchecked")
+    public static <T> T[] arrayListToArray(ArrayList<T> arrayList, Class<T> cls) {
+        return arrayList.toArray((T[]) Array.newInstance(cls, arrayList.size()));
     }
 
     // Returns a sorted array of keys given a map

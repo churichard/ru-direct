@@ -91,7 +91,7 @@ public class ActiveRoutesFragment extends BaseRouteFragment {
     private class UpdateActiveRoutesTask extends AsyncTask<Void, Void, String[]> {
 
         protected String[] doInBackground(Void... voids) {
-            if (RUDirectApplication.getBusData().getBusTagsToBusTitles() == null) {
+            if (RUDirectApplication.getBusData().getBusTagToBusTitle() == null) {
                 NextBusAPI.saveBusStops();
             }
             return NextBusAPI.getActiveBusTags();
@@ -100,7 +100,7 @@ public class ActiveRoutesFragment extends BaseRouteFragment {
         protected void onPostExecute(String[] activeBusTags) {
             // Fill active bus array with active bus names
             String[] activeBuses = new String[activeBusTags.length];
-            HashMap<String, String> busTagsToBusTitles = RUDirectApplication.getBusData().getBusTagsToBusTitles();
+            HashMap<String, String> busTagsToBusTitles = RUDirectApplication.getBusData().getBusTagToBusTitle();
             if (busTagsToBusTitles != null) {
                 for (int i = 0; i < activeBusTags.length; i++) {
                     activeBuses[i] = busTagsToBusTitles.get(activeBusTags[i]);

@@ -64,7 +64,7 @@ public class AllRoutesFragment extends BaseRouteFragment {
         allBusesRecyclerView.addItemDecoration(new DividerItemDecoration(mainActivity, LinearLayoutManager.VERTICAL));
         // Set adapter
         allBusesRecyclerView.setAdapter(new BusRouteAdapter(RUDirectUtil.mapKeySetToSortedArray(
-                RUDirectApplication.getBusData().getBusTitlesToBusTags()), mainActivity, this));
+                RUDirectApplication.getBusData().getBusTitleToBusTag()), mainActivity, this));
     }
 
     // Set up SwipeRefreshLayout
@@ -81,8 +81,7 @@ public class AllRoutesFragment extends BaseRouteFragment {
 
     // Sets up the RecyclerView
     private void updateAllRoutes() {
-        MainPagerAdapter adapter = (MainPagerAdapter) mainActivity.getViewPager().getAdapter();
-        DirectionsFragment directionsFragment = (DirectionsFragment) adapter.getRegisteredFragment(1);
+        DirectionsFragment directionsFragment = (DirectionsFragment) MainPagerAdapter.getRegisteredFragment(1);
         new UpdateBusStopsAndPaths().execute(directionsFragment);
     }
 
@@ -106,7 +105,7 @@ public class AllRoutesFragment extends BaseRouteFragment {
             } else {
                 errorView.setVisibility(View.GONE);
                 allBusesRecyclerView.setAdapter(new BusRouteAdapter(RUDirectUtil.mapKeySetToSortedArray(
-                                RUDirectApplication.getBusData().getBusTitlesToBusTags()), mainActivity, AllRoutesFragment.this));
+                                RUDirectApplication.getBusData().getBusTitleToBusTag()), mainActivity, AllRoutesFragment.this));
             }
             mSwipeRefreshLayout.setRefreshing(false);
 

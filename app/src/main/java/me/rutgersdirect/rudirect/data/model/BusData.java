@@ -10,20 +10,17 @@ public class BusData {
     @DatabaseField(id = true)
     private final int ID = 9000;
     @DatabaseField(dataType = DataType.SERIALIZABLE)
-    private HashMap<String, String> busTagsToBusTitles;
+    private HashMap<String, String> busTagToBusTitle;
     @DatabaseField(dataType = DataType.SERIALIZABLE)
-    private HashMap<String, String> busTitlesToBusTags;
-
-    @DatabaseField(dataType = DataType.SERIALIZABLE)
-    private HashMap<String, String[]> stopTitlesToStopTags;
-
-    @DatabaseField(dataType = DataType.SERIALIZABLE)
-    private HashMap<String, String[][]> busTagToPathLatitudes;
-    @DatabaseField(dataType = DataType.SERIALIZABLE)
-    private HashMap<String, String[][]> busTagToPathLongitudes;
+    private HashMap<String, String> busTitleToBusTag;
 
     @DatabaseField(dataType = DataType.SERIALIZABLE)
     private HashMap<String, BusStop[]> busTagToBusStops;
+    @DatabaseField(dataType = DataType.SERIALIZABLE)
+    private HashMap<String, BusPathSegment[]> busTagToBusPathSegments;
+
+    @DatabaseField(dataType = DataType.SERIALIZABLE)
+    private HashMap<String, String[]> stopTitleToStopTags;
 
     public BusData() {
     }
@@ -32,20 +29,20 @@ public class BusData {
         return ID;
     }
 
-    public HashMap<String, String> getBusTagsToBusTitles() {
-        return busTagsToBusTitles;
+    public HashMap<String, String> getBusTagToBusTitle() {
+        return busTagToBusTitle;
     }
 
-    public void setBusTagsToBusTitles(HashMap<String, String> busTagsToBusTitles) {
-        this.busTagsToBusTitles = busTagsToBusTitles;
+    public void setBusTagToBusTitle(HashMap<String, String> busTagToBusTitle) {
+        this.busTagToBusTitle = busTagToBusTitle;
     }
 
-    public HashMap<String, String> getBusTitlesToBusTags() {
-        return busTitlesToBusTags;
+    public HashMap<String, String> getBusTitleToBusTag() {
+        return busTitleToBusTag;
     }
 
-    public void setBusTitlesToBusTags(HashMap<String, String> busTitlesToBusTags) {
-        this.busTitlesToBusTags = busTitlesToBusTags;
+    public void setBusTitleToBusTag(HashMap<String, String> busTitleToBusTag) {
+        this.busTitleToBusTag = busTitleToBusTag;
     }
 
     public HashMap<String, BusStop[]> getBusTagToBusStops() {
@@ -56,27 +53,19 @@ public class BusData {
         this.busTagToBusStops = busTagToBusStops;
     }
 
-    public HashMap<String, String[]> getStopTitlesToStopTags() {
-        return stopTitlesToStopTags;
+    public HashMap<String, String[]> getStopTitleToStopTags() {
+        return stopTitleToStopTags;
     }
 
-    public void setStopTitlesToStopTags(HashMap<String, String[]> stopTitlesToStopTags) {
-        this.stopTitlesToStopTags = stopTitlesToStopTags;
+    public void setStopTitleToStopTags(HashMap<String, String[]> stopTitleToStopTags) {
+        this.stopTitleToStopTags = stopTitleToStopTags;
     }
 
-    public HashMap<String, String[][]> getBusTagToPathLatitudes() {
-        return busTagToPathLatitudes;
+    public HashMap<String, BusPathSegment[]> getBusTagToBusPathSegments() {
+        return busTagToBusPathSegments;
     }
 
-    public void setBusTagToPathLatitudes(HashMap<String, String[][]> busTagToPathLatitudes) {
-        this.busTagToPathLatitudes = busTagToPathLatitudes;
-    }
-
-    public HashMap<String, String[][]> getBusTagToPathLongitudes() {
-        return busTagToPathLongitudes;
-    }
-
-    public void setBusTagToPathLongitudes(HashMap<String, String[][]> busTagToPathLongitudes) {
-        this.busTagToPathLongitudes = busTagToPathLongitudes;
+    public void setBusTagToBusPathSegments(HashMap<String, BusPathSegment[]> busTagToBusPathSegments) {
+        this.busTagToBusPathSegments = busTagToBusPathSegments;
     }
 }

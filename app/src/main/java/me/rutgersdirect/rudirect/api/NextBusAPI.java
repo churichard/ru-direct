@@ -18,6 +18,7 @@ import javax.xml.parsers.SAXParserFactory;
 
 import me.rutgersdirect.rudirect.data.constants.AppData;
 import me.rutgersdirect.rudirect.data.constants.RUDirectApplication;
+import me.rutgersdirect.rudirect.data.model.BusPathSegment;
 import me.rutgersdirect.rudirect.data.model.BusStop;
 
 public class NextBusAPI {
@@ -26,6 +27,7 @@ public class NextBusAPI {
     private static OkHttpClient okHttpClient;
     private static SAXParser saxParser;
 
+    // Downloads data from a url and returns it as an input stream
     private static InputStream downloadUrl(String url) {
         if (okHttpClient == null) {
             okHttpClient = new OkHttpClient();
@@ -54,8 +56,9 @@ public class NextBusAPI {
             InputStream inputStream = downloadUrl(url);
             if (inputStream == null) {
                 throw new IOException("Can't connect to the Internet");
+            } else {
+                saxParser.parse(inputStream, handler);
             }
-            saxParser.parse(inputStream, handler);
         } catch (IOException | SAXException | ParserConfigurationException e) {
             Log.e(TAG, e.toString());
         }
@@ -66,11 +69,9 @@ public class NextBusAPI {
         parseXML(AppData.VEHICLE_LOCATIONS_URL, new XMLActiveBusHandler());
     }
 
-    // Returns a list of the active buses
-    public static String[] getActiveBusTags() {
-        AppData.ACTIVE_BUSES = new String[1]; // Default value if no Internet / no active buses
-        updateActiveBuses();
-        return AppData.ACTIVE_BUSES;
+    // Saves the bus stops to the database
+    public static void saveBusStops() {
+        parseXML(AppData.ALL_ROUTES_URL, new XMLBusStopHandler());
     }
 
     // Saves the bus stop times to the database
@@ -87,9 +88,11 @@ public class NextBusAPI {
         parseXML(link.toString(), new XMLBusTimesHandler(busTag));
     }
 
-    // Saves the bus stops to the database
-    public static void saveBusStops() {
-        parseXML(AppData.ALL_ROUTES_URL, new XMLBusStopHandler());
+    // Returns a list of the active buses
+    public static String[] getActiveBusTags() {
+        AppData.ACTIVE_BUSES = new String[1]; // Default value if no Internet / no active buses
+        updateActiveBuses();
+        return AppData.ACTIVE_BUSES;
     }
 
     // Takes in a bus tag and returns a list of bus stops (only called after saving bus stops)
@@ -97,13 +100,8 @@ public class NextBusAPI {
         return RUDirectApplication.getBusData().getBusTagToBusStops().get(busTag);
     }
 
-    // Takes in a bus tag and returns a list of the bus path latitudes (only called after saving bus stops)
-    public static String[][] getBusPathLats(String busTag) {
-        return RUDirectApplication.getBusData().getBusTagToPathLatitudes().get(busTag);
-    }
-
-    // Takes in a bus tag and returns a list of the bus path longitudes (only called after saving bus stops)
-    public static String[][] getBusPathLons(String busTag) {
-        return RUDirectApplication.getBusData().getBusTagToPathLongitudes().get(busTag);
+    // Takes in a bus tag and returns a list of bus path segments (only called after saving bus stops)
+    public static BusPathSegment[] getBusPathSegments(String busTag) {
+        return RUDirectApplication.getBusData().getBusTagToBusPathSegments().get(busTag);
     }
 }

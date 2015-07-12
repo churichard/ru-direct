@@ -13,7 +13,7 @@ import me.rutgersdirect.rudirect.data.constants.AppData;
 
 public class XMLActiveBusHandler extends DefaultHandler {
 
-    public static TreeSet<String> activeBuses;
+    private static TreeSet<String> activeBuses;
 
     public void startDocument() throws SAXException {
         activeBuses = new TreeSet<>();

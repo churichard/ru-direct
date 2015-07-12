@@ -23,6 +23,7 @@ import me.rutgersdirect.rudirect.R;
 import me.rutgersdirect.rudirect.activity.BusStopsActivity;
 import me.rutgersdirect.rudirect.api.NextBusAPI;
 import me.rutgersdirect.rudirect.data.constants.AppData;
+import me.rutgersdirect.rudirect.data.model.BusPathSegment;
 import me.rutgersdirect.rudirect.data.model.BusStop;
 import me.rutgersdirect.rudirect.util.ShowBusPathHelper;
 
@@ -34,9 +35,7 @@ public class BusMapFragment extends MapFragment implements OnMapReadyCallback {
     private BusStopsActivity busStopsActivity;
     private Handler refreshHandler;
     private ArrayList<Marker> activeBusMarkers;
-
-    public String[][] pathLats;
-    public String[][] pathLons;
+    private BusPathSegment[] pathSegments;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -110,13 +109,15 @@ public class BusMapFragment extends MapFragment implements OnMapReadyCallback {
         }
 
         // Draws the bus route
-        for (int i = 0; i < pathLats.length; i++) {
+        for (BusPathSegment pathSegment : pathSegments) {
             PolylineOptions polylineOptions = new PolylineOptions();
             polylineOptions.color(polyLineColor);
 
-            int size = pathLats[i].length;
+            String[] latitudes = pathSegment.getLatitudes();
+            String[] longitudes = pathSegment.getLongitudes();
+            int size = latitudes.length;
             for (int j = 0; j < size; j++) {
-                polylineOptions.add(getLatLng(pathLats[i][j], pathLons[i][j]));
+                polylineOptions.add(getLatLng(latitudes[j], longitudes[j]));
             }
 
             mMap.addPolyline(polylineOptions);
@@ -125,6 +126,10 @@ public class BusMapFragment extends MapFragment implements OnMapReadyCallback {
 
     private LatLng getLatLng(String latitude, String longitude) {
         return new LatLng(Double.parseDouble(latitude), Double.parseDouble(longitude));
+    }
+
+    public void setPathSegments(BusPathSegment[] pathSegments) {
+        this.pathSegments = pathSegments;
     }
 
     // Update active bus locations

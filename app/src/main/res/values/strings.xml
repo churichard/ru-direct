@@ -12,8 +12,10 @@
     <string name="find_route">Find route</string>
 
     <!-- Intents -->
-    <string name="intent_origin_text">Origin</string>
-    <string name="intent_destination_text">Destination</string>
+    <string name="bus_tag_message">Bus Tag</string>
+    <string name="bus_stops_message">Bus Stops</string>
+    <string name="origin_text_message">Origin</string>
+    <string name="destination_text_message">Destination</string>
 
     <!-- Misc -->
     <string name="refresh">Refresh</string>

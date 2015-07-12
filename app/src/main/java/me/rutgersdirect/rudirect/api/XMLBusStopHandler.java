@@ -12,6 +12,7 @@ import java.util.HashMap;
 
 import me.rutgersdirect.rudirect.data.constants.RUDirectApplication;
 import me.rutgersdirect.rudirect.data.model.BusData;
+import me.rutgersdirect.rudirect.data.model.BusPathSegment;
 import me.rutgersdirect.rudirect.data.model.BusStop;
 import me.rutgersdirect.rudirect.util.RUDirectUtil;
 
@@ -22,12 +23,10 @@ public class XMLBusStopHandler extends DefaultHandler {
     private String busTag;
     private boolean isGettingStops;
     private boolean inPath;
-    private int pathSize;
 
     private HashMap<String, BusStop[]> busTagToBusStops;
-    private HashMap<String, ArrayList<String>> stopTitlesToStopTagsHashMap;
-    private HashMap<String, String[][]> pathLatsHashMap;
-    private HashMap<String, String[][]> pathLonsHashMap;
+    private HashMap<String, ArrayList<String>> stopTitleToStopTags;
+    private HashMap<String, BusPathSegment[]> busTagToBusPathSegments;
 
     private ArrayList<String> busTags;
     private ArrayList<String> busTitles;
@@ -35,17 +34,17 @@ public class XMLBusStopHandler extends DefaultHandler {
     private ArrayList<String> stopTags;
     private ArrayList<String> latitudes;
     private ArrayList<String> longitudes;
-    private ArrayList<ArrayList<String>> pathLats;
-    private ArrayList<ArrayList<String>> pathLons;
+    private ArrayList<String> pathLats;
+    private ArrayList<String> pathLons;
+    private ArrayList<BusPathSegment> busPathSegments;
 
     public void startDocument() throws SAXException {
         busData = RUDirectApplication.getBusData();
 
         // Initialize HashMaps
         busTagToBusStops = new HashMap<>();
-        stopTitlesToStopTagsHashMap = new HashMap<>();
-        pathLatsHashMap = new HashMap<>();
-        pathLonsHashMap = new HashMap<>();
+        stopTitleToStopTags = new HashMap<>();
+        busTagToBusPathSegments = new HashMap<>();
 
         // Initialize ArrayLists
         busTags = new ArrayList<>();
@@ -56,11 +55,11 @@ public class XMLBusStopHandler extends DefaultHandler {
         longitudes = new ArrayList<>();
         pathLats = new ArrayList<>();
         pathLons = new ArrayList<>();
+        busPathSegments = new ArrayList<>();
 
         // Initialize misc vars
         isGettingStops = false;
         inPath = false;
-        pathSize = -1;
     }
 
     public void startElement(String namespaceURI, String localName, String qName, Attributes atts)
@@ -85,10 +84,10 @@ public class XMLBusStopHandler extends DefaultHandler {
             longitudes.add(atts.getValue("lon"));
 
             // Update stop titles to stop tags hash map
-            ArrayList<String> arrayList = stopTitlesToStopTagsHashMap.get(title);
+            ArrayList<String> arrayList = stopTitleToStopTags.get(title);
             if (arrayList == null) {
                 arrayList = new ArrayList<>();
-                stopTitlesToStopTagsHashMap.put(atts.getValue("title"), arrayList);
+                stopTitleToStopTags.put(atts.getValue("title"), arrayList);
             }
             arrayList.add(tag);
         }
@@ -109,31 +108,31 @@ public class XMLBusStopHandler extends DefaultHandler {
         }
         if (!inPath && qName.equalsIgnoreCase("path")) {
             inPath = true;
-            pathSize++;
-
-            // Add new path segment
-            pathLats.add(new ArrayList<String>());
-            pathLons.add(new ArrayList<String>());
         }
         if (inPath && qName.equalsIgnoreCase("point")) {
             // Update lats and lons in path segment
-            pathLats.get(pathSize).add(atts.getValue("lat"));
-            pathLons.get(pathSize).add(atts.getValue("lon"));
+            pathLats.add(atts.getValue("lat"));
+            pathLons.add(atts.getValue("lon"));
         }
     }
 
     public void endElement(String uri, String localName, String qName) throws SAXException {
         if (inPath && qName.equalsIgnoreCase("path")) {
             inPath = false;
-        }
-        if (qName.equalsIgnoreCase("route")) {
-            // Update path lats and lons hash maps
-            pathLatsHashMap.put(busTag, RUDirectUtil.arrayListToTwoDimenArray(pathLats));
-            pathLonsHashMap.put(busTag, RUDirectUtil.arrayListToTwoDimenArray(pathLons));
+
+            // Add new path segment
+            busPathSegments.add(new BusPathSegment(
+                    RUDirectUtil.arrayListToArray(pathLats, String.class),
+                    RUDirectUtil.arrayListToArray(pathLons, String.class)));
 
             pathLats.clear();
             pathLons.clear();
-            pathSize = -1;
+        }
+        if (qName.equalsIgnoreCase("route")) {
+            // Update path lats and lons hash maps
+            busTagToBusPathSegments.put(busTag,
+                    RUDirectUtil.arrayListToArray(busPathSegments, BusPathSegment.class));
+            busPathSegments.clear();
         }
     }
 
@@ -150,19 +149,18 @@ public class XMLBusStopHandler extends DefaultHandler {
             busTagsToBusTitlesHashMap.put(tag, title);
             busTitlesToBusTagsHashMap.put(title, tag);
         }
-        busData.setBusTagsToBusTitles(busTagsToBusTitlesHashMap);
-        busData.setBusTitlesToBusTags(busTitlesToBusTagsHashMap);
+        busData.setBusTagToBusTitle(busTagsToBusTitlesHashMap);
+        busData.setBusTitleToBusTag(busTitlesToBusTagsHashMap);
 
-        // Update bus tags to path lats/lons hash maps
-        busData.setBusTagToPathLatitudes(pathLatsHashMap);
-        busData.setBusTagToPathLongitudes(pathLonsHashMap);
+        // Update bus tag to path segments hash map
+        busData.setBusTagToBusPathSegments(busTagToBusPathSegments);
 
         // Update stop titles to stop tags hash map
         HashMap<String, String[]> stopTitlesToStopTags = new HashMap<>();
-        for (String busTag : stopTitlesToStopTagsHashMap.keySet()) {
-            stopTitlesToStopTags.put(busTag, RUDirectUtil.arrayListToArray(stopTitlesToStopTagsHashMap.get(busTag)));
+        for (String busTag : stopTitleToStopTags.keySet()) {
+            stopTitlesToStopTags.put(busTag, RUDirectUtil.arrayListToArray(stopTitleToStopTags.get(busTag), String.class));
         }
-        busData.setStopTitlesToStopTags(stopTitlesToStopTags);
+        busData.setStopTitleToStopTags(stopTitlesToStopTags);
 
         // Update bus data
         try {

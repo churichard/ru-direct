@@ -85,8 +85,8 @@ public class DirectionsFragment extends Fragment
             public void onClick(View view) {
                 if (origin != null && destination != null) {
                     Intent intent = new Intent(mainActivity, DirectionsActivity.class);
-                    intent.putExtra(getString(R.string.intent_origin_text), (Parcelable) origin);
-                    intent.putExtra(getString(R.string.intent_destination_text), (Parcelable) destination);
+                    intent.putExtra(getString(R.string.origin_text_message), (Parcelable) origin);
+                    intent.putExtra(getString(R.string.destination_text_message), (Parcelable) destination);
                     startActivity(intent);
                 }
             }
