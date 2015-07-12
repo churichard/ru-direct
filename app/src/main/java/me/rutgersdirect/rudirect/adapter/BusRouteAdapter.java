@@ -2,6 +2,7 @@ package me.rutgersdirect.rudirect.adapter;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +10,8 @@ import android.view.ViewGroup;
 
 import me.rutgersdirect.rudirect.R;
 import me.rutgersdirect.rudirect.activity.BusStopsActivity;
+import me.rutgersdirect.rudirect.api.NextBusAPI;
+import me.rutgersdirect.rudirect.data.constants.AppData;
 import me.rutgersdirect.rudirect.data.constants.RUDirectApplication;
 import me.rutgersdirect.rudirect.data.model.BusData;
 import me.rutgersdirect.rudirect.ui.holder.BusRouteViewHolder;
@@ -40,16 +43,24 @@ public class BusRouteAdapter extends RecyclerView.Adapter<BusRouteViewHolder> {
                     String bus = busRoutes[position];
                     String busTag = null;
 
+                    // Get bus tag
                     BusData busData = RUDirectApplication.getBusData();
                     if (busData != null) {
-                        busTag = busData
-                                .getBusTitlesToBusTags()
-                                .get(bus);
+                        busTag = busData.getBusTitlesToBusTags().get(bus);
                     }
 
+                    // Start new activity to display bus stop titles and times
                     if (busTag != null) {
                         BusStopsActivity.setIsActive(true);
-                        new ShowBusStopsHelper().execute(busTag, activity, fragment);
+                        new ShowBusStopsHelper().execute(busTag, fragment);
+
+                        Intent intent = new Intent(activity, BusStopsActivity.class);
+
+                        intent.putExtra(AppData.BUS_TAG_MESSAGE, busTag);
+                        intent.putExtra(AppData.BUS_STOPS_MESSAGE, NextBusAPI.getBusStops(busTag));
+
+                        activity.startActivity(intent);
+                        activity.overridePendingTransition(R.anim.abc_grow_fade_in_from_bottom, 0);
                     }
                 }
             }

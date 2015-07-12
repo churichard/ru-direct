@@ -88,13 +88,13 @@ public class BusTimesFragment extends Fragment implements AppBarLayout.OnOffsetC
             if (noInternetTextView != null) {
                 noInternetTextView.setVisibility(View.GONE);
             }
-            new ShowBusStopsHelper().execute(busStopsActivity.getBusTag(), busStopsActivity, BusTimesFragment.this);
+            new ShowBusStopsHelper().execute(busStopsActivity.getBusTag(), BusTimesFragment.this);
         } else {
             if (noInternetTextView != null) {
                 noInternetTextView.setVisibility(View.VISIBLE);
             }
             if (busTimesRecyclerView.getAdapter().getItemCount() == 0) {
-                new ShowBusStopsHelper().execute(busStopsActivity.getBusTag(), busStopsActivity, BusTimesFragment.this);
+                new ShowBusStopsHelper().execute(busStopsActivity.getBusTag(), BusTimesFragment.this);
             } else {
                 mSwipeRefreshLayout.setRefreshing(false);
             }

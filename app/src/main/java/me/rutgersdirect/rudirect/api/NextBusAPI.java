@@ -73,7 +73,7 @@ public class NextBusAPI {
         return AppData.ACTIVE_BUSES;
     }
 
-    // Returns a list of the bus stop times
+    // Saves the bus stop times to the database
     public static void saveBusStopTimes(String busTag) {
         BusStop[] busStops = RUDirectApplication.getBusData().getBusTagToBusStops().get(busTag);
 
@@ -87,22 +87,22 @@ public class NextBusAPI {
         parseXML(link.toString(), new XMLBusTimesHandler(busTag));
     }
 
-    // Saves the bus stops to shared preferences
+    // Saves the bus stops to the database
     public static void saveBusStops() {
         parseXML(AppData.ALL_ROUTES_URL, new XMLBusStopHandler());
     }
 
-    // Takes in a bus tag and returns a list of bus stops
+    // Takes in a bus tag and returns a list of bus stops (only called after saving bus stops)
     public static BusStop[] getBusStops(String busTag) {
         return RUDirectApplication.getBusData().getBusTagToBusStops().get(busTag);
     }
 
-    // Takes in a bus tag and returns a list of the bus path latitudes
+    // Takes in a bus tag and returns a list of the bus path latitudes (only called after saving bus stops)
     public static String[][] getBusPathLats(String busTag) {
         return RUDirectApplication.getBusData().getBusTagToPathLatitudes().get(busTag);
     }
 
-    // Takes in a bus tag and returns a list of the bus path longitudes
+    // Takes in a bus tag and returns a list of the bus path longitudes (only called after saving bus stops)
     public static String[][] getBusPathLons(String busTag) {
         return RUDirectApplication.getBusData().getBusTagToPathLongitudes().get(busTag);
     }
