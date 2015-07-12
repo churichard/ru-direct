@@ -35,8 +35,6 @@ public class BusMapFragment extends MapFragment implements OnMapReadyCallback {
     private Handler refreshHandler;
     private ArrayList<Marker> activeBusMarkers;
 
-    public String[] latitudes;
-    public String[] longitudes;
     public String[][] pathLats;
     public String[][] pathLons;
 
@@ -56,8 +54,9 @@ public class BusMapFragment extends MapFragment implements OnMapReadyCallback {
     @Override
     public void onMapReady(final GoogleMap map) {
         mMap = map;
+        BusStop stop = busStopsActivity.getBusStops()[0];
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
-                getLatLng(latitudes[0], longitudes[0]), 13.0f));
+                getLatLng(stop.getLatitude(), stop.getLongitude()), 13.0f));
         mMap.setMyLocationEnabled(true);
         drawRoute();
     }
@@ -92,18 +91,18 @@ public class BusMapFragment extends MapFragment implements OnMapReadyCallback {
 
     // Draws the bus route on the map
     private void drawRoute() {
-        ArrayList<BusStop> busStops = busStopsActivity.getBusStops();
+        BusStop[] busStops = busStopsActivity.getBusStops();
         int polyLineColor = getResources().getColor(R.color.polyline_color);
 
         // Draws the active bus locations
         new UpdateActiveBusLocation().execute();
 
         // Draws the bus stop markers
-        for (int i = 0; i < busStops.size(); i++) {
+        for (BusStop stop : busStops) {
             MarkerOptions markerOptions = new MarkerOptions()
-                    .position(getLatLng(latitudes[i], longitudes[i]))
-                    .title(busStops.get(i).getTitle());
-            int[] times = busStops.get(i).getTimes();
+                    .position(getLatLng(stop.getLatitude(), stop.getLongitude()))
+                    .title(stop.getTitle());
+            int[] times = stop.getTimes();
             if (times.length == 1 && times[0] == -1) {
                 markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
             }

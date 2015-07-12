@@ -9,7 +9,6 @@ import android.widget.TextView;
 
 import java.text.DateFormat;
 import java.util.Date;
-import java.util.List;
 
 import me.rutgersdirect.rudirect.R;
 import me.rutgersdirect.rudirect.data.constants.RUDirectApplication;
@@ -19,10 +18,10 @@ import me.rutgersdirect.rudirect.ui.holder.BusStopViewHolder;
 public class BusStopAdapter extends RecyclerView.Adapter<BusStopViewHolder> {
 
     private static final int MILLIS_IN_ONE_MINUTE = 60000;
-    private List<BusStop> busStops;
+    private BusStop[] busStops;
     private static boolean expToggleRequest; // Whether or not the bus stop should be expanded/retracted
 
-    public BusStopAdapter(List<BusStop> busStops) {
+    public BusStopAdapter(BusStop[] busStops) {
         this.busStops = busStops;
     }
 
@@ -38,7 +37,7 @@ public class BusStopAdapter extends RecyclerView.Adapter<BusStopViewHolder> {
             public void onClick(View v, int position) {
                 expToggleRequest = true;
 
-                BusStop stop = busStops.get(position);
+                BusStop stop = busStops[position];
                 TextView titleTextView = (TextView) v.findViewById(R.id.bus_stop_name);
                 TextView timesTextView = (TextView) v.findViewById(R.id.bus_stop_times);
                 timesTextView.setText(getBusStopTimes(stop, titleTextView, timesTextView));
@@ -49,7 +48,7 @@ public class BusStopAdapter extends RecyclerView.Adapter<BusStopViewHolder> {
     // Replace the contents of a view
     @Override
     public void onBindViewHolder(BusStopViewHolder viewHolder, int position) {
-        BusStop stop = busStops.get(position);
+        BusStop stop = busStops[position];
         TextView titleTextView = viewHolder.title;
         TextView timesTextView = viewHolder.times;
 
@@ -61,7 +60,7 @@ public class BusStopAdapter extends RecyclerView.Adapter<BusStopViewHolder> {
     @Override
     public int getItemCount() {
         if (busStops != null) {
-            return busStops.size();
+            return busStops.length;
         }
         return 0;
     }

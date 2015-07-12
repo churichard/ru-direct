@@ -18,6 +18,7 @@ import javax.xml.parsers.SAXParserFactory;
 
 import me.rutgersdirect.rudirect.data.constants.AppData;
 import me.rutgersdirect.rudirect.data.constants.RUDirectApplication;
+import me.rutgersdirect.rudirect.data.model.BusStop;
 
 public class NextBusAPI {
 
@@ -50,7 +51,11 @@ public class NextBusAPI {
                 SAXParserFactory factory = SAXParserFactory.newInstance();
                 saxParser = factory.newSAXParser();
             }
-            saxParser.parse(downloadUrl(url), handler);
+            InputStream inputStream = downloadUrl(url);
+            if (inputStream == null) {
+                throw new IOException("Can't connect to the Internet");
+            }
+            saxParser.parse(inputStream, handler);
         } catch (IOException | SAXException | ParserConfigurationException e) {
             Log.e(TAG, e.toString());
         }
@@ -69,23 +74,17 @@ public class NextBusAPI {
     }
 
     // Returns a list of the bus stop times
-    public static int[][] getBusStopTimes(String busTag) {
-        // If there is no Internet
-        int length = RUDirectApplication.getBusData().getBusTagsToStopTags().get(busTag).length;
-        int[][] defaultTime = new int[length][1];
-        for (int i = 0; i < length; i++) {
-            defaultTime[i][0] = -1;
-        }
-        AppData.BUS_TAGS_TO_STOP_TIMES.put(busTag, defaultTime);
+    public static void saveBusStopTimes(String busTag) {
+        BusStop[] busStops = RUDirectApplication.getBusData().getBusTagToBusStops().get(busTag);
 
-        String[] busStopTags = getBusStopTags(busTag);
+        // Set no Internet stop times and create predictions link
         StringBuilder link = new StringBuilder(AppData.PREDICTIONS_URL);
-        for (String stopTag : busStopTags) {
-            link.append("&stops=").append(busTag).append("%7Cnull%7C").append(stopTag);
+        for (BusStop stop : busStops) {
+            stop.setTimes(new int[]{-1});
+            link.append("&stops=").append(busTag).append("%7Cnull%7C").append(stop.getTag());
         }
-        parseXML(link.toString(), new XMLBusTimesHandler(busTag));
 
-        return AppData.BUS_TAGS_TO_STOP_TIMES.get(busTag);
+        parseXML(link.toString(), new XMLBusTimesHandler(busTag));
     }
 
     // Saves the bus stops to shared preferences
@@ -93,29 +92,9 @@ public class NextBusAPI {
         parseXML(AppData.ALL_ROUTES_URL, new XMLBusStopHandler());
     }
 
-    // Saves the bus paths to shared preferences
-    public static void saveBusPaths() {
-        parseXML(AppData.ALL_ROUTES_URL, new XMLBusPathHandler());
-    }
-
-    // Takes in a bus tag and returns a list of the bus stop titles
-    public static String[] getBusStopTitles(String busTag) {
-        return RUDirectApplication.getBusData().getBusTagsToStopTitles().get(busTag);
-    }
-
-    // Takes in a bus tag and returns a list of the bus stop tags
-    public static String[] getBusStopTags(String busTag) {
-        return RUDirectApplication.getBusData().getBusTagsToStopTags().get(busTag);
-    }
-
-    // Takes in a bus tag and returns a list of the bus stop latitudes
-    public static String[] getBusStopLats(String busTag) {
-        return RUDirectApplication.getBusData().getBusTagToStopLatitudes().get(busTag);
-    }
-
-    // Takes in a bus tag and returns a list of the bus stop longitudes
-    public static String[] getBusStopLons(String busTag) {
-        return RUDirectApplication.getBusData().getBusTagToStopLongitudes().get(busTag);
+    // Takes in a bus tag and returns a list of bus stops
+    public static BusStop[] getBusStops(String busTag) {
+        return RUDirectApplication.getBusData().getBusTagToBusStops().get(busTag);
     }
 
     // Takes in a bus tag and returns a list of the bus path latitudes

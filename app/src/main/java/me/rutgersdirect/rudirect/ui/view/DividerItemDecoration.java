@@ -1,5 +1,3 @@
-package me.rutgersdirect.rudirect.ui.view;
-
 /*
  * Copyright (C) 2014 The Android Open Source Project
  *
@@ -16,6 +14,8 @@ package me.rutgersdirect.rudirect.ui.view;
  * limitations under the License.
  */
 
+package me.rutgersdirect.rudirect.ui.view;
+
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
@@ -24,7 +24,6 @@ import android.graphics.drawable.Drawable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-
 
 public class DividerItemDecoration extends RecyclerView.ItemDecoration {
 

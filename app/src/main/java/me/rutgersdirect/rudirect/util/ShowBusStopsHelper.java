@@ -6,8 +6,6 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
 
-import java.util.ArrayList;
-
 import me.rutgersdirect.rudirect.R;
 import me.rutgersdirect.rudirect.activity.BusStopsActivity;
 import me.rutgersdirect.rudirect.adapter.BusStopAdapter;
@@ -21,36 +19,34 @@ public class ShowBusStopsHelper extends AsyncTask<Object, Void, Void> {
     private String tag;
     private Activity activity;
     private Fragment fragment;
-    private String[] busStopTitles;
-    private int[][] busStopTimes;
+    private BusStop[] busStops;
 
     @Override
     protected Void doInBackground(Object... objects) {
         tag = (String) objects[0];
         activity = (Activity) objects[1];
         fragment = (Fragment) objects[2];
-        busStopTitles = NextBusAPI.getBusStopTitles(tag);
-        busStopTimes = NextBusAPI.getBusStopTimes(tag);
+        NextBusAPI.saveBusStopTimes(tag);
+        busStops = NextBusAPI.getBusStops(tag);
 
         return null;
     }
 
     @Override
     protected void onPostExecute(Void v) {
-        ArrayList<BusStop> buses = RUDirectUtil.getBusStopArrayList(tag, busStopTitles, busStopTimes);
         if (fragment instanceof BusTimesFragment) {
             // Update items in RecyclerView
             BusTimesFragment busTimesFragment = ((BusTimesFragment) fragment);
             RecyclerView busTimesRecyclerView = busTimesFragment.getBusTimesRecyclerView();
 
-            busTimesRecyclerView.setAdapter(new BusStopAdapter(buses));
+            busTimesRecyclerView.setAdapter(new BusStopAdapter(busStops));
             busTimesFragment.getSwipeRefreshLayout().setRefreshing(false);
         } else {
             // Start new activity to display bus stop titles and times
             Intent intent = new Intent(activity, BusStopsActivity.class);
 
             intent.putExtra(AppData.BUS_TAG_MESSAGE, tag);
-            intent.putParcelableArrayListExtra(AppData.BUS_STOPS_MESSAGE, buses);
+            intent.putExtra(AppData.BUS_STOPS_MESSAGE, busStops);
 
             activity.startActivity(intent);
             activity.overridePendingTransition(R.anim.abc_grow_fade_in_from_bottom, 0);

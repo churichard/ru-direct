@@ -5,25 +5,26 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
-import me.rutgersdirect.rudirect.data.constants.AppData;
+import me.rutgersdirect.rudirect.data.constants.RUDirectApplication;
+import me.rutgersdirect.rudirect.data.model.BusStop;
 
 public class XMLBusTimesHandler extends DefaultHandler {
 
     private String busTag;
     private boolean inBusTag;
-    private ArrayList<int[]> stopTimes;
+    private BusStop[] busStops;
     private ArrayList<Integer> times;
+    private int currentStopIndex;
 
     public XMLBusTimesHandler(String busTag) {
         this.busTag = busTag;
     }
 
     public void startDocument() throws SAXException {
-        AppData.BUS_TAGS_TO_STOP_TIMES = new HashMap<>();
-        stopTimes = new ArrayList<>();
+        busStops = RUDirectApplication.getBusData().getBusTagToBusStops().get(busTag);
         inBusTag = false;
+        currentStopIndex = 0;
     }
 
     public void startElement(String namespaceURI, String localName, String qName, Attributes atts)
@@ -41,26 +42,19 @@ public class XMLBusTimesHandler extends DefaultHandler {
     public void endElement(String uri, String localName, String qName) throws SAXException {
         if (inBusTag && qName.equalsIgnoreCase("predictions")) {
             inBusTag = false;
-            if (times.size() != 0) {
-                int[] temp = new int[times.size()];
-                for (int i = 0; i < temp.length; i++) {
-                    temp[i] = times.get(i);
-                }
-                stopTimes.add(temp);
-            } else {
-                int[] temp = {-1}; // Offline bus
-                stopTimes.add(temp);
-            }
-        }
-    }
+            int[] timesTemp;
 
-    public void endDocument() throws SAXException {
-        if (stopTimes.size() > 0) {
-            int[][] temp = new int[stopTimes.size()][];
-            for (int i = 0; i < temp.length; i++) {
-                temp[i] = stopTimes.get(i);
+            if (times.size() != 0) {
+                timesTemp = new int[times.size()];
+                for (int i = 0; i < timesTemp.length; i++) {
+                    timesTemp[i] = times.get(i);
+                }
+            } else {
+                timesTemp = new int[]{-1}; // Offline bus
             }
-            AppData.BUS_TAGS_TO_STOP_TIMES.put(busTag, temp);
+
+            busStops[currentStopIndex].setTimes(timesTemp);
+            currentStopIndex++;
         }
     }
 }

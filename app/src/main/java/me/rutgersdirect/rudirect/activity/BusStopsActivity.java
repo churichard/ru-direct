@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Parcelable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.view.ViewPager;
@@ -16,7 +17,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 
 import me.rutgersdirect.rudirect.R;
 import me.rutgersdirect.rudirect.adapter.BusStopsPagerAdapter;
@@ -34,7 +35,7 @@ public class BusStopsActivity extends AppCompatActivity
 
     private GoogleApiClient mGoogleApiClient;
     private String busTag;
-    private ArrayList<BusStop> busStops;
+    private BusStop[] busStops;
     private boolean mResolvingError = false;
 
     @Override
@@ -46,7 +47,8 @@ public class BusStopsActivity extends AppCompatActivity
         // Gets the bus tag, stop titles, and stop times
         Intent intent = getIntent();
         busTag = intent.getStringExtra(AppData.BUS_TAG_MESSAGE);
-        busStops = (ArrayList) intent.getParcelableArrayListExtra(AppData.BUS_STOPS_MESSAGE);
+        Parcelable[] busStopParceArray = intent.getParcelableArrayExtra(AppData.BUS_STOPS_MESSAGE);
+        busStops = Arrays.copyOf(busStopParceArray, busStopParceArray.length, BusStop[].class);
 
         // Set the title to the name of the bus
         setTitle(RUDirectApplication.getBusData().getBusTagsToBusTitles().get(busTag));
@@ -100,6 +102,7 @@ public class BusStopsActivity extends AppCompatActivity
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
+                    firstMapLoad = false;
                     viewPager.setAdapter(new BusStopsPagerAdapter(getFragmentManager()));
                 }
             }, 100);
@@ -150,7 +153,7 @@ public class BusStopsActivity extends AppCompatActivity
         return busTag;
     }
 
-    public ArrayList<BusStop> getBusStops() {
+    public BusStop[] getBusStops() {
         return busStops;
     }
 

@@ -12,8 +12,6 @@ public class AppData {
     // Intent messages
     public static final String BUS_TAG_MESSAGE = "Bus Tag";
     public static final String BUS_STOPS_MESSAGE = "Bus Stops";
-    // Bus tags to stop times
-    public static HashMap<String, int[][]> BUS_TAGS_TO_STOP_TIMES;
     // Active buses
     public static String[] ACTIVE_BUSES;
     // Bus tag to latitude segments / longitude segments

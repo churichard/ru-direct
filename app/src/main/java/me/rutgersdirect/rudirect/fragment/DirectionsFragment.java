@@ -3,6 +3,7 @@ package me.rutgersdirect.rudirect.fragment;
 import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +12,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
 
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.TreeSet;
 
@@ -19,6 +20,7 @@ import me.rutgersdirect.rudirect.R;
 import me.rutgersdirect.rudirect.activity.DirectionsActivity;
 import me.rutgersdirect.rudirect.activity.MainActivity;
 import me.rutgersdirect.rudirect.data.constants.RUDirectApplication;
+import me.rutgersdirect.rudirect.data.model.BusStop;
 import me.rutgersdirect.rudirect.interfaces.UpdateBusStopsListener;
 import me.rutgersdirect.rudirect.util.RUDirectUtil;
 
@@ -28,8 +30,8 @@ public class DirectionsFragment extends Fragment
     private MainActivity mainActivity;
     private Spinner originSpinner;
     private Spinner destSpinner;
-    private String origin;
-    private String destination;
+    private BusStop origin;
+    private BusStop destination;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -45,30 +47,30 @@ public class DirectionsFragment extends Fragment
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        setupAutoCompleteTextViews();
+        setupSpinners();
     }
 
-    public void setupAutoCompleteTextViews() {
+    public void setupSpinners() {
         originSpinner = (Spinner) mainActivity.findViewById(R.id.origin_spinner);
         destSpinner = (Spinner) mainActivity.findViewById(R.id.destination_spinner);
 
-        HashMap<String, String[]> busTagsToStopTitles = RUDirectApplication.getBusData().getBusTagsToStopTitles();
+        HashMap<String, BusStop[]> busTagsToBusStops = RUDirectApplication.getBusData().getBusTagToBusStops();
 
-        if (busTagsToStopTitles != null) {
+        if (busTagsToBusStops != null) {
             // Create list of bus stops
-            TreeSet<String> busStops = new TreeSet<>();
-            String[] busTags = RUDirectUtil.mapKeySetToSortedArray(RUDirectApplication.getBusData().getBusTagsToBusTitles());
+            TreeSet<BusStop> busStops = new TreeSet<>();
+            String[] busTags = RUDirectUtil.mapKeySetToSortedArray(busTagsToBusStops);
             for (String busTag : busTags) {
-                Collections.addAll(busStops, busTagsToStopTitles.get(busTag));
+                busStops.addAll(Arrays.asList(busTagsToBusStops.get(busTag)));
             }
-            String[] busStopArray = busStops.toArray(new String[busStops.size()]);
+            BusStop[] busStopArray = busStops.toArray(new BusStop[busStops.size()]);
 
             // Initialize origin and destination
             origin = busStopArray[0];
             destination = busStopArray[0];
 
-            // Create the adapter and set it to the AutoCompleteTextViews
-            ArrayAdapter<String> adapter =
+            // Create the adapter and set it to the spinners
+            ArrayAdapter<BusStop> adapter =
                     new ArrayAdapter<>(mainActivity, android.R.layout.simple_list_item_1, busStopArray);
             originSpinner.setAdapter(adapter);
             originSpinner.setOnItemSelectedListener(this);
@@ -83,8 +85,8 @@ public class DirectionsFragment extends Fragment
             public void onClick(View view) {
                 if (origin != null && destination != null) {
                     Intent intent = new Intent(mainActivity, DirectionsActivity.class);
-                    intent.putExtra(getString(R.string.intent_origin_text), origin);
-                    intent.putExtra(getString(R.string.intent_destination_text), destination);
+                    intent.putExtra(getString(R.string.intent_origin_text), (Parcelable) origin);
+                    intent.putExtra(getString(R.string.intent_destination_text), (Parcelable) destination);
                     startActivity(intent);
                 }
             }
@@ -94,9 +96,9 @@ public class DirectionsFragment extends Fragment
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         if (parent == originSpinner) {
-            origin = (String) parent.getItemAtPosition(position);
+            origin = (BusStop) parent.getItemAtPosition(position);
         } else if (parent == destSpinner){
-            destination = (String) parent.getItemAtPosition(position);
+            destination = (BusStop) parent.getItemAtPosition(position);
         }
     }
 
@@ -105,6 +107,6 @@ public class DirectionsFragment extends Fragment
 
     @Override
     public void onBusStopsUpdate() {
-        setupAutoCompleteTextViews();
+        setupSpinners();
     }
 }

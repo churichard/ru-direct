@@ -8,8 +8,6 @@ import me.rutgersdirect.rudirect.fragment.BusMapFragment;
 public class ShowBusPathHelper extends AsyncTask<Object, Void, Void> {
 
     private BusMapFragment busMapFragment;
-    private String[] busStopLats;
-    private String[] busStopLons;
     private String[][] busPathLats;
     private String[][] busPathLons;
 
@@ -17,8 +15,6 @@ public class ShowBusPathHelper extends AsyncTask<Object, Void, Void> {
     protected Void doInBackground(Object... objects) {
         String tag = (String) objects[0];
         busMapFragment = (BusMapFragment) objects[1];
-        busStopLats = NextBusAPI.getBusStopLats(tag);
-        busStopLons = NextBusAPI.getBusStopLons(tag);
         busPathLats = NextBusAPI.getBusPathLats(tag);
         busPathLons = NextBusAPI.getBusPathLons(tag);
 
@@ -27,8 +23,6 @@ public class ShowBusPathHelper extends AsyncTask<Object, Void, Void> {
 
     @Override
     protected void onPostExecute(Void v) {
-        busMapFragment.latitudes = busStopLats;
-        busMapFragment.longitudes = busStopLons;
         busMapFragment.pathLats = busPathLats;
         busMapFragment.pathLons = busPathLons;
         busMapFragment.getMapAsync(busMapFragment);

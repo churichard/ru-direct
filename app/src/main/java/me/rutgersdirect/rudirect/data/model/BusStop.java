@@ -3,38 +3,50 @@ package me.rutgersdirect.rudirect.data.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class BusStop implements Parcelable {
+import java.io.Serializable;
+
+public class BusStop implements Parcelable, Serializable, Comparable<BusStop> {
 
     private String tag;
     private String title;
     private int[] times;
+    private String latitude;
+    private String longitude;
+
     private boolean isExpanded;
 
-    public BusStop(String tag, String title, int[] times) {
+    public BusStop(String tag, String title, int[] times, String latitude, String longitude) {
         this.tag = tag;
         this.title = title;
         this.times = times;
+        this.latitude = latitude;
+        this.longitude = longitude;
         this.isExpanded = false;
-    }
-
-    public BusStop(String tag, String title) {
-        this.tag = tag;
-        this.title = title;
     }
 
     private BusStop(Parcel in) {
         tag = in.readString();
         title = in.readString();
         times = in.createIntArray();
+        latitude = in.readString();
+        longitude = in.readString();
         isExpanded = false;
     }
 
+    public BusStop() {
+        // Needed by ormlite
+    }
+
+    @Override
     public void writeToParcel(Parcel out, int flags) {
         out.writeString(tag);
         out.writeString(title);
         out.writeIntArray(times);
+        out.writeString(latitude);
+        out.writeString(longitude);
     }
 
+    @Override
     public int describeContents() {
         return 0;
     }
@@ -53,12 +65,24 @@ public class BusStop implements Parcelable {
         return tag;
     }
 
+    public void setTag(String tag) {
+        this.tag = tag;
+    }
+
     public String getTitle() {
         return title;
     }
 
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
     public int[] getTimes() {
         return times;
+    }
+
+    public void setTimes(int[] times) {
+        this.times = times;
     }
 
     public boolean isExpanded() {
@@ -67,5 +91,34 @@ public class BusStop implements Parcelable {
 
     public void setIsExpanded(boolean isExpanded) {
         this.isExpanded = isExpanded;
+    }
+
+    public String getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(String latitude) {
+        this.latitude = latitude;
+    }
+
+    public String getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(String longitude) {
+        this.longitude = longitude;
+    }
+
+    @Override
+    public String toString() {
+        return title;
+    }
+
+    @Override
+    public int compareTo(BusStop busStop) {
+        if (this == busStop) {
+            return 0;
+        }
+        return getTitle().compareTo(busStop.getTitle());
     }
 }

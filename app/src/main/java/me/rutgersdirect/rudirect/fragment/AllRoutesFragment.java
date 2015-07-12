@@ -95,7 +95,6 @@ public class AllRoutesFragment extends BaseRouteFragment {
                 this.listener = listeners[0];
             }
             NextBusAPI.saveBusStops();
-            NextBusAPI.saveBusPaths();
             return null;
         }
 
