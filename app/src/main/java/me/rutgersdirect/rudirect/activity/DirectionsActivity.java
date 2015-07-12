@@ -10,11 +10,12 @@ import android.view.MenuItem;
 import android.widget.TextView;
 
 import me.rutgersdirect.rudirect.R;
+import me.rutgersdirect.rudirect.data.model.BusStop;
 
 public class DirectionsActivity extends AppCompatActivity {
 
-    private String origin;
-    private String destination;
+    private BusStop origin;
+    private BusStop destination;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,8 +23,8 @@ public class DirectionsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_directions);
 
         Intent intent = getIntent();
-        origin = intent.getStringExtra(getString(R.string.intent_origin_text));
-        destination = intent.getStringExtra(getString(R.string.intent_destination_text));
+        origin = intent.getParcelableExtra(getString(R.string.intent_origin_text));
+        destination = intent.getParcelableExtra(getString(R.string.intent_destination_text));
 
         // Setup the toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -37,8 +38,8 @@ public class DirectionsActivity extends AppCompatActivity {
 
         TextView originTextView = (TextView) findViewById(R.id.origin_textview);
         TextView destinationTextView = (TextView) findViewById(R.id.destination_textview);
-        originTextView.setText(origin);
-        destinationTextView.setText(destination);
+        originTextView.setText(origin.getTitle());
+        destinationTextView.setText(destination.getTitle());
     }
 
     @Override
