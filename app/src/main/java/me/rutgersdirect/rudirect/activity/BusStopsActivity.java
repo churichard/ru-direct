@@ -156,6 +156,10 @@ public class BusStopsActivity extends AppCompatActivity
         return busStops;
     }
 
+    public void setBusStops(BusStop[] busStops) {
+        this.busStops = busStops;
+    }
+
     public static boolean isActive() {
         return isActive;
     }

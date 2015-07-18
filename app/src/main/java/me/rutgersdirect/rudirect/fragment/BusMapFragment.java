@@ -34,6 +34,7 @@ public class BusMapFragment extends MapFragment implements OnMapReadyCallback {
     private GoogleMap mMap;
     private BusStopsActivity busStopsActivity;
     private Handler refreshHandler;
+    private ArrayList<Marker> busStopMarkers;
     private ArrayList<Marker> activeBusMarkers;
     private BusPathSegment[] pathSegments;
 
@@ -47,6 +48,7 @@ public class BusMapFragment extends MapFragment implements OnMapReadyCallback {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         activeBusMarkers = new ArrayList<>();
+        busStopMarkers = new ArrayList<>();
         new ShowBusPathHelper().execute(busStopsActivity.getBusTag(), this);
     }
 
@@ -70,7 +72,7 @@ public class BusMapFragment extends MapFragment implements OnMapReadyCallback {
             @Override
             public void run() {
                 if (mMap != null) {
-                    new UpdateActiveBusLocation().execute();
+                    new UpdateMarkers().execute();
                 }
                 refreshHandler.postDelayed(this, ACTIVE_BUS_REFRESH_INTERVAL);
             }
@@ -90,25 +92,11 @@ public class BusMapFragment extends MapFragment implements OnMapReadyCallback {
 
     // Draws the bus route on the map
     private void drawRoute() {
-        BusStop[] busStops = busStopsActivity.getBusStops();
-        int polyLineColor = getResources().getColor(R.color.polyline_color);
-
         // Draws the active bus locations
-        new UpdateActiveBusLocation().execute();
-
-        // Draws the bus stop markers
-        for (BusStop stop : busStops) {
-            MarkerOptions markerOptions = new MarkerOptions()
-                    .position(getLatLng(stop.getLatitude(), stop.getLongitude()))
-                    .title(stop.getTitle());
-            int[] times = stop.getTimes();
-            if (times == null || (times.length == 1 && times[0] == -1)) {
-                markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
-            }
-            mMap.addMarker(markerOptions);
-        }
+        new UpdateMarkers().execute();
 
         // Draws the bus route
+        int polyLineColor = getResources().getColor(R.color.polyline_color);
         for (BusPathSegment pathSegment : pathSegments) {
             PolylineOptions polylineOptions = new PolylineOptions();
             polylineOptions.color(polyLineColor);
@@ -133,7 +121,7 @@ public class BusMapFragment extends MapFragment implements OnMapReadyCallback {
     }
 
     // Update active bus locations
-    private class UpdateActiveBusLocation extends AsyncTask<Void, Void, Void> {
+    private class UpdateMarkers extends AsyncTask<Void, Void, Void> {
         @Override
         protected Void doInBackground(Void... voids) {
             NextBusAPI.updateActiveBuses();
@@ -142,6 +130,7 @@ public class BusMapFragment extends MapFragment implements OnMapReadyCallback {
 
         @Override
         protected void onPostExecute(Void v) {
+            // Update active bus locations
             if (AppData.activeLatsHashMap != null && AppData.activeLonsHashMap != null) {
                 HashMap<String, ArrayList<String>> activeLatsHashMap = AppData.activeLatsHashMap;
                 HashMap<String, ArrayList<String>> activeLonsHashMap = AppData.activeLonsHashMap;
@@ -155,6 +144,7 @@ public class BusMapFragment extends MapFragment implements OnMapReadyCallback {
                     for (int i = 0; i < activeBusMarkers.size(); i++) {
                         activeBusMarkers.get(i).remove();
                     }
+                    activeBusMarkers.clear();
 
                     // Add active bus markers
                     for (int i = 0; i < activeLats.size(); i++) {
@@ -163,6 +153,30 @@ public class BusMapFragment extends MapFragment implements OnMapReadyCallback {
                                 .title("Active Bus")
                                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_bus));
                         activeBusMarkers.add(mMap.addMarker(markerOptions));
+                    }
+                }
+            }
+
+            // Draw the bus stop markers
+            BusStop[] busStops = busStopsActivity.getBusStops();
+            if (busStopMarkers.isEmpty()) { // Create the markers
+                for (BusStop stop : busStops) {
+                    MarkerOptions markerOptions = new MarkerOptions()
+                            .position(getLatLng(stop.getLatitude(), stop.getLongitude()))
+                            .title(stop.getTitle());
+                    int[] times = stop.getTimes();
+                    if (times == null || (times.length == 1 && times[0] == -1)) {
+                        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
+                    }
+                    busStopMarkers.add(mMap.addMarker(markerOptions));
+                }
+            } else { // Change the color if necessary
+                for (int i = 0; i < busStops.length; i++) {
+                    int[] times = busStops[i].getTimes();
+                    if (times == null || (times.length == 1 && times[0] == -1)) {
+                        busStopMarkers.get(i).setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
+                    } else {
+                        busStopMarkers.get(i).setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
                     }
                 }
             }

@@ -4,6 +4,7 @@ import android.app.Fragment;
 import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
 
+import me.rutgersdirect.rudirect.activity.BusStopsActivity;
 import me.rutgersdirect.rudirect.adapter.BusStopAdapter;
 import me.rutgersdirect.rudirect.api.NextBusAPI;
 import me.rutgersdirect.rudirect.data.model.BusStop;
@@ -33,6 +34,9 @@ public class ShowBusStopsHelper extends AsyncTask<Object, Void, Void> {
             RecyclerView busTimesRecyclerView = busTimesFragment.getBusTimesRecyclerView();
 
             busTimesRecyclerView.setAdapter(new BusStopAdapter(busStops));
+            if (busTimesFragment.isAdded()) {
+                ((BusStopsActivity) busTimesFragment.getActivity()).setBusStops(busStops);
+            }
             busTimesFragment.getSwipeRefreshLayout().setRefreshing(false);
         }
     }
