@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import me.rutgersdirect.rudirect.R;
@@ -23,6 +24,7 @@ import me.rutgersdirect.rudirect.util.RUDirectUtil;
 public class AllRoutesFragment extends BaseRouteFragment {
 
     private RecyclerView allBusesRecyclerView;
+    private ProgressBar progressBar;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -33,6 +35,9 @@ public class AllRoutesFragment extends BaseRouteFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        progressBar = (ProgressBar) getActivity().findViewById(R.id.progress_spinner);
+        progressBar.setVisibility(View.VISIBLE);
 
         setupRecyclerView();
         setupSwipeRefreshLayout();
@@ -105,9 +110,10 @@ public class AllRoutesFragment extends BaseRouteFragment {
             } else {
                 errorView.setVisibility(View.GONE);
                 allBusesRecyclerView.setAdapter(new BusRouteAdapter(RUDirectUtil.mapKeySetToSortedArray(
-                                RUDirectApplication.getBusData().getBusTitleToBusTag()), mainActivity, AllRoutesFragment.this));
+                        RUDirectApplication.getBusData().getBusTitleToBusTag()), mainActivity, AllRoutesFragment.this));
             }
             mSwipeRefreshLayout.setRefreshing(false);
+            progressBar.setVisibility(View.GONE);
 
             if (listener != null) {
                 listener.onBusStopsUpdate();

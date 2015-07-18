@@ -13,6 +13,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import me.rutgersdirect.rudirect.R;
@@ -30,6 +31,7 @@ public class BusTimesFragment extends Fragment implements AppBarLayout.OnOffsetC
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private RecyclerView busTimesRecyclerView;
     private AppBarLayout appBarLayout;
+    private ProgressBar progressBar;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -46,7 +48,10 @@ public class BusTimesFragment extends Fragment implements AppBarLayout.OnOffsetC
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
         appBarLayout = (AppBarLayout) busStopsActivity.findViewById(R.id.appbar);
+        progressBar = (ProgressBar) busStopsActivity.findViewById(R.id.progress_spinner);
+        progressBar.setVisibility(View.VISIBLE);
 
         setupRecyclerView();
         setupSwipeRefreshLayout();
@@ -58,7 +63,6 @@ public class BusTimesFragment extends Fragment implements AppBarLayout.OnOffsetC
 
         // Update bus times
         BusStopAdapter.setExpToggleRequest(false);
-        mSwipeRefreshLayout.setRefreshing(true);
         updateBusTimes();
 
         // Auto refreshes times every REFRESH_INTERVAL seconds
@@ -162,5 +166,9 @@ public class BusTimesFragment extends Fragment implements AppBarLayout.OnOffsetC
 
     public RecyclerView getBusTimesRecyclerView() {
         return busTimesRecyclerView;
+    }
+
+    public ProgressBar getProgressBar() {
+        return progressBar;
     }
 }

@@ -3,6 +3,7 @@ package me.rutgersdirect.rudirect.util;
 import android.app.Fragment;
 import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 
 import me.rutgersdirect.rudirect.activity.BusStopsActivity;
 import me.rutgersdirect.rudirect.adapter.BusStopAdapter;
@@ -37,6 +38,7 @@ public class ShowBusStopsHelper extends AsyncTask<Object, Void, Void> {
             if (busTimesFragment.isAdded()) {
                 ((BusStopsActivity) busTimesFragment.getActivity()).setBusStops(busStops);
             }
+            busTimesFragment.getProgressBar().setVisibility(View.GONE);
             busTimesFragment.getSwipeRefreshLayout().setRefreshing(false);
         }
     }
