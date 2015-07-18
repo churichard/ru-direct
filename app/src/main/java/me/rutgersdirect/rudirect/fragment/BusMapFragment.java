@@ -37,6 +37,7 @@ public class BusMapFragment extends MapFragment implements OnMapReadyCallback {
     private ArrayList<Marker> busStopMarkers;
     private ArrayList<Marker> activeBusMarkers;
     private BusPathSegment[] pathSegments;
+    private boolean isVisible;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -49,6 +50,7 @@ public class BusMapFragment extends MapFragment implements OnMapReadyCallback {
         super.onViewCreated(view, savedInstanceState);
         activeBusMarkers = new ArrayList<>();
         busStopMarkers = new ArrayList<>();
+        isVisible = false;
         new ShowBusPathHelper().execute(busStopsActivity.getBusTag(), this);
     }
 
@@ -71,12 +73,21 @@ public class BusMapFragment extends MapFragment implements OnMapReadyCallback {
         refreshHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                if (mMap != null) {
+                if (mMap != null && isVisible) {
                     new UpdateMarkers().execute();
                 }
                 refreshHandler.postDelayed(this, ACTIVE_BUS_REFRESH_INTERVAL);
             }
         }, ACTIVE_BUS_REFRESH_INTERVAL);
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        isVisible = isVisibleToUser;
+        if (isVisible) {
+            new UpdateMarkers().execute();
+        }
     }
 
     @Override
