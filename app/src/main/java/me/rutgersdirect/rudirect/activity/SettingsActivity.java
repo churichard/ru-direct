@@ -1,31 +1,23 @@
 package me.rutgersdirect.rudirect.activity;
 
-import android.content.Intent;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-import android.widget.TextView;
 
 import me.rutgersdirect.rudirect.R;
-import me.rutgersdirect.rudirect.data.model.BusStop;
+import me.rutgersdirect.rudirect.fragment.SettingsFragment;
 
-public class DirectionsActivity extends AppCompatActivity {
-
-    private BusStop origin;
-    private BusStop destination;
+public class SettingsActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_directions);
-
-        // Get origin and destination
-        Intent intent = getIntent();
-        origin = intent.getParcelableExtra(getString(R.string.origin_text_message));
-        destination = intent.getParcelableExtra(getString(R.string.destination_text_message));
+        setContentView(R.layout.activity_settings);
 
         // Setup the toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -37,11 +29,11 @@ public class DirectionsActivity extends AppCompatActivity {
                     R.drawable.ic_action_toolbar_back, getTheme()));
         }
 
-        // Setup origin and destination textviews
-        TextView originTextView = (TextView) findViewById(R.id.origin_textview);
-        TextView destinationTextView = (TextView) findViewById(R.id.destination_textview);
-        originTextView.setText(origin.getTitle());
-        destinationTextView.setText(destination.getTitle());
+        // Setup the preference fragment
+        FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.fragment_container, new SettingsFragment());
+        fragmentTransaction.commit();
     }
 
     @Override
@@ -54,11 +46,5 @@ public class DirectionsActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        overridePendingTransition(0, R.anim.abc_shrink_fade_out_from_bottom);
     }
 }

@@ -22,6 +22,7 @@ import java.util.TreeSet;
 import me.rutgersdirect.rudirect.R;
 import me.rutgersdirect.rudirect.activity.DirectionsActivity;
 import me.rutgersdirect.rudirect.activity.MainActivity;
+import me.rutgersdirect.rudirect.activity.SettingsActivity;
 import me.rutgersdirect.rudirect.data.constants.RUDirectApplication;
 import me.rutgersdirect.rudirect.data.model.BusStop;
 import me.rutgersdirect.rudirect.interfaces.UpdateBusStopsListener;
@@ -65,6 +66,7 @@ public class DirectionsFragment extends Fragment
                     intent.putExtra(getString(R.string.origin_text_message), (Parcelable) origin);
                     intent.putExtra(getString(R.string.destination_text_message), (Parcelable) destination);
                     startActivity(intent);
+                    mainActivity.overridePendingTransition(R.anim.abc_grow_fade_in_from_bottom, 0);
                 }
             }
         });
@@ -83,7 +85,8 @@ public class DirectionsFragment extends Fragment
         int id = item.getItemId();
 
         if (id == R.id.settings) {
-            // TODO Open settings preference
+            Intent intent = new Intent(mainActivity, SettingsActivity.class);
+            startActivity(intent);
             return true;
         }
 

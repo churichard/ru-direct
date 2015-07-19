@@ -1,5 +1,6 @@
 package me.rutgersdirect.rudirect.fragment;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -15,6 +16,7 @@ import android.widget.TextView;
 import java.util.HashMap;
 
 import me.rutgersdirect.rudirect.R;
+import me.rutgersdirect.rudirect.activity.SettingsActivity;
 import me.rutgersdirect.rudirect.adapter.BusRouteAdapter;
 import me.rutgersdirect.rudirect.api.NextBusAPI;
 import me.rutgersdirect.rudirect.data.constants.RUDirectApplication;
@@ -35,7 +37,7 @@ public class ActiveRoutesFragment extends BaseRouteFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        progressBar = (ProgressBar) getActivity().findViewById(R.id.active_buses_progress_bar);
+        progressBar = (ProgressBar) mainActivity.findViewById(R.id.active_buses_progress_bar);
         progressBar.setVisibility(View.VISIBLE);
 
         setupRecyclerView();
@@ -55,7 +57,8 @@ public class ActiveRoutesFragment extends BaseRouteFragment {
         int id = item.getItemId();
 
         if (id == R.id.settings) {
-            // TODO Open settings preference
+            Intent intent = new Intent(mainActivity, SettingsActivity.class);
+            startActivity(intent);
             return true;
         }
 

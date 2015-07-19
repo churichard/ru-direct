@@ -65,7 +65,8 @@ public class BusStopsActivity extends AppCompatActivity
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setHomeAsUpIndicator(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_action_toolbar_back, getTheme()));
+            actionBar.setHomeAsUpIndicator(ResourcesCompat.getDrawable(getResources(),
+                    R.drawable.ic_action_toolbar_back, getTheme()));
         }
     }
 

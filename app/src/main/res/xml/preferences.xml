@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:title="@string/pref_contributors_title">
+        <Preference
+            android:summary="@string/pref_developer_summary"
+            android:title="@string/pref_developer_title" />
+        <Preference
+            android:summary="@string/pref_product_manager_summary"
+            android:title="@string/pref_product_manager_title" />
+        <Preference
+            android:summary="@string/pref_web_developer_summary"
+            android:title="@string/pref_web_developer_title" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/pref_attributions_title">
+        <Preference
+            android:key="@string/google_maps_key"
+            android:title="@string/pref_google_maps_title" />
+    </PreferenceCategory>
+</PreferenceScreen>
