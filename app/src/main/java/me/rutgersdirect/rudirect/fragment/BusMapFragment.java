@@ -3,6 +3,8 @@ package me.rutgersdirect.rudirect.fragment;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -43,6 +45,7 @@ public class BusMapFragment extends MapFragment implements OnMapReadyCallback {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         busStopsActivity = (BusStopsActivity) getActivity();
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -82,23 +85,30 @@ public class BusMapFragment extends MapFragment implements OnMapReadyCallback {
     }
 
     @Override
-    public void setUserVisibleHint(boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
-        isVisible = isVisibleToUser;
-        if (isVisible) {
-            new UpdateMarkers().execute();
-        }
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.menu_refresh, menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        if (id == android.R.id.home) {
-            busStopsActivity.onBackPressed();
+        if (id == R.id.refresh) {
+            new UpdateMarkers().execute();
             return true;
         }
+
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        isVisible = isVisibleToUser;
+        if (isVisible) {
+            new UpdateMarkers().execute();
+        }
     }
 
     // Draws the bus route on the map

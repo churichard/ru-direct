@@ -18,8 +18,8 @@
     <string name="destination_text_message">Destination</string>
 
     <!-- Misc -->
-    <string name="refresh">Refresh</string>
     <string name="no_internet_text">No Internet Connection</string>
+    <string name="action_refresh">Refresh</string>
     <string name="action_settings">Settings</string>
 
     <!-- Google Play Services error messages -->

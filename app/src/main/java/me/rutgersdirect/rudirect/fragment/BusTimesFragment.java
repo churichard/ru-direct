@@ -37,11 +37,11 @@ public class BusTimesFragment extends Fragment implements AppBarLayout.OnOffsetC
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         busStopsActivity = (BusStopsActivity) getActivity();
+        setHasOptionsMenu(true);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        setHasOptionsMenu(true);
         return inflater.inflate(R.layout.fragment_bus_times, container, false);
     }
 
@@ -133,8 +133,8 @@ public class BusTimesFragment extends Fragment implements AppBarLayout.OnOffsetC
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_refresh, menu);
         super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.menu_refresh, menu);
     }
 
     @Override

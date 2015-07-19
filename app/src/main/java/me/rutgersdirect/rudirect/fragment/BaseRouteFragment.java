@@ -23,6 +23,7 @@ public class BaseRouteFragment extends Fragment implements AppBarLayout.OnOffset
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mainActivity = (MainActivity) getActivity();
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -34,7 +35,7 @@ public class BaseRouteFragment extends Fragment implements AppBarLayout.OnOffset
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.menu_refresh, menu);
+        inflater.inflate(R.menu.menu_settings, menu);
     }
 
     @Override

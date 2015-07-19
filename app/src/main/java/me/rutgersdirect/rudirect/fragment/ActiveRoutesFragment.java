@@ -28,7 +28,6 @@ public class ActiveRoutesFragment extends BaseRouteFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        setHasOptionsMenu(true);
         return inflater.inflate(R.layout.fragment_active_routes, container, false);
     }
 
@@ -55,9 +54,8 @@ public class ActiveRoutesFragment extends BaseRouteFragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        if (id == R.id.refresh) {
-            mSwipeRefreshLayout.setRefreshing(true);
-            updateActiveRoutes();
+        if (id == R.id.settings) {
+            // TODO Open settings preference
             return true;
         }
 
