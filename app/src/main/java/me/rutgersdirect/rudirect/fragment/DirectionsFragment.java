@@ -47,13 +47,28 @@ public class DirectionsFragment extends Fragment
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        setupSpinners();
-    }
 
-    public void setupSpinners() {
         originSpinner = (Spinner) mainActivity.findViewById(R.id.origin_spinner);
         destSpinner = (Spinner) mainActivity.findViewById(R.id.destination_spinner);
 
+        // Set up find route button
+        Button findRouteButton = (Button) mainActivity.findViewById(R.id.find_route_button);
+        findRouteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (origin != null && destination != null) {
+                    Intent intent = new Intent(mainActivity, DirectionsActivity.class);
+                    intent.putExtra(getString(R.string.origin_text_message), (Parcelable) origin);
+                    intent.putExtra(getString(R.string.destination_text_message), (Parcelable) destination);
+                    startActivity(intent);
+                }
+            }
+        });
+
+        populateSpinners();
+    }
+
+    public void populateSpinners() {
         HashMap<String, BusStop[]> busTagsToBusStops = RUDirectApplication.getBusData().getBusTagToBusStops();
 
         if (busTagsToBusStops != null) {
@@ -77,27 +92,13 @@ public class DirectionsFragment extends Fragment
             destSpinner.setAdapter(adapter);
             destSpinner.setOnItemSelectedListener(this);
         }
-
-        // Set up find route button
-        Button findRouteButton = (Button) mainActivity.findViewById(R.id.find_route_button);
-        findRouteButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (origin != null && destination != null) {
-                    Intent intent = new Intent(mainActivity, DirectionsActivity.class);
-                    intent.putExtra(getString(R.string.origin_text_message), (Parcelable) origin);
-                    intent.putExtra(getString(R.string.destination_text_message), (Parcelable) destination);
-                    startActivity(intent);
-                }
-            }
-        });
     }
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         if (parent == originSpinner) {
             origin = (BusStop) parent.getItemAtPosition(position);
-        } else if (parent == destSpinner){
+        } else if (parent == destSpinner) {
             destination = (BusStop) parent.getItemAtPosition(position);
         }
     }
@@ -107,6 +108,6 @@ public class DirectionsFragment extends Fragment
 
     @Override
     public void onBusStopsUpdate() {
-        setupSpinners();
+        populateSpinners();
     }
 }
