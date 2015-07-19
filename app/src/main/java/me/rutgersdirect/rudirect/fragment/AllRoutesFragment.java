@@ -36,7 +36,7 @@ public class AllRoutesFragment extends BaseRouteFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        progressBar = (ProgressBar) getActivity().findViewById(R.id.progress_spinner);
+        progressBar = (ProgressBar) getActivity().findViewById(R.id.all_buses_progress_bar);
         progressBar.setVisibility(View.VISIBLE);
 
         setupRecyclerView();
