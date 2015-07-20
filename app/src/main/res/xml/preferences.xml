@@ -10,6 +10,9 @@
         <Preference
             android:summary="@string/pref_web_developer_summary"
             android:title="@string/pref_web_developer_title" />
+        <Preference
+            android:key="@string/special_thanks_key"
+            android:title="@string/pref_special_thanks_title" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_legal_title">
         <Preference

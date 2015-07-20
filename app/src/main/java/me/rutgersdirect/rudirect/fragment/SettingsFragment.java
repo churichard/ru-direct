@@ -30,7 +30,30 @@ public class SettingsFragment extends PreferenceFragment {
         settingsActivity = (SettingsActivity) getActivity();
 
         addPreferencesFromResource(R.xml.preferences);
+        setupContributors();
         setupAttributions();
+    }
+
+    // Setup contributors
+    private void setupContributors() {
+        Preference specialThanksPref = findPreference(getString(R.string.special_thanks_key));
+        specialThanksPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                try {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                    builder.setTitle(R.string.pref_special_thanks_title)
+                            .setMessage(Html.fromHtml(convertStreamToString(settingsActivity.getAssets().open("special_thanks.html"))))
+                            .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) { /* Do nothing */ }
+                            }).create().show();
+                    return true;
+                } catch (IOException e) {
+                    Log.e(TAG, e.toString(), e);
+                    return false;
+                }
+            }
+        });
     }
 
     // Setup open source software license text
@@ -41,7 +64,7 @@ public class SettingsFragment extends PreferenceFragment {
                 try {
                     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                     builder.setTitle(R.string.pref_open_source_software_title)
-                            .setMessage(new SpannableStringBuilder(Html.fromHtml("<h5>Google Maps</h5>"))
+                            .setMessage(new SpannableStringBuilder(Html.fromHtml("<h5>Google Play Services</h5>"))
                                     .append(GoogleApiAvailability.getInstance().getOpenSourceSoftwareLicenseInfo(settingsActivity))
                                     .append("\n").append(Html.fromHtml(convertStreamToString(
                                             settingsActivity.getAssets().open("open_source_software.html")))))

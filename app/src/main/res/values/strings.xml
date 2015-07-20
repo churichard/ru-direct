@@ -25,6 +25,8 @@
     <string name="pref_product_manager_summary">Kenny Li</string>
     <string name="pref_web_developer_title">Web Developer</string>
     <string name="pref_web_developer_summary">James Paik</string>
+    <string name="pref_special_thanks_title">Special Thanks</string>
+    <string name="special_thanks_key">pref_special_thanks</string>
     <string name="pref_legal_title">Legal</string>
     <string name="pref_open_source_software_title">Open Source Licenses</string>
     <string name="open_source_software_key">pref_open_source_software</string>
