@@ -22,7 +22,7 @@
     <string name="pref_developer_title">Developer/Designer</string>
     <string name="pref_developer_summary">Richard Chu</string>
     <string name="pref_product_manager_title">Product Manager</string>
-    <string name="pref_product_manager_summary">Kenny Li</string>
+    <string name="pref_product_manager_summary">Kenneth Li</string>
     <string name="pref_web_developer_title">Web Developer</string>
     <string name="pref_web_developer_summary">James Paik</string>
     <string name="pref_special_thanks_title">Special Thanks</string>
