@@ -25,14 +25,15 @@
     <string name="pref_product_manager_summary">Kenny Li</string>
     <string name="pref_web_developer_title">Web Developer</string>
     <string name="pref_web_developer_summary">James Paik</string>
-    <string name="pref_attributions_title">Attributions</string>
-    <string name="pref_google_maps_title">Google Maps</string>
-    <string name="google_maps_key">pref_google_maps</string>
+    <string name="pref_legal_title">Legal</string>
+    <string name="pref_open_source_software_title">Open Source Licenses</string>
+    <string name="open_source_software_key">pref_open_source_software</string>
 
     <!-- Misc -->
     <string name="no_internet_text">No Internet Connection</string>
     <string name="refresh">Refresh</string>
     <string name="settings">Settings</string>
+    <string name="ok">OK</string>
 
     <!-- Google Play Services error messages -->
     <string name="common_google_play_services_install_text_phone" msgid="2122112764540849864">

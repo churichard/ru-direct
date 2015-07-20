@@ -11,9 +11,9 @@
             android:summary="@string/pref_web_developer_summary"
             android:title="@string/pref_web_developer_title" />
     </PreferenceCategory>
-    <PreferenceCategory android:title="@string/pref_attributions_title">
+    <PreferenceCategory android:title="@string/pref_legal_title">
         <Preference
-            android:key="@string/google_maps_key"
-            android:title="@string/pref_google_maps_title" />
+            android:key="@string/open_source_software_key"
+            android:title="@string/pref_open_source_software_title" />
     </PreferenceCategory>
 </PreferenceScreen>
