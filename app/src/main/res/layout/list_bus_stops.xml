@@ -1,6 +1,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:background="?android:attr/selectableItemBackground"
     android:paddingBottom="@dimen/listview_vertical_margin"
     android:paddingLeft="@dimen/listview_horizontal_margin"
@@ -9,21 +9,21 @@
 
     <TextView
         android:id="@+id/bus_stop_name"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingLeft="2dip"
-        android:paddingRight="2dip"
+        android:paddingLeft="2dp"
+        android:paddingRight="2dp"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textColor="#000000" />
+        android:textColor="@android:color/black" />
 
     <TextView
         android:id="@+id/bus_stop_times"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/bus_stop_name"
-        android:paddingLeft="2dip"
-        android:paddingRight="2dip"
+        android:paddingLeft="2dp"
+        android:paddingRight="2dp"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textColor="#1565C0" />
+        android:textColor="@color/blue" />
 
 </RelativeLayout>

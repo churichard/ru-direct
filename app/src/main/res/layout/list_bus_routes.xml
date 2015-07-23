@@ -1,6 +1,6 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:background="?android:attr/selectableItemBackground"
     android:gravity="center_vertical"
     android:paddingLeft="@dimen/listview_horizontal_margin"
@@ -8,13 +8,13 @@
 
     <TextView
         android:id="@+id/bus_route_name"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
         android:minHeight="?android:attr/listPreferredItemHeight"
-        android:paddingLeft="2dip"
-        android:paddingRight="2dip"
+        android:paddingLeft="2dp"
+        android:paddingRight="2dp"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textColor="#000000" />
+        android:textColor="@android:color/black" />
 
 </FrameLayout>

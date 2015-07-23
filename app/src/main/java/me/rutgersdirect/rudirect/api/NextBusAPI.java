@@ -64,9 +64,9 @@ public class NextBusAPI {
         }
     }
 
-    // Updates active buses
-    public static void updateActiveBuses() {
-        parseXML(AppData.VEHICLE_LOCATIONS_URL, new XMLActiveBusHandler());
+    // Saves directions
+    public static void saveDirections() {
+        parseXML(AppData.ALL_ROUTES_URL, new XMLDirectionsHandler());
     }
 
     // Saves the bus stops to the database
@@ -86,6 +86,11 @@ public class NextBusAPI {
         }
 
         parseXML(link.toString(), new XMLBusTimesHandler(busTag));
+    }
+
+    // Updates active buses
+    public static void updateActiveBuses() {
+        parseXML(AppData.VEHICLE_LOCATIONS_URL, new XMLActiveBusHandler());
     }
 
     // Returns a list of the active buses

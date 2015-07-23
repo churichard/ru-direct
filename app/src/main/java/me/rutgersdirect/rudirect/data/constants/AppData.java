@@ -12,6 +12,7 @@ public class AppData {
 
     // Active buses
     public static String[] ACTIVE_BUSES;
+
     // Bus tag to latitude segments / longitude segments
     public static HashMap<String, ArrayList<String>> activeLonsHashMap;
     public static HashMap<String, ArrayList<String>> activeLatsHashMap;
