@@ -15,9 +15,6 @@ import me.rutgersdirect.rudirect.util.DirectionsUtil;
 
 public class DirectionsActivity extends AppCompatActivity {
 
-    private BusStop origin;
-    private BusStop destination;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -25,8 +22,8 @@ public class DirectionsActivity extends AppCompatActivity {
 
         // Get origin and destination
         Intent intent = getIntent();
-        origin = intent.getParcelableExtra(getString(R.string.origin_text_message));
-        destination = intent.getParcelableExtra(getString(R.string.destination_text_message));
+        BusStop origin = intent.getParcelableExtra(getString(R.string.origin_text_message));
+        BusStop destination = intent.getParcelableExtra(getString(R.string.destination_text_message));
 
         // Setup the toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -44,6 +41,12 @@ public class DirectionsActivity extends AppCompatActivity {
         originTextView.setText("Origin: " + origin.getTitle());
         destinationTextView.setText("Destination: " + destination.getTitle());
 
+        // Compute the shortest path
+        computeShortestPath(origin, destination);
+    }
+
+    // Computes the shortest path
+    private void computeShortestPath(BusStop origin, BusStop destination) {
         // Build the bus stops graph
         DirectionsUtil.setupBusStopsGraph();
 
@@ -57,7 +60,8 @@ public class DirectionsActivity extends AppCompatActivity {
                 result.setText("The origin and the destination are the same!");
             }
         } catch (IllegalArgumentException e) {
-            result.setText("There doesn't exist a path between " + origin.toString() + " and " + destination.toString());
+            result.setText("There doesn't exist a path between " + origin.toString() + " and "
+                    + destination.toString());
         }
     }
 

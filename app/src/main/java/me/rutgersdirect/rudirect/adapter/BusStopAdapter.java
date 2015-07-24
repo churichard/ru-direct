@@ -142,7 +142,13 @@ public class BusStopAdapter extends RecyclerView.Adapter<BusStopViewHolder> {
         }
     }
 
+    // Sets expanded toggle request boolean
     public static void setExpToggleRequest(boolean expToggleRequest) {
         BusStopAdapter.expToggleRequest = expToggleRequest;
+    }
+
+    // Sets the bus stops
+    public void setBusStops(BusStop[] busStops) {
+        this.busStops = busStops;
     }
 }

@@ -75,7 +75,7 @@ public class ActiveRoutesFragment extends BaseRouteFragment {
         // Setup layout
         activeBusesRecyclerView.addItemDecoration(new DividerItemDecoration(mainActivity, LinearLayoutManager.VERTICAL));
         // Set adapter
-        activeBusesRecyclerView.setAdapter(new BusRouteAdapter());
+        activeBusesRecyclerView.setAdapter(new BusRouteAdapter(mainActivity, this));
     }
 
     // Set up SwipeRefreshLayout
@@ -113,10 +113,12 @@ public class ActiveRoutesFragment extends BaseRouteFragment {
                     activeBuses[i] = busTagsToBusTitles.get(activeBusTags[i]);
                 }
             }
+            BusRouteAdapter adapter = (BusRouteAdapter) activeBusesRecyclerView.getAdapter();
             if (activeBusTags.length == 1 && activeBuses[0] == null) {
                 // Setup error message
                 errorView.setVisibility(View.VISIBLE);
-                activeBusesRecyclerView.setAdapter(new BusRouteAdapter());
+                adapter.setBusRoutes(null);
+                adapter.notifyDataSetChanged();
                 if (RUDirectUtil.isNetworkAvailable()) {
                     errorView.setText("No active buses.");
                 } else {
@@ -125,7 +127,8 @@ public class ActiveRoutesFragment extends BaseRouteFragment {
             } else {
                 // Show active buses
                 errorView.setVisibility(View.GONE);
-                activeBusesRecyclerView.setAdapter(new BusRouteAdapter(activeBuses, mainActivity, ActiveRoutesFragment.this));
+                adapter.setBusRoutes(activeBuses);
+                adapter.notifyDataSetChanged();
             }
             progressBar.setVisibility(View.GONE);
             mSwipeRefreshLayout.setRefreshing(false);

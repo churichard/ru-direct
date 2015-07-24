@@ -29,6 +29,12 @@ public class BusRouteAdapter extends RecyclerView.Adapter<BusRouteViewHolder> {
         this.fragment = fragment;
     }
 
+    public BusRouteAdapter(Activity activity, Fragment fragment) {
+        this.busRoutes = null;
+        this.activity = activity;
+        this.fragment = fragment;
+    }
+
     public BusRouteAdapter() {
         this.busRoutes = null;
     }
@@ -39,30 +45,27 @@ public class BusRouteAdapter extends RecyclerView.Adapter<BusRouteViewHolder> {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_bus_routes, parent, false);
         return new BusRouteViewHolder(v, new BusRouteViewHolder.BusRouteViewHolderClick() {
             public void onClick(View v, int position) {
-                if (!BusStopsActivity.isActive()) {
-                    String bus = busRoutes[position];
-                    String busTag = null;
+                String bus = busRoutes[position];
+                String busTag = null;
 
-                    // Get bus tag
-                    BusData busData = RUDirectApplication.getBusData();
-                    if (busData != null) {
-                        busTag = busData.getBusTitleToBusTag().get(bus);
-                    }
+                // Get bus tag
+                BusData busData = RUDirectApplication.getBusData();
+                if (busData != null) {
+                    busTag = busData.getBusTitleToBusTag().get(bus);
+                }
 
-                    // Start new activity to display bus stop titles and times
-                    if (busTag != null) {
-                        BusStopsActivity.setIsActive(true);
-                        new ShowBusStopsHelper().execute(busTag, fragment);
+                // Start new activity to display bus stop titles and times
+                if (busTag != null) {
+                    new ShowBusStopsHelper().execute(busTag, fragment);
 
-                        Intent intent = new Intent(activity, BusStopsActivity.class);
-                        Context context = RUDirectApplication.getContext();
+                    Intent intent = new Intent(activity, BusStopsActivity.class);
+                    Context context = RUDirectApplication.getContext();
 
-                        intent.putExtra(context.getString(R.string.bus_tag_message), busTag);
-                        intent.putExtra(context.getString(R.string.bus_stops_message), NextBusAPI.getBusStops(busTag));
+                    intent.putExtra(context.getString(R.string.bus_tag_message), busTag);
+                    intent.putExtra(context.getString(R.string.bus_stops_message), NextBusAPI.getBusStops(busTag));
 
-                        activity.startActivity(intent);
-                        activity.overridePendingTransition(R.anim.abc_grow_fade_in_from_bottom, 0);
-                    }
+                    activity.startActivity(intent);
+                    activity.overridePendingTransition(R.anim.abc_grow_fade_in_from_bottom, 0);
                 }
             }
         });
@@ -81,5 +84,10 @@ public class BusRouteAdapter extends RecyclerView.Adapter<BusRouteViewHolder> {
             return busRoutes.length;
         }
         return 0;
+    }
+
+    // Sets the bus routes
+    public void setBusRoutes(String[] busRoutes) {
+        this.busRoutes = busRoutes;
     }
 }

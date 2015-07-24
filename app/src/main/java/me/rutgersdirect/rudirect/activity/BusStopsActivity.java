@@ -28,8 +28,6 @@ public class BusStopsActivity extends AppCompatActivity
         implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     private static final int REQUEST_RESOLVE_ERROR = 5001;
-
-    private static boolean isActive; // Whether or not the activity is active
     private static boolean firstMapLoad = true;
 
     private GoogleApiClient mGoogleApiClient;
@@ -137,18 +135,6 @@ public class BusStopsActivity extends AppCompatActivity
         }
     }
 
-    @Override
-    protected void onPause() {
-        isActive = false;
-        super.onPause();
-    }
-
-    @Override
-    protected void onResume() {
-        isActive = true;
-        super.onResume();
-    }
-
     public String getBusTag() {
         return busTag;
     }
@@ -159,14 +145,6 @@ public class BusStopsActivity extends AppCompatActivity
 
     public void setBusStops(BusStop[] busStops) {
         this.busStops = busStops;
-    }
-
-    public static boolean isActive() {
-        return isActive;
-    }
-
-    public static void setIsActive(boolean isActive) {
-        BusStopsActivity.isActive = isActive;
     }
 
     // Build Google Api Client for displaying maps

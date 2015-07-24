@@ -16,12 +16,12 @@ import me.rutgersdirect.rudirect.data.model.BusStop;
 public class XMLBusTimesHandler extends DefaultHandler {
 
     private static final String TAG = XMLBusTimesHandler.class.getSimpleName();
-    private String busTag;
-    private boolean inBusTag;
     private BusData busData;
     private BusStop[] busStops;
-    private ArrayList<Integer> times;
+    private String busTag;
+    private boolean inBusTag;
     private int currentStopIndex;
+    private ArrayList<Integer> times;
 
     public XMLBusTimesHandler(String busTag) {
         this.busTag = busTag;

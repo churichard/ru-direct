@@ -12,6 +12,7 @@ import me.rutgersdirect.rudirect.data.model.BusStop;
 
 public class DirectionsUtil {
 
+    // The graph of active bus stops
     private static DirectedWeightedPseudograph<BusStop, DefaultWeightedEdge> busStopsGraph;
 
     // Build the bus stop graph
@@ -39,9 +40,7 @@ public class DirectionsUtil {
     // Calculate the shortest path from the origin to the destination
     public static String calculateShortestPath(BusStop origin, BusStop destination) throws IllegalArgumentException {
         DijkstraShortestPath<BusStop, DefaultWeightedEdge> shortestPath = new DijkstraShortestPath<>(busStopsGraph, origin, destination);
-        String pathEdgeList = shortestPath.getPath().toString();
-        Log.d("Shortest path", pathEdgeList);
-        return pathEdgeList;
+        return shortestPath.getPath().toString();
     }
 
     // Print out the vertices of the bus stops graph and their corresponding edges

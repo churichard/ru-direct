@@ -23,6 +23,7 @@ public class BusData {
     private HashMap<String, String[]> stopTitleToStopTags;
 
     public BusData() {
+        // Needed for ormlite
     }
 
     public int getID() {

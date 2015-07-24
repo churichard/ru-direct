@@ -26,6 +26,7 @@ import me.rutgersdirect.rudirect.util.ShowBusStopsHelper;
 public class BusTimesFragment extends Fragment implements AppBarLayout.OnOffsetChangedListener {
 
     private static final int REFRESH_INTERVAL = 60000;
+
     private BusStopsActivity busStopsActivity;
     private Handler refreshHandler;
     private SwipeRefreshLayout mSwipeRefreshLayout;

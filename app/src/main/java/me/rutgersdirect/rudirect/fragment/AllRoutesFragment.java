@@ -110,8 +110,10 @@ public class AllRoutesFragment extends BaseRouteFragment {
                 errorView.setText("Unable to get routes - check your Internet connection and try again.");
             } else {
                 errorView.setVisibility(View.GONE);
-                allBusesRecyclerView.setAdapter(new BusRouteAdapter(RUDirectUtil.mapKeySetToSortedArray(
-                        RUDirectApplication.getBusData().getBusTitleToBusTag()), mainActivity, AllRoutesFragment.this));
+                BusRouteAdapter adapter = ((BusRouteAdapter) allBusesRecyclerView.getAdapter());
+                adapter.setBusRoutes(RUDirectUtil.mapKeySetToSortedArray(
+                        RUDirectApplication.getBusData().getBusTitleToBusTag()));
+                adapter.notifyDataSetChanged();
             }
             mSwipeRefreshLayout.setRefreshing(false);
             progressBar.setVisibility(View.GONE);

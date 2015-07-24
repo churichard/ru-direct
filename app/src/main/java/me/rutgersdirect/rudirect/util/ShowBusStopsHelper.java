@@ -21,6 +21,7 @@ public class ShowBusStopsHelper extends AsyncTask<Object, Void, Void> {
         String tag = (String) objects[0];
         fragment = (Fragment) objects[1];
 
+        // Save bus stop times and get the bus stops
         NextBusAPI.saveBusStopTimes(tag);
         busStops = NextBusAPI.getBusStops(tag);
 
@@ -34,10 +35,15 @@ public class ShowBusStopsHelper extends AsyncTask<Object, Void, Void> {
             BusTimesFragment busTimesFragment = ((BusTimesFragment) fragment);
             RecyclerView busTimesRecyclerView = busTimesFragment.getBusTimesRecyclerView();
 
-            busTimesRecyclerView.setAdapter(new BusStopAdapter(busStops));
+            // Update bus stops
+            BusStopAdapter busStopAdapter = (BusStopAdapter) busTimesRecyclerView.getAdapter();
+            busStopAdapter.setBusStops(busStops);
+            busStopAdapter.notifyDataSetChanged();
             if (busTimesFragment.isAdded()) {
                 ((BusStopsActivity) busTimesFragment.getActivity()).setBusStops(busStops);
             }
+
+            // Update progress bar and swipe refresh layout
             busTimesFragment.getProgressBar().setVisibility(View.GONE);
             busTimesFragment.getSwipeRefreshLayout().setRefreshing(false);
         }

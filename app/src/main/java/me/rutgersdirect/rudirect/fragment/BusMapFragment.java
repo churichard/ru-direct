@@ -33,8 +33,8 @@ public class BusMapFragment extends MapFragment implements OnMapReadyCallback {
 
     private static final int ACTIVE_BUS_REFRESH_INTERVAL = 10000;
 
-    private GoogleMap mMap;
     private BusStopsActivity busStopsActivity;
+    private GoogleMap mMap;
     private Handler refreshHandler;
     private ArrayList<Marker> busStopMarkers;
     private ArrayList<Marker> activeBusMarkers;
