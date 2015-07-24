@@ -185,16 +185,14 @@ public class BusMapFragment extends MapFragment implements OnMapReadyCallback {
                     MarkerOptions markerOptions = new MarkerOptions()
                             .position(getLatLng(stop.getLatitude(), stop.getLongitude()))
                             .title(stop.getTitle());
-                    int[] times = stop.getTimes();
-                    if (times == null || (times.length == 1 && times[0] == -1)) {
+                    if (!stop.isActive()) {
                         markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
                     }
                     busStopMarkers.add(mMap.addMarker(markerOptions));
                 }
             } else { // Change the color if necessary
                 for (int i = 0; i < busStops.length; i++) {
-                    int[] times = busStops[i].getTimes();
-                    if (times == null || (times.length == 1 && times[0] == -1)) {
+                    if (!busStops[i].isActive()) {
                         busStopMarkers.get(i).setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
                     } else {
                         busStopMarkers.get(i).setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));

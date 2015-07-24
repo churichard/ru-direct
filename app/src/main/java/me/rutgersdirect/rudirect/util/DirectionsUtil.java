@@ -19,12 +19,20 @@ public class DirectionsUtil {
         busStopsGraph = new DirectedWeightedPseudograph<>(DefaultWeightedEdge.class);
         for (String activeBusTag : AppData.activeBuses) {
             BusStop[] busStops = RUDirectApplication.getBusData().getBusTagToBusStops().get(activeBusTag);
-            busStopsGraph.addVertex(busStops[0]);
-            for (int i = 1; i < busStops.length; i++) {
-                busStopsGraph.addVertex(busStops[i]);
-                busStopsGraph.addEdge(busStops[i - 1], busStops[i]);
+            if (busStops[0].isActive()) {
+                busStopsGraph.addVertex(busStops[0]);
             }
-            busStopsGraph.addEdge(busStops[busStops.length - 1], busStops[0]);
+            for (int i = 1; i < busStops.length; i++) {
+                if (busStops[i].isActive()) {
+                    busStopsGraph.addVertex(busStops[i]);
+                    if (busStops[i - 1].isActive()) {
+                        busStopsGraph.addEdge(busStops[i - 1], busStops[i]);
+                    }
+                }
+            }
+            if (busStops[busStops.length - 1].isActive() && busStops[0].isActive()) {
+                busStopsGraph.addEdge(busStops[busStops.length - 1], busStops[0]);
+            }
         }
     }
 

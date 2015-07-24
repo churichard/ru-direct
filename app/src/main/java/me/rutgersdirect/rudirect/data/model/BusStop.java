@@ -109,6 +109,10 @@ public class BusStop implements Parcelable, Serializable, Comparable<BusStop> {
         this.longitude = longitude;
     }
 
+    public boolean isActive() {
+        return !(times == null || (times.length == 1 && times[0] == -1));
+    }
+
     @Override
     public String toString() {
         return title;
