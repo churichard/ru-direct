@@ -66,7 +66,9 @@ public class NextBusAPI {
 
     // Saves directions
     public static void saveDirections() {
-        parseXML(AppData.ALL_ROUTES_URL, new XMLDirectionsHandler());
+        for (String activeBus : AppData.activeBuses) {
+            saveBusStopTimes(activeBus);
+        }
     }
 
     // Saves the bus stops to the database
@@ -95,9 +97,9 @@ public class NextBusAPI {
 
     // Returns a list of the active buses
     public static String[] getActiveBusTags() {
-        AppData.ACTIVE_BUSES = new String[1]; // Default value if no Internet / no active buses
+        AppData.activeBuses = new String[1]; // Default value if no Internet / no active buses
         updateActiveBuses();
-        return AppData.ACTIVE_BUSES;
+        return AppData.activeBuses;
     }
 
     // Takes in a bus tag and returns a list of bus stops (only called after saving bus stops)

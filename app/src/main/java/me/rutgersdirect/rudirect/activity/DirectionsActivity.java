@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import me.rutgersdirect.rudirect.R;
 import me.rutgersdirect.rudirect.data.model.BusStop;
+import me.rutgersdirect.rudirect.util.DirectionsUtil;
 
 public class DirectionsActivity extends AppCompatActivity {
 
@@ -40,8 +41,24 @@ public class DirectionsActivity extends AppCompatActivity {
         // Setup origin and destination textviews
         TextView originTextView = (TextView) findViewById(R.id.origin_textview);
         TextView destinationTextView = (TextView) findViewById(R.id.destination_textview);
-        originTextView.setText(origin.getTitle());
-        destinationTextView.setText(destination.getTitle());
+        originTextView.setText("Origin: " + origin.getTitle());
+        destinationTextView.setText("Destination: " + destination.getTitle());
+
+        // Build the bus stops graph
+        DirectionsUtil.setupBusStopsGraph();
+
+        // Compute the shortest path between the origin and the destination
+        TextView result = (TextView) findViewById(R.id.directions_result);
+        try {
+            String shortestPath = DirectionsUtil.calculateShortestPath(origin, destination);
+            if (!shortestPath.equals("[]")) {
+                result.setText("Path: " + shortestPath);
+            } else {
+                result.setText("The origin and the destination are the same!");
+            }
+        } catch (IllegalArgumentException e) {
+            result.setText("There doesn't exist a path between " + origin.toString() + " and " + destination.toString());
+        }
     }
 
     @Override

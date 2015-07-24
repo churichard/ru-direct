@@ -11,7 +11,7 @@ public class AppData {
     public static final String PREDICTIONS_URL = BASE_URL + "predictionsForMultiStops";
 
     // Active buses
-    public static String[] ACTIVE_BUSES;
+    public static String[] activeBuses;
 
     // Bus tag to latitude segments / longitude segments
     public static HashMap<String, ArrayList<String>> activeLonsHashMap;

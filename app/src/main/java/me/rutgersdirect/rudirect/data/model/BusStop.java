@@ -115,6 +115,21 @@ public class BusStop implements Parcelable, Serializable, Comparable<BusStop> {
     }
 
     @Override
+    public int hashCode() {
+        return getTitle().hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        } else if (obj instanceof BusStop) {
+            return getTitle().equals(((BusStop) obj).getTitle());
+        }
+        return false;
+    }
+
+    @Override
     public int compareTo(BusStop busStop) {
         if (this == busStop) {
             return 0;

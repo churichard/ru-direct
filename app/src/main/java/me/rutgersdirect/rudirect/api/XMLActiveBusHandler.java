@@ -48,7 +48,7 @@ public class XMLActiveBusHandler extends DefaultHandler {
 
     public void endDocument() throws SAXException {
         if (activeBuses.size() > 0) {
-            AppData.ACTIVE_BUSES = collectionToArray(activeBuses);
+            AppData.activeBuses = collectionToArray(activeBuses);
         }
     }
 
