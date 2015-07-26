@@ -4,6 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 public class BusStop implements Parcelable, Serializable, Comparable<BusStop> {
 
@@ -11,11 +12,10 @@ public class BusStop implements Parcelable, Serializable, Comparable<BusStop> {
     private String title;
     private String latitude;
     private String longitude;
-    private transient int[] times;
-
+    private transient ArrayList<BusStopTime> times;
     private boolean isExpanded;
 
-    public BusStop(String tag, String title, int[] times, String latitude, String longitude) {
+    public BusStop(String tag, String title, ArrayList<BusStopTime> times, String latitude, String longitude) {
         this.tag = tag;
         this.title = title;
         this.times = times;
@@ -27,7 +27,8 @@ public class BusStop implements Parcelable, Serializable, Comparable<BusStop> {
     private BusStop(Parcel in) {
         tag = in.readString();
         title = in.readString();
-        times = in.createIntArray();
+        times = new ArrayList<>();
+        times = in.readArrayList(BusStopTime.class.getClassLoader());
         latitude = in.readString();
         longitude = in.readString();
         isExpanded = false;
@@ -41,7 +42,7 @@ public class BusStop implements Parcelable, Serializable, Comparable<BusStop> {
     public void writeToParcel(Parcel out, int flags) {
         out.writeString(tag);
         out.writeString(title);
-        out.writeIntArray(times);
+        out.writeList(times);
         out.writeString(latitude);
         out.writeString(longitude);
     }
@@ -77,11 +78,11 @@ public class BusStop implements Parcelable, Serializable, Comparable<BusStop> {
         this.title = title;
     }
 
-    public int[] getTimes() {
+    public ArrayList<BusStopTime> getTimes() {
         return times;
     }
 
-    public void setTimes(int[] times) {
+    public void setTimes(ArrayList<BusStopTime> times) {
         this.times = times;
     }
 
@@ -110,7 +111,7 @@ public class BusStop implements Parcelable, Serializable, Comparable<BusStop> {
     }
 
     public boolean isActive() {
-        return !(times == null || (times.length == 1 && times[0] == -1));
+        return times != null && !(times.size() == 1 && times.get(0).getMinutes() == -1);
     }
 
     @Override

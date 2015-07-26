@@ -11,6 +11,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -20,6 +21,7 @@ import me.rutgersdirect.rudirect.data.constants.AppData;
 import me.rutgersdirect.rudirect.data.constants.RUDirectApplication;
 import me.rutgersdirect.rudirect.data.model.BusPathSegment;
 import me.rutgersdirect.rudirect.data.model.BusStop;
+import me.rutgersdirect.rudirect.data.model.BusStopTime;
 
 public class NextBusAPI {
 
@@ -82,8 +84,10 @@ public class NextBusAPI {
 
         // Set no Internet stop times and create predictions link
         StringBuilder link = new StringBuilder(AppData.PREDICTIONS_URL);
+        ArrayList<BusStopTime> busStopTimes = new ArrayList<>();
+        busStopTimes.add(new BusStopTime(-1));
         for (BusStop stop : busStops) {
-            stop.setTimes(new int[]{-1});
+            stop.setTimes(busStopTimes);
             link.append("&stops=").append(busTag).append("%7Cnull%7C").append(stop.getTag());
         }
 

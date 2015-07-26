@@ -2,7 +2,7 @@ package me.rutgersdirect.rudirect.data.model;
 
 import org.jgrapht.graph.DefaultWeightedEdge;
 
-public class RouteEdge extends DefaultWeightedEdge {
+public class BusRouteEdge extends DefaultWeightedEdge {
 
     private String routeName;
 

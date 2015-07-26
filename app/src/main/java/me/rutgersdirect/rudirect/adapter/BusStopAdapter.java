@@ -8,11 +8,13 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 import me.rutgersdirect.rudirect.R;
 import me.rutgersdirect.rudirect.data.constants.RUDirectApplication;
 import me.rutgersdirect.rudirect.data.model.BusStop;
+import me.rutgersdirect.rudirect.data.model.BusStopTime;
 import me.rutgersdirect.rudirect.ui.holder.BusStopViewHolder;
 
 public class BusStopAdapter extends RecyclerView.Adapter<BusStopViewHolder> {
@@ -67,7 +69,7 @@ public class BusStopAdapter extends RecyclerView.Adapter<BusStopViewHolder> {
 
     // Return the bus stop times
     private String getBusStopTimes(BusStop busStop, TextView titleTextView, TextView timesTextView) {
-        int[] times = busStop.getTimes();
+        ArrayList<BusStopTime> times = busStop.getTimes();
         setTextColor(titleTextView, timesTextView, times);
 
         if (expToggleRequest && busStop.isActive() && !busStop.isExpanded() || !expToggleRequest && busStop.isExpanded()) {
@@ -82,17 +84,17 @@ public class BusStopAdapter extends RecyclerView.Adapter<BusStopViewHolder> {
     }
 
     // Sets up the expanded view of the bus stop times
-    private String expandedTimes(int[] times) {
+    private String expandedTimes(ArrayList<BusStopTime> times) {
         long currentTime = new Date().getTime();
 
         // Build string of times
         StringBuilder builder = new StringBuilder();
         builder.append("Arriving at ");
-        for (int i = 0; i < times.length; i++) {
-            Date stopTime = new Date(currentTime + (times[i] * MILLIS_IN_ONE_MINUTE));
+        for (int i = 0; i < times.size(); i++) {
+            Date stopTime = new Date(currentTime + (times.get(i).getMinutes() * MILLIS_IN_ONE_MINUTE));
             String time = DateFormat.getTimeInstance(DateFormat.SHORT).format(stopTime);
             builder.append(time);
-            if (i != times.length - 1) {
+            if (i != times.size() - 1) {
                 builder.append(", ");
             }
         }
@@ -102,23 +104,24 @@ public class BusStopAdapter extends RecyclerView.Adapter<BusStopViewHolder> {
     }
 
     // Sets up the normal view of the bus stop times
-    private String normalTimes(int[] times) {
+    private String normalTimes(ArrayList<BusStopTime> times) {
         // Bus stop is offline
-        if (times.length == 1 && times[0] == -1) {
+        if (times.size() == 1 && times.get(0).getMinutes() == -1) {
             return "Offline";
         }
         // Format bus stop times
         StringBuilder builder = new StringBuilder();
         builder.append("Arriving in ");
-        for (int i = 0; i < times.length; i++) {
+        for (int i = 0; i < times.size(); i++) {
             // Append time
-            if (times[i] == 0) {
+            int minutes = times.get(i).getMinutes();
+            if (minutes == 0) {
                 builder.append("<1");
             } else {
-                builder.append(Integer.toString(times[i]));
+                builder.append(Integer.toString(minutes));
             }
             // Append comma
-            if (i != times.length - 1) {
+            if (i != times.size() - 1) {
                 builder.append(", ");
             }
         }
@@ -127,15 +130,16 @@ public class BusStopAdapter extends RecyclerView.Adapter<BusStopViewHolder> {
     }
 
     // Change text color of the ListView items
-    private void setTextColor(TextView busStopName, TextView busStopTimes, int[] times) {
+    private void setTextColor(TextView busStopName, TextView busStopTimes, ArrayList<BusStopTime> times) {
         Resources resources = RUDirectApplication.getContext().getResources();
         busStopName.setTextColor(resources.getColor(android.R.color.black));
-        if (times[0] == -1) {
+        int minutes = times.get(0).getMinutes();
+        if (minutes == -1) {
             busStopName.setTextColor(resources.getColor(R.color.dark_gray));
             busStopTimes.setTextColor(resources.getColor(R.color.dark_gray));
-        } else if (times[0] == 0 || times[0] == 1) {
+        } else if (minutes == 0 || minutes == 1) {
             busStopTimes.setTextColor(resources.getColor(R.color.primary_color));
-        } else if (times[0] > 1 && times[0] <= 5) {
+        } else if (minutes > 1 && minutes <= 5) {
             busStopTimes.setTextColor(resources.getColor(R.color.orange));
         } else {
             busStopTimes.setTextColor(resources.getColor(R.color.blue));

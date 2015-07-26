@@ -8,16 +8,16 @@ import org.jgrapht.graph.DirectedWeightedPseudograph;
 import me.rutgersdirect.rudirect.data.constants.AppData;
 import me.rutgersdirect.rudirect.data.constants.RUDirectApplication;
 import me.rutgersdirect.rudirect.data.model.BusStop;
-import me.rutgersdirect.rudirect.data.model.RouteEdge;
+import me.rutgersdirect.rudirect.data.model.BusRouteEdge;
 
 public class DirectionsUtil {
 
     // The graph of active bus stops
-    private static DirectedWeightedPseudograph<BusStop, RouteEdge> busStopsGraph;
+    private static DirectedWeightedPseudograph<BusStop, BusRouteEdge> busStopsGraph;
 
     // Build the bus stop graph
     public static void setupBusStopsGraph() {
-        busStopsGraph = new DirectedWeightedPseudograph<>(RouteEdge.class);
+        busStopsGraph = new DirectedWeightedPseudograph<>(BusRouteEdge.class);
         // Add all the active bus stops to the graph
         for (String activeBusTag : AppData.activeBuses) {
             String busName = RUDirectApplication.getBusData().getBusTagToBusTitle().get(activeBusTag);
@@ -29,7 +29,7 @@ public class DirectionsUtil {
                 if (busStops[i].isActive()) {
                     busStopsGraph.addVertex(busStops[i]);
                     if (busStops[i - 1].isActive()) {
-                        RouteEdge edge = busStopsGraph.addEdge(busStops[i - 1], busStops[i]);
+                        BusRouteEdge edge = busStopsGraph.addEdge(busStops[i - 1], busStops[i]);
                         edge.setRouteName(busName);
                         busStopsGraph.setEdgeWeight(edge, 1); // Set edge weight
                     }
@@ -43,7 +43,7 @@ public class DirectionsUtil {
 
     // Calculate the shortest path from the origin to the destination
     public static String calculateShortestPath(BusStop origin, BusStop destination) throws IllegalArgumentException {
-        DijkstraShortestPath<BusStop, RouteEdge> shortestPath = new DijkstraShortestPath<>(busStopsGraph, origin, destination);
+        DijkstraShortestPath<BusStop, BusRouteEdge> shortestPath = new DijkstraShortestPath<>(busStopsGraph, origin, destination);
         return shortestPath.getPath().toString();
     }
 
