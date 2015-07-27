@@ -9,11 +9,16 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import org.jgrapht.GraphPath;
+
 import me.rutgersdirect.rudirect.R;
+import me.rutgersdirect.rudirect.data.model.BusRouteEdge;
 import me.rutgersdirect.rudirect.data.model.BusStop;
 import me.rutgersdirect.rudirect.util.DirectionsUtil;
 
 public class DirectionsActivity extends AppCompatActivity {
+
+    private static final String TAG = DirectionsActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,21 +52,24 @@ public class DirectionsActivity extends AppCompatActivity {
 
     // Computes the shortest path
     private void computeShortestPath(BusStop origin, BusStop destination) {
+        TextView result = (TextView) findViewById(R.id.directions_result);
+
+        // Check to see if the origin is equal to the destination
+        if (origin.equals(destination)) {
+            result.setText("You're already at your destination!");
+            return;
+        }
+
         // Build the bus stops graph
         DirectionsUtil.setupBusStopsGraph();
 
         // Compute the shortest path between the origin and the destination
-        TextView result = (TextView) findViewById(R.id.directions_result);
         try {
-            String shortestPath = DirectionsUtil.calculateShortestPath(origin, destination);
-            if (!shortestPath.equals("[]")) {
-                result.setText("Path: " + shortestPath);
-            } else {
-                result.setText("The origin and the destination are the same!");
-            }
+            GraphPath<BusStop, BusRouteEdge> shortestPath = DirectionsUtil.calculateShortestPath(origin, destination);
+            result.setText("Path: " + shortestPath.toString());
         } catch (IllegalArgumentException e) {
-            result.setText("There doesn't exist a path between " + origin.toString() + " and "
-                    + destination.toString());
+            result.setText("You can't go from " + origin.toString() + " to "
+                    + destination.toString() + " by riding buses right now!");
         }
     }
 

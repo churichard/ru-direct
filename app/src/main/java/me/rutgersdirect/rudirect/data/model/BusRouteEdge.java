@@ -5,6 +5,7 @@ import org.jgrapht.graph.DefaultWeightedEdge;
 public class BusRouteEdge extends DefaultWeightedEdge {
 
     private String routeName;
+    private int vehicleId;
 
     public String getRouteName() {
         return routeName;
@@ -14,8 +15,16 @@ public class BusRouteEdge extends DefaultWeightedEdge {
         this.routeName = routeName;
     }
 
+    public int getVehicleId() {
+        return vehicleId;
+    }
+
+    public void setVehicleId(int vehicleId) {
+        this.vehicleId = vehicleId;
+    }
+
     @Override
     public String toString() {
-        return routeName + ": " + super.toString();
+        return routeName + ": " + vehicleId + " - " + super.toString();
     }
 }
