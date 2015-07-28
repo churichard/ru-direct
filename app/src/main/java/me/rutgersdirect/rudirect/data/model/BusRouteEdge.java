@@ -25,6 +25,9 @@ public class BusRouteEdge extends DefaultWeightedEdge {
 
     @Override
     public String toString() {
-        return routeName + ": " + vehicleId + " - " + super.toString();
+        return "Route name: " + routeName
+                + "\nVehicle ID: " + vehicleId
+                + "\nTime: " + getWeight()
+                + "\nEdge: " + super.toString();
     }
 }

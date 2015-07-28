@@ -2,10 +2,12 @@ package me.rutgersdirect.rudirect.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.TextView;
 
@@ -19,6 +21,8 @@ import me.rutgersdirect.rudirect.util.DirectionsUtil;
 public class DirectionsActivity extends AppCompatActivity {
 
     private static final String TAG = DirectionsActivity.class.getSimpleName();
+    private BusStop origin;
+    private BusStop destination;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,8 +31,8 @@ public class DirectionsActivity extends AppCompatActivity {
 
         // Get origin and destination
         Intent intent = getIntent();
-        BusStop origin = intent.getParcelableExtra(getString(R.string.origin_text_message));
-        BusStop destination = intent.getParcelableExtra(getString(R.string.destination_text_message));
+        origin = intent.getParcelableExtra(getString(R.string.origin_text_message));
+        destination = intent.getParcelableExtra(getString(R.string.destination_text_message));
 
         // Setup the toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -55,21 +59,29 @@ public class DirectionsActivity extends AppCompatActivity {
         TextView result = (TextView) findViewById(R.id.directions_result);
 
         // Check to see if the origin is equal to the destination
-        if (origin.equals(destination)) {
+        if (origin.getTitle().equals(destination.getTitle())) {
             result.setText("You're already at your destination!");
             return;
         }
 
-        // Build the bus stops graph
-        DirectionsUtil.setupBusStopsGraph();
-
-        // Compute the shortest path between the origin and the destination
-        try {
-            GraphPath<BusStop, BusRouteEdge> shortestPath = DirectionsUtil.calculateShortestPath(origin, destination);
-            result.setText("Path: " + shortestPath.toString());
-        } catch (IllegalArgumentException e) {
-            result.setText("You can't go from " + origin.toString() + " to "
-                    + destination.toString() + " by riding buses right now!");
+        if (DirectionsUtil.isReady) {
+            // Compute the shortest path between the origin and the destination
+            try {
+                GraphPath<BusStop, BusRouteEdge> shortestPath = DirectionsUtil.calculateShortestPath(origin, destination);
+                if (shortestPath != null) {
+                    result.setText("Path: " + shortestPath.toString());
+                } else {
+                    result.setText("There isn't a path from " + origin.toString() + " to "
+                            + destination.toString() + " right now!");
+                }
+            } catch (IllegalArgumentException e) {
+                Log.e(TAG, e.toString(), e);
+                result.setText("There isn't a path from " + origin.toString() + " to "
+                        + destination.toString() + " right now!");
+            }
+        } else {
+            Snackbar.make(findViewById(R.id.directions_activity_layout),
+                    "Directions are not ready yet! Try again later.", Snackbar.LENGTH_LONG).show();
         }
     }
 

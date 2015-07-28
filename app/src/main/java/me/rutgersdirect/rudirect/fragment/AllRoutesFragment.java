@@ -19,8 +19,9 @@ import me.rutgersdirect.rudirect.adapter.BusRouteAdapter;
 import me.rutgersdirect.rudirect.adapter.MainPagerAdapter;
 import me.rutgersdirect.rudirect.api.NextBusAPI;
 import me.rutgersdirect.rudirect.data.constants.RUDirectApplication;
-import me.rutgersdirect.rudirect.interfaces.UpdateBusStopsListener;
+import me.rutgersdirect.rudirect.interfaces.NetworkCallFinishListener;
 import me.rutgersdirect.rudirect.ui.view.DividerItemDecoration;
+import me.rutgersdirect.rudirect.util.DirectionsUtil;
 import me.rutgersdirect.rudirect.util.RUDirectUtil;
 
 public class AllRoutesFragment extends BaseRouteFragment {
@@ -92,20 +93,22 @@ public class AllRoutesFragment extends BaseRouteFragment {
     }
 
     // Sets up the bus routes
-    private class UpdateBusStopsAndPaths extends AsyncTask<UpdateBusStopsListener, Void, Void> {
-        private UpdateBusStopsListener listener;
+    private class UpdateBusStopsAndPaths extends AsyncTask<NetworkCallFinishListener, Void, Void> {
+        private NetworkCallFinishListener listener;
 
-        protected Void doInBackground(UpdateBusStopsListener... listeners) {
+        protected Void doInBackground(NetworkCallFinishListener... listeners) {
             if (listeners.length != 0) {
                 this.listener = listeners[0];
             }
             NextBusAPI.saveBusStops();
+
             return null;
         }
 
         @Override
         protected void onPostExecute(Void v) {
             if (!RUDirectUtil.isNetworkAvailable() && allBusesRecyclerView.getAdapter().getItemCount() == 0) {
+                DirectionsUtil.isReady = false;
                 errorView.setVisibility(View.VISIBLE);
                 errorView.setText("Unable to get routes - check your Internet connection and try again.");
             } else {
@@ -119,7 +122,7 @@ public class AllRoutesFragment extends BaseRouteFragment {
             progressBar.setVisibility(View.GONE);
 
             if (listener != null) {
-                listener.onBusStopsUpdate();
+                listener.onBusStopsUpdated();
             }
         }
     }

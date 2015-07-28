@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.Spinner;
 
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.TreeSet;
 
@@ -25,11 +26,12 @@ import me.rutgersdirect.rudirect.activity.MainActivity;
 import me.rutgersdirect.rudirect.activity.SettingsActivity;
 import me.rutgersdirect.rudirect.data.constants.RUDirectApplication;
 import me.rutgersdirect.rudirect.data.model.BusStop;
-import me.rutgersdirect.rudirect.interfaces.UpdateBusStopsListener;
+import me.rutgersdirect.rudirect.interfaces.NetworkCallFinishListener;
+import me.rutgersdirect.rudirect.util.DirectionsUtil;
 import me.rutgersdirect.rudirect.util.RUDirectUtil;
 
 public class DirectionsFragment extends Fragment
-        implements AdapterView.OnItemSelectedListener, UpdateBusStopsListener {
+        implements AdapterView.OnItemSelectedListener, NetworkCallFinishListener {
 
     private MainActivity mainActivity;
     private Spinner originSpinner;
@@ -79,7 +81,15 @@ public class DirectionsFragment extends Fragment
 
         if (busTagsToBusStops != null) {
             // Create list of bus stops
-            TreeSet<BusStop> busStops = new TreeSet<>();
+            TreeSet<BusStop> busStops = new TreeSet<>(new Comparator<BusStop>() {
+                @Override
+                public int compare(BusStop stop1, BusStop stop2) {
+                    if (stop1 == stop2) {
+                        return 0;
+                    }
+                    return stop1.getTitle().compareTo(stop2.getTitle());
+                }
+            });
             String[] busTags = RUDirectUtil.mapKeySetToSortedArray(busTagsToBusStops);
             for (String busTag : busTags) {
                 busStops.addAll(Arrays.asList(busTagsToBusStops.get(busTag)));
@@ -113,8 +123,16 @@ public class DirectionsFragment extends Fragment
     public void onNothingSelected(AdapterView<?> parent) { /* Do nothing */ }
 
     @Override
-    public void onBusStopsUpdate() {
+    public void onBusStopsUpdated() {
+        // Populate the directions spinners
         populateSpinners();
+    }
+
+    @Override
+    public void onBusTimesUpdated() {
+        // Build the bus stops graph
+        DirectionsUtil.isReady = true;
+        DirectionsUtil.setupBusStopsGraph();
     }
 
     @Override

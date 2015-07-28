@@ -18,9 +18,12 @@ import java.util.HashMap;
 import me.rutgersdirect.rudirect.R;
 import me.rutgersdirect.rudirect.activity.SettingsActivity;
 import me.rutgersdirect.rudirect.adapter.BusRouteAdapter;
+import me.rutgersdirect.rudirect.adapter.MainPagerAdapter;
 import me.rutgersdirect.rudirect.api.NextBusAPI;
 import me.rutgersdirect.rudirect.data.constants.RUDirectApplication;
+import me.rutgersdirect.rudirect.interfaces.NetworkCallFinishListener;
 import me.rutgersdirect.rudirect.ui.view.DividerItemDecoration;
+import me.rutgersdirect.rudirect.util.DirectionsUtil;
 import me.rutgersdirect.rudirect.util.RUDirectUtil;
 
 public class ActiveRoutesFragment extends BaseRouteFragment {
@@ -92,16 +95,25 @@ public class ActiveRoutesFragment extends BaseRouteFragment {
 
     // Sets up the RecyclerView
     public void updateActiveRoutes() {
-        new UpdateActiveRoutesTask().execute();
+        DirectionsFragment directionsFragment = (DirectionsFragment) MainPagerAdapter.getRegisteredFragment(1);
+        new UpdateActiveRoutesTask().execute(directionsFragment);
     }
 
-    private class UpdateActiveRoutesTask extends AsyncTask<Void, Void, String[]> {
+    private class UpdateActiveRoutesTask extends AsyncTask<NetworkCallFinishListener, Void, String[]> {
+        private NetworkCallFinishListener listener;
 
-        protected String[] doInBackground(Void... voids) {
+        protected String[] doInBackground(NetworkCallFinishListener... listeners) {
+            if (listeners.length != 0) {
+                this.listener = listeners[0];
+            }
             if (RUDirectApplication.getBusData().getBusTagToBusTitle() == null) {
                 NextBusAPI.saveBusStops();
             }
-            return NextBusAPI.getActiveBusTags();
+            String[] activeBusTags = NextBusAPI.getActiveBusTags();
+            for (String busTag : activeBusTags) {
+                NextBusAPI.saveBusStopTimes(busTag);
+            }
+            return activeBusTags;
         }
 
         protected void onPostExecute(String[] activeBusTags) {
@@ -122,6 +134,7 @@ public class ActiveRoutesFragment extends BaseRouteFragment {
                 if (RUDirectUtil.isNetworkAvailable()) {
                     errorView.setText("No active buses.");
                 } else {
+                    DirectionsUtil.isReady = false;
                     errorView.setText("Unable to get active routes - check your Internet connection and try again.");
                 }
             } else {
@@ -129,6 +142,9 @@ public class ActiveRoutesFragment extends BaseRouteFragment {
                 errorView.setVisibility(View.GONE);
                 adapter.setBusRoutes(activeBuses);
                 adapter.notifyDataSetChanged();
+                if (listener != null) {
+                    listener.onBusTimesUpdated();
+                }
             }
             progressBar.setVisibility(View.GONE);
             mSwipeRefreshLayout.setRefreshing(false);

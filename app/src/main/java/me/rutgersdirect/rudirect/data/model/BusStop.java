@@ -8,6 +8,7 @@ import java.util.ArrayList;
 
 public class BusStop implements Parcelable, Serializable, Comparable<BusStop> {
 
+    private int id = 0;
     private String tag;
     private String title;
     private String latitude;
@@ -62,6 +63,14 @@ public class BusStop implements Parcelable, Serializable, Comparable<BusStop> {
         }
     };
 
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public String getTag() {
         return tag;
     }
@@ -111,7 +120,7 @@ public class BusStop implements Parcelable, Serializable, Comparable<BusStop> {
     }
 
     public boolean isActive() {
-        return times != null && !(times.size() == 1 && times.get(0).getMinutes() == -1);
+        return (times != null) && !(times.size() == 1 && times.get(0).getMinutes() == -1);
     }
 
     @Override
@@ -121,7 +130,7 @@ public class BusStop implements Parcelable, Serializable, Comparable<BusStop> {
 
     @Override
     public int hashCode() {
-        return getTitle().hashCode();
+        return title.hashCode();
     }
 
     @Override
@@ -129,7 +138,8 @@ public class BusStop implements Parcelable, Serializable, Comparable<BusStop> {
         if (obj == this) {
             return true;
         } else if (obj instanceof BusStop) {
-            return getTitle().equals(((BusStop) obj).getTitle());
+            BusStop other = (BusStop) obj;
+            return id == other.getId() && title.equals(other.getTitle());
         }
         return false;
     }
@@ -139,6 +149,6 @@ public class BusStop implements Parcelable, Serializable, Comparable<BusStop> {
         if (this == busStop) {
             return 0;
         }
-        return getTitle().compareTo(busStop.getTitle());
+        return title.compareTo(busStop.getTitle());
     }
 }

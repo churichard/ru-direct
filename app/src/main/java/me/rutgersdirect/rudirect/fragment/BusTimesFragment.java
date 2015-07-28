@@ -20,6 +20,7 @@ import me.rutgersdirect.rudirect.R;
 import me.rutgersdirect.rudirect.activity.BusStopsActivity;
 import me.rutgersdirect.rudirect.adapter.BusStopAdapter;
 import me.rutgersdirect.rudirect.ui.view.DividerItemDecoration;
+import me.rutgersdirect.rudirect.util.DirectionsUtil;
 import me.rutgersdirect.rudirect.util.RUDirectUtil;
 import me.rutgersdirect.rudirect.util.ShowBusStopsHelper;
 
@@ -95,6 +96,7 @@ public class BusTimesFragment extends Fragment implements AppBarLayout.OnOffsetC
             }
             new ShowBusStopsHelper().execute(busStopsActivity.getBusTag(), BusTimesFragment.this);
         } else {
+            DirectionsUtil.isReady = false;
             if (noInternetTextView != null) {
                 noInternetTextView.setVisibility(View.VISIBLE);
             }
