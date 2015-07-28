@@ -8,14 +8,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <android.support.v7.widget.Toolbar
+        <include
             android:id="@+id/toolbar"
+            layout="@layout/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="@color/primary_color"
-            android:theme="@style/Base.ThemeOverlay.AppCompat.Dark"
-            app:layout_scrollFlags="scroll|enterAlways"
-            app:titleTextAppearance="@style/ToolbarTextAppearance" />
+            app:layout_scrollFlags="scroll|enterAlways" />
 
         <android.support.design.widget.TabLayout
             android:id="@+id/sliding_tabs"

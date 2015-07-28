@@ -106,12 +106,15 @@ public class ActiveRoutesFragment extends BaseRouteFragment {
             if (listeners.length != 0) {
                 this.listener = listeners[0];
             }
+            String[] activeBusTags = NextBusAPI.getActiveBusTags();
             if (RUDirectApplication.getBusData().getBusTagToBusTitle() == null) {
                 NextBusAPI.saveBusStops();
             }
-            String[] activeBusTags = NextBusAPI.getActiveBusTags();
-            for (String busTag : activeBusTags) {
-                NextBusAPI.saveBusStopTimes(busTag);
+            if (RUDirectApplication.getBusData().getBusTagToBusStops() != null) {
+                activeBusTags = NextBusAPI.getActiveBusTags();
+                for (String busTag : activeBusTags) {
+                    NextBusAPI.saveBusStopTimes(busTag);
+                }
             }
             return activeBusTags;
         }

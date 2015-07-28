@@ -85,7 +85,7 @@ public class DirectionsActivity extends AppCompatActivity {
         } else {
             Snackbar.make(findViewById(R.id.directions_activity_layout),
                     "Directions are loading...", Snackbar.LENGTH_LONG).show();
-            new UpdateActiveRoutesTask().execute();
+            new UpdateBusStopTimes().execute();
         }
     }
 
@@ -107,15 +107,18 @@ public class DirectionsActivity extends AppCompatActivity {
         overridePendingTransition(0, R.anim.abc_shrink_fade_out_from_bottom);
     }
 
-    private class UpdateActiveRoutesTask extends AsyncTask<Void, Void, String[]> {
+    private class UpdateBusStopTimes extends AsyncTask<Void, Void, String[]> {
 
         protected String[] doInBackground(Void... voids) {
             if (RUDirectApplication.getBusData().getBusTagToBusTitle() == null) {
                 NextBusAPI.saveBusStops();
             }
             String[] activeBusTags = NextBusAPI.getActiveBusTags();
-            for (String busTag : activeBusTags) {
-                NextBusAPI.saveBusStopTimes(busTag);
+            if (RUDirectApplication.getBusData().getBusTagToBusStops() != null) {
+                activeBusTags = NextBusAPI.getActiveBusTags();
+                for (String busTag : activeBusTags) {
+                    NextBusAPI.saveBusStopTimes(busTag);
+                }
             }
             return activeBusTags;
         }
