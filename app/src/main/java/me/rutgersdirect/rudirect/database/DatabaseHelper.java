@@ -19,6 +19,7 @@ import me.rutgersdirect.rudirect.data.model.BusData;
  */
 public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
+    private static final String TAG = DatabaseHelper.class.getSimpleName();
     private static final String DATABASE_NAME = "RUDirect.db";
     private static final int DATABASE_VERSION = 1;
 
@@ -35,10 +36,10 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db, ConnectionSource connectionSource) {
         try {
-            Log.i(DatabaseHelper.class.getName(), "onCreate");
+            Log.i(TAG, "onCreate");
             TableUtils.createTable(connectionSource, BusData.class);
         } catch (SQLException e) {
-            Log.e(DatabaseHelper.class.getName(), "Can't create database", e);
+            Log.e(TAG, "Can't create database", e);
             throw new RuntimeException(e);
         }
     }
@@ -50,12 +51,12 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, ConnectionSource connectionSource, int oldVersion, int newVersion) {
         try {
-            Log.i(DatabaseHelper.class.getName(), "onUpgrade");
+            Log.i(TAG, "onUpgrade");
             TableUtils.dropTable(connectionSource, BusData.class, true);
             // after we drop the old databases, we create the new ones
             onCreate(db, connectionSource);
         } catch (SQLException e) {
-            Log.e(DatabaseHelper.class.getName(), "Can't drop databases", e);
+            Log.e(TAG, "Can't drop databases", e);
             throw new RuntimeException(e);
         }
     }

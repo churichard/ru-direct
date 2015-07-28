@@ -82,16 +82,18 @@ public class NextBusAPI {
     public static void saveBusStopTimes(String busTag) {
         BusStop[] busStops = RUDirectApplication.getBusData().getBusTagToBusStops().get(busTag);
 
-        // Set no Internet stop times and create predictions link
-        StringBuilder link = new StringBuilder(AppData.PREDICTIONS_URL);
-        ArrayList<BusStopTime> busStopTimes = new ArrayList<>();
-        busStopTimes.add(new BusStopTime(-1));
-        for (BusStop stop : busStops) {
-            stop.setTimes(busStopTimes);
-            link.append("&stops=").append(busTag).append("%7Cnull%7C").append(stop.getTag());
-        }
+        if (busStops != null) {
+            // Set no Internet stop times and create predictions link
+            StringBuilder link = new StringBuilder(AppData.PREDICTIONS_URL);
+            ArrayList<BusStopTime> busStopTimes = new ArrayList<>();
+            busStopTimes.add(new BusStopTime(-1));
+            for (BusStop stop : busStops) {
+                stop.setTimes(busStopTimes);
+                link.append("&stops=").append(busTag).append("%7Cnull%7C").append(stop.getTag());
+            }
 
-        parseXML(link.toString(), new XMLBusTimesHandler(busTag));
+            parseXML(link.toString(), new XMLBusTimesHandler(busTag));
+        }
     }
 
     // Updates active buses

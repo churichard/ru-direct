@@ -1,6 +1,7 @@
 package me.rutgersdirect.rudirect.activity;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.res.ResourcesCompat;
@@ -14,6 +15,8 @@ import android.widget.TextView;
 import org.jgrapht.GraphPath;
 
 import me.rutgersdirect.rudirect.R;
+import me.rutgersdirect.rudirect.api.NextBusAPI;
+import me.rutgersdirect.rudirect.data.constants.RUDirectApplication;
 import me.rutgersdirect.rudirect.data.model.BusRouteEdge;
 import me.rutgersdirect.rudirect.data.model.BusStop;
 import me.rutgersdirect.rudirect.util.DirectionsUtil;
@@ -81,7 +84,8 @@ public class DirectionsActivity extends AppCompatActivity {
             }
         } else {
             Snackbar.make(findViewById(R.id.directions_activity_layout),
-                    "Directions are not ready yet! Try again later.", Snackbar.LENGTH_LONG).show();
+                    "Directions are loading...", Snackbar.LENGTH_LONG).show();
+            new UpdateActiveRoutesTask().execute();
         }
     }
 
@@ -101,5 +105,30 @@ public class DirectionsActivity extends AppCompatActivity {
     public void onBackPressed() {
         super.onBackPressed();
         overridePendingTransition(0, R.anim.abc_shrink_fade_out_from_bottom);
+    }
+
+    private class UpdateActiveRoutesTask extends AsyncTask<Void, Void, String[]> {
+
+        protected String[] doInBackground(Void... voids) {
+            if (RUDirectApplication.getBusData().getBusTagToBusTitle() == null) {
+                NextBusAPI.saveBusStops();
+            }
+            String[] activeBusTags = NextBusAPI.getActiveBusTags();
+            for (String busTag : activeBusTags) {
+                NextBusAPI.saveBusStopTimes(busTag);
+            }
+            return activeBusTags;
+        }
+
+        protected void onPostExecute(String[] activeBusTags) {
+            if (activeBusTags.length == 1 && activeBusTags[0] != null) {
+                // Build the bus stops graph
+                DirectionsUtil.isReady = true;
+                DirectionsUtil.setupBusStopsGraph();
+            } else {
+                Snackbar.make(findViewById(R.id.directions_activity_layout),
+                        "Directions are not available right now. Try again later.", Snackbar.LENGTH_LONG).show();
+            }
+        }
     }
 }

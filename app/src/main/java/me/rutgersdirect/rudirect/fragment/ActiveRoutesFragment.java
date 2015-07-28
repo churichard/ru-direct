@@ -133,6 +133,9 @@ public class ActiveRoutesFragment extends BaseRouteFragment {
                 adapter.notifyDataSetChanged();
                 if (RUDirectUtil.isNetworkAvailable()) {
                     errorView.setText("No active buses.");
+                    if (listener != null) {
+                        listener.onBusTimesUpdated();
+                    }
                 } else {
                     DirectionsUtil.isReady = false;
                     errorView.setText("Unable to get active routes - check your Internet connection and try again.");
