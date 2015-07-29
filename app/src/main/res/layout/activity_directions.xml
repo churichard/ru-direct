@@ -23,9 +23,15 @@
         style="@style/TextViewStyle"
         android:layout_margin="@dimen/directions_margin" />
 
-    <TextView
-        android:id="@+id/directions_result"
-        style="@style/TextViewStyle"
-        android:layout_margin="@dimen/directions_margin" />
+    <ScrollView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/directions_margin">
+
+        <TextView
+            android:id="@+id/directions_result"
+            style="@style/TextViewStyle" />
+
+    </ScrollView>
 
 </LinearLayout>
