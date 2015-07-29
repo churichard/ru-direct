@@ -1,22 +1,17 @@
 # RU Direct
 
 ## Description
-RU Direct is an Android app that provides a clean and easy to use interface for finding out which Rutgers buses are active, what places they stop at, and when they will be arriving at each of the stops. The app's focus on responsiveness and intuitive design dramatically improves the experience of using Rutgers' bus system.
-
-## Things to Do
-- Update app icon
-- Add directions from one bus stop to another
-- Publish the app on the Play Store
+RU Direct is an Android app that provides an intuitive and responsive interface for locating information about Rutgers University buses. It displays what times buses are arriving at each bus stop, shows maps of each of the bus routes, and provides directions from one bus stop to another.
 
 ## Contributors
-RU Direct is currently in active development by Richard Chu, Kenneth Li, and James Paik.
+RU Direct is currently in active development by Richard Chu, Kenneth Li, James Paik, and Carin Yao.
 
 ## License
 RU Direct is licensed underneath the MIT License.
 
     The MIT License (MIT)
 
-    Copyright (c) 2015 Richard Chu, Kenneth Li, James Paik
+    Copyright (c) 2015 Richard Chu, Kenneth Li, James Paik, Carin Yao
 
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal
