@@ -8,7 +8,6 @@ import java.util.ArrayList;
 
 public class BusStop implements Parcelable, Serializable, Comparable<BusStop> {
 
-    private int id = 0;
     private String tag;
     private String title;
     private String latitude;
@@ -62,14 +61,6 @@ public class BusStop implements Parcelable, Serializable, Comparable<BusStop> {
             return new BusStop[size];
         }
     };
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
 
     public String getTag() {
         return tag;
@@ -139,7 +130,7 @@ public class BusStop implements Parcelable, Serializable, Comparable<BusStop> {
             return true;
         } else if (obj instanceof BusStop) {
             BusStop other = (BusStop) obj;
-            return id == other.getId() && title.equals(other.getTitle());
+            return title.equals(other.getTitle());
         }
         return false;
     }
