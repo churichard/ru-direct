@@ -6,5 +6,6 @@
     <color name="blue">#1565C0</color>
     <color name="polyline_color">#B32196F3</color>
     <color name="light_gray">#E0E0E0</color>
-    <color name="dark_gray">#9E9E9E</color>
+    <color name="medium_gray">#9E9E9E</color>
+    <color name="dark_gray">#757575</color>
 </resources>

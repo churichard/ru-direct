@@ -135,8 +135,8 @@ public class BusStopAdapter extends RecyclerView.Adapter<BusStopViewHolder> {
         busStopName.setTextColor(resources.getColor(android.R.color.black));
         int minutes = times.get(0).getMinutes();
         if (minutes == -1) {
-            busStopName.setTextColor(resources.getColor(R.color.dark_gray));
-            busStopTimes.setTextColor(resources.getColor(R.color.dark_gray));
+            busStopName.setTextColor(resources.getColor(R.color.medium_gray));
+            busStopTimes.setTextColor(resources.getColor(R.color.medium_gray));
         } else if (minutes == 0 || minutes == 1) {
             busStopTimes.setTextColor(resources.getColor(R.color.primary_color));
         } else if (minutes > 1 && minutes <= 5) {
