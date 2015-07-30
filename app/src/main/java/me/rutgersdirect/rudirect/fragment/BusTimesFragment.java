@@ -4,6 +4,7 @@ import android.app.Fragment;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -97,6 +98,8 @@ public class BusTimesFragment extends Fragment implements AppBarLayout.OnOffsetC
             new ShowBusStopsHelper().execute(busStopsActivity.getBusTag(), BusTimesFragment.this);
         } else {
             DirectionsUtil.isReady = false;
+            Snackbar.make(busStopsActivity.findViewById(R.id.bus_times_layout),
+                    "No Internet connection. Please try again later.", Snackbar.LENGTH_SHORT).show();
             if (noInternetTextView != null) {
                 noInternetTextView.setVisibility(View.VISIBLE);
             }

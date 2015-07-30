@@ -151,11 +151,12 @@ public class DirectionsUtil {
         return shortestPath.getPath();
     }
 
-    // Calculate the total travel time for the shortest path
-    public static double calculateShortestPathTime(DijkstraShortestPath<BusStop, BusRouteEdge> shortestPath) {
+    // Calculate and return the total travel time for the shortest path
+    public static double getShortestPathTime(GraphPath<BusStop, BusRouteEdge> shortestPath) {
         // TODO Add in initial wait time and vehicle transfer times!!!!!!!
-        double totalTime = shortestPath.getPath().getWeight();
-        return totalTime;
+        // TODO I think vehicle transfer times might already be included? Check this!!!!!!
+        double initialWait = shortestPath.getStartVertex().getTimes().get(0).getMinutes();
+        return shortestPath.getWeight() + initialWait;
     }
 
     // Print out the vertices of the bus stops graph and their corresponding edges

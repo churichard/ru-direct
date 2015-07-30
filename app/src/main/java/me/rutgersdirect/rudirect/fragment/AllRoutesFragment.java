@@ -3,6 +3,7 @@ package me.rutgersdirect.rudirect.fragment;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -107,16 +108,20 @@ public class AllRoutesFragment extends BaseRouteFragment {
 
         @Override
         protected void onPostExecute(Void v) {
-            if (!RUDirectUtil.isNetworkAvailable() && allBusesRecyclerView.getAdapter().getItemCount() == 0) {
-                DirectionsUtil.isReady = false;
-                errorView.setVisibility(View.VISIBLE);
-                errorView.setText("Unable to get routes - check your Internet connection and try again.");
-            } else {
+            if (RUDirectUtil.isNetworkAvailable()) {
                 errorView.setVisibility(View.GONE);
                 BusRouteAdapter adapter = ((BusRouteAdapter) allBusesRecyclerView.getAdapter());
                 adapter.setBusRoutes(RUDirectUtil.mapKeySetToSortedArray(
                         RUDirectApplication.getBusData().getBusTitleToBusTag()));
                 adapter.notifyDataSetChanged();
+            } else {
+                if (allBusesRecyclerView.getAdapter().getItemCount() == 0) {
+                    errorView.setVisibility(View.VISIBLE);
+                    errorView.setText("Unable to get routes. Check your Internet connection and try again.");
+                }
+                DirectionsUtil.isReady = false;
+                Snackbar.make(mainActivity.findViewById(R.id.all_routes_layout),
+                        "No Internet connection. Please try again later.", Snackbar.LENGTH_SHORT).show();
             }
             mSwipeRefreshLayout.setRefreshing(false);
             progressBar.setVisibility(View.GONE);

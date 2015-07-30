@@ -3,6 +3,7 @@ package me.rutgersdirect.rudirect.fragment;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -141,7 +142,9 @@ public class ActiveRoutesFragment extends BaseRouteFragment {
                     }
                 } else {
                     DirectionsUtil.isReady = false;
-                    errorView.setText("Unable to get active routes - check your Internet connection and try again.");
+                    errorView.setText("Unable to get active routes. Check your Internet connection and try again.");
+                    Snackbar.make(mainActivity.findViewById(R.id.active_routes_layout),
+                            "No Internet connection. Please try again later.", Snackbar.LENGTH_SHORT).show();
                 }
             } else {
                 // Show active buses
