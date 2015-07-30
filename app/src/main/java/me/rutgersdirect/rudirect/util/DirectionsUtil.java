@@ -37,29 +37,15 @@ public class DirectionsUtil {
                     Log.d(TAG, "Active bus tag: " + activeBusTag);
                     String busName = RUDirectApplication.getBusData().getBusTagToBusTitle().get(activeBusTag);
                     BusStop[] busStops = RUDirectApplication.getBusData().getBusTagToBusStops().get(activeBusTag);
-                    int vehicleId = -1;
                     BusStopTime prevTime = null;
 
                     // Add the first bus stop
                     if (busStops[0].isActive()) {
                         Log.d(TAG, "0th bus stop: " + busStops[0].getTitle());
-                        ArrayList<BusStop> stopsArrayList;
-
-                        // Check for duplicate bus stops
-                        if (busStopsGraph.containsVertex(busStops[0])) {
-                            // TODO Add edges between this vertex and every other vertex for this bus stop
-                            stopsArrayList = busStopsHashMap.get(busStops[0].getTitle());
-                            stopsArrayList.add(busStops[0]);
-                        } else {
-                            busStopsGraph.addVertex(busStops[0]);
-                            stopsArrayList = new ArrayList<>();
-                            stopsArrayList.add(busStops[0]);
-                            busStopsHashMap.put(busStops[0].getTitle(), stopsArrayList);
-                        }
-
-                        // Set prevTime and vehicle id
+                        // Add vertex
+                        addVertex(busStops[0]);
+                        // Set previous time
                         prevTime = busStops[0].getTimes().get(0);
-                        vehicleId = prevTime.getVehicleId();
                     }
 
                     // Iterate through all the bus stops
@@ -67,84 +53,90 @@ public class DirectionsUtil {
                         // Add vertex if this bus stop is active
                         if (busStops[i].isActive()) {
                             Log.d(TAG, i + "th bus stop: " + busStops[i].getTitle());
-                            ArrayList<BusStop> stopsArrayList;
-
-                            // Check for duplicate bus stops
-                            if (busStopsGraph.containsVertex(busStops[i])) {
-                                // TODO Add edges between this vertex and every other vertex for this bus stop
-                                stopsArrayList = busStopsHashMap.get(busStops[i].getTitle());
-                                stopsArrayList.add(busStops[i]);
-                            } else {
-                                busStopsGraph.addVertex(busStops[i]);
-                                stopsArrayList = new ArrayList<>();
-                                stopsArrayList.add(busStops[i]);
-                                busStopsHashMap.put(busStops[i].getTitle(), stopsArrayList);
-                            }
-
-                            // Add edge if both this bus stop and the previous bus stop are active
+                            // Add vertex
+                            addVertex(busStops[i]);
+                            // Add edge between this bus stop and the previous bus stop if they are both active
                             if (busStops[i - 1].isActive()) {
-                                BusRouteEdge edge = busStopsGraph.addEdge(busStops[i - 1], busStops[i]);
-                                edge.setRouteName(busName);
-                                ArrayList<BusStopTime> busStopTimes = busStops[i].getTimes();
-                                BusStopTime nextSmallestTime = null;
-
-                                // Iterate through all the times for the bus stop to get the one with the correct vehicle id
-                                for (int j = 0; j < busStopTimes.size(); j++) {
-                                    BusStopTime time = busStopTimes.get(j);
-                                    Log.d(TAG, "Bus stop time: " + time.getVehicleId() + " " + time.getMinutes());
-
-                                    // Check to see that the time for this bus stop is greater than the time for the previous bus stop
-                                    if (prevTime != null && (time.getMinutes() - prevTime.getMinutes() < 0)) {
-                                        continue;
-                                    }
-
-                                    // Adds the next smallest time just in case the same vehicle from before doesn't go to this stop
-                                    if (nextSmallestTime == null && prevTime != null && time.getMinutes() > prevTime.getMinutes()
-                                            && time.getVehicleId() != prevTime.getVehicleId()) {
-                                        Log.d(TAG, "Next smallest time: " + time.getVehicleId() + " " + time.getMinutes());
-                                        nextSmallestTime = time;
-                                    }
-
-                                    // Staying on the same vehicle
-                                    if (vehicleId != -1 && vehicleId == time.getVehicleId()) {
-                                        edge.setVehicleId(prevTime.getVehicleId());
-                                        busStopsGraph.setEdgeWeight(edge, time.getMinutes() - prevTime.getMinutes());
-                                        Log.d(TAG, "Edge weight (1st): " + (time.getMinutes() - prevTime.getMinutes()));
-                                        prevTime = time;
-                                        break;
-                                    }
-                                    // Vehicle id hasn't been set yet
-                                    else if (vehicleId == -1 && prevTime != null) {
-                                        vehicleId = time.getVehicleId();
-                                        edge.setVehicleId(prevTime.getVehicleId());
-                                        busStopsGraph.setEdgeWeight(edge, time.getMinutes() - prevTime.getMinutes());
-                                        Log.d(TAG, "Edge weight (2nd): " + (time.getMinutes() - prevTime.getMinutes()));
-                                        prevTime = time;
-                                        break;
-                                    }
-                                    // Transfer to another vehicle
-                                    else if (nextSmallestTime != null && j == busStopTimes.size() - 1) {
-                                        vehicleId = nextSmallestTime.getVehicleId();
-                                        edge.setVehicleId(vehicleId);
-                                        busStopsGraph.setEdgeWeight(edge, time.getMinutes() - prevTime.getMinutes());
-                                        Log.d(TAG, "Edge weight (3rd): " + (time.getMinutes() - prevTime.getMinutes()));
-                                        prevTime = time;
-                                    }
-                                }
-                                Log.d(TAG, i + "th edge: " + edge);
+                                prevTime = addEdge(busName, busStops[i - 1], busStops[i], prevTime);
                             }
                         }
                     }
 
                     // Add edge from last bus stop to first bus stop
-                    // TODO Check to see that they are the same vehicle
                     if (busStops[busStops.length - 1].isActive() && busStops[0].isActive()) {
-                        busStopsGraph.addEdge(busStops[busStops.length - 1], busStops[0]);
+                        addEdge(busName, busStops[busStops.length - 1], busStops[0], prevTime);
                     }
                 }
             }
         } else {
             Log.e(TAG, "Can't set up bus stops graph!");
+        }
+    }
+
+    // Adds a weighted edge between two bus stops, giving preference to times with the same vehicle id
+    private static BusStopTime addEdge(String busName, BusStop stop1, BusStop stop2, BusStopTime prevTime) {
+        // Set previous time if it hasn't been set yet
+        if (prevTime == null) {
+            prevTime = stop2.getTimes().get(0);
+        }
+
+        // Add edge between stop1 and stop2
+        BusRouteEdge edge = busStopsGraph.addEdge(stop1, stop2);
+        ArrayList<BusStopTime> busStopTimes = stop2.getTimes();
+        BusStopTime nextSmallestTime = null;
+        int vehicleId = prevTime.getVehicleId();
+        edge.setRouteName(busName);
+
+        // Iterate through all the times for the bus stop to get the one with the correct vehicle id
+        for (int j = 0; j < busStopTimes.size(); j++) {
+            BusStopTime time = busStopTimes.get(j);
+            Log.d(TAG, "Vehicle ID: " + time.getVehicleId() + " Time: " + time.getMinutes());
+
+            // Check to see that the time for this bus stop is greater than the time for the previous bus stop
+            if (time.getMinutes() - prevTime.getMinutes() < 0) {
+                continue;
+            }
+
+            // Adds the next smallest time just in case the same vehicle from before doesn't go to this stop
+            if (nextSmallestTime == null && time.getMinutes() > prevTime.getMinutes()
+                    && time.getVehicleId() != prevTime.getVehicleId()) {
+                nextSmallestTime = time;
+            }
+
+            // Staying on the same vehicle
+            if (vehicleId == time.getVehicleId()) {
+                edge.setVehicleId(vehicleId);
+                busStopsGraph.setEdgeWeight(edge, time.getMinutes() - prevTime.getMinutes());
+                Log.d(TAG, "Edge weight (same vehicle): " + (time.getMinutes() - prevTime.getMinutes()));
+                return time;
+            }
+            // Transfer to another vehicle
+            else if (nextSmallestTime != null && j == busStopTimes.size() - 1) {
+                edge.setVehicleId(nextSmallestTime.getVehicleId());
+                busStopsGraph.setEdgeWeight(edge, time.getMinutes() - prevTime.getMinutes());
+                Log.d(TAG, "Edge weight (vehicle transfer): " + (time.getMinutes() - prevTime.getMinutes()));
+                return nextSmallestTime;
+            }
+        }
+        return null;
+    }
+
+    // Adds the bus stop to the graph while also handling duplicate bus stops
+    private static void addVertex(BusStop busStop) {
+        ArrayList<BusStop> stopsArrayList;
+
+        if (busStopsGraph.containsVertex(busStop)) { // If the bus stop already exists in the graph
+            // TODO Add edges between this vertex and every other vertex for this bus stop
+            stopsArrayList = busStopsHashMap.get(busStop.getTitle());
+            for (BusStop stop : stopsArrayList) {
+                
+            }
+            stopsArrayList.add(busStop);
+        } else { // If the bus stop doesn't exist in the graph
+            busStopsGraph.addVertex(busStop);
+            stopsArrayList = new ArrayList<>();
+            stopsArrayList.add(busStop);
+            busStopsHashMap.put(busStop.getTitle(), stopsArrayList);
         }
     }
 

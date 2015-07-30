@@ -49,7 +49,7 @@ public class RUDirectApplication extends Application {
                     getDatabaseHelper().getDao().create(busData);
                 }
             } catch (SQLException e) {
-                Log.d(TAG, e.toString(), e);
+                Log.e(TAG, e.toString(), e);
             }
         }
         return busData;
