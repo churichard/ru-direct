@@ -15,17 +15,9 @@
         android:textSize="24sp"
         android:visibility="gone" />
 
-    <ProgressBar
-        android:id="@+id/active_buses_progress_bar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:gravity="center"
-        android:indeterminate="true"
-        android:indeterminateTint="@color/primary_color"
-        android:indeterminateTintMode="src_in"
-        android:paddingBottom="?android:attr/actionBarSize"
-        android:visibility="gone" />
+    <include
+        android:id="@+id/progress_spinner"
+        layout="@layout/progress_spinner" />
 
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/active_buses_swipe_refresh_layout"

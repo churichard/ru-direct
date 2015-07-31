@@ -27,7 +27,6 @@ import me.rutgersdirect.rudirect.activity.SettingsActivity;
 import me.rutgersdirect.rudirect.data.constants.RUDirectApplication;
 import me.rutgersdirect.rudirect.data.model.BusStop;
 import me.rutgersdirect.rudirect.interfaces.NetworkCallFinishListener;
-import me.rutgersdirect.rudirect.util.DirectionsUtil;
 import me.rutgersdirect.rudirect.util.RUDirectUtil;
 
 public class DirectionsFragment extends Fragment
@@ -126,13 +125,6 @@ public class DirectionsFragment extends Fragment
     public void onBusStopsUpdated() {
         // Populate the directions spinners
         populateSpinners();
-    }
-
-    @Override
-    public void onBusTimesUpdated() {
-        // Build the bus stops graph
-        DirectionsUtil.isReady = true;
-        DirectionsUtil.setupBusStopsGraph();
     }
 
     @Override

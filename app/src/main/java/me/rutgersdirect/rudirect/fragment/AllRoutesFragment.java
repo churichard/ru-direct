@@ -22,7 +22,6 @@ import me.rutgersdirect.rudirect.api.NextBusAPI;
 import me.rutgersdirect.rudirect.data.constants.RUDirectApplication;
 import me.rutgersdirect.rudirect.interfaces.NetworkCallFinishListener;
 import me.rutgersdirect.rudirect.ui.view.DividerItemDecoration;
-import me.rutgersdirect.rudirect.util.DirectionsUtil;
 import me.rutgersdirect.rudirect.util.RUDirectUtil;
 
 public class AllRoutesFragment extends BaseRouteFragment {
@@ -39,7 +38,7 @@ public class AllRoutesFragment extends BaseRouteFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        progressBar = (ProgressBar) mainActivity.findViewById(R.id.all_buses_progress_bar);
+        progressBar = (ProgressBar) mainActivity.findViewById(R.id.progress_spinner);
         progressBar.setVisibility(View.VISIBLE);
 
         setupRecyclerView();
@@ -119,7 +118,6 @@ public class AllRoutesFragment extends BaseRouteFragment {
                     errorView.setVisibility(View.VISIBLE);
                     errorView.setText("Unable to get routes. Check your Internet connection and try again.");
                 }
-                DirectionsUtil.isReady = false;
                 Snackbar.make(mainActivity.findViewById(R.id.all_routes_layout),
                         "No Internet connection. Please try again later.", Snackbar.LENGTH_SHORT).show();
             }

@@ -18,7 +18,6 @@ import me.rutgersdirect.rudirect.data.model.BusStopTime;
 public class DirectionsUtil {
 
     private static final String TAG = DirectionsUtil.class.getSimpleName();
-    public static boolean isReady = false; // Whether or not the bus stop times have been downloaded
 
     // The graph of active bus stops
     private static DirectedWeightedPseudograph<BusStop, BusRouteEdge> busStopsGraph;
@@ -27,45 +26,42 @@ public class DirectionsUtil {
 
     // Build the bus stop graph
     public static void setupBusStopsGraph() {
-        if (isReady) { // Check to see that the bus stop times are all downloaded
-            busStopsGraph = new DirectedWeightedPseudograph<>(BusRouteEdge.class);
-            busStopsHashMap = new HashMap<>();
+        busStopsGraph = new DirectedWeightedPseudograph<>(BusRouteEdge.class);
+        busStopsHashMap = new HashMap<>();
 
-            // Add all the active bus stops to the graph
-            for (String activeBusTag : AppData.activeBuses) {
-                if (activeBusTag != null) {
-                    Log.d(TAG, "Active bus tag: " + activeBusTag);
-                    String busName = RUDirectApplication.getBusData().getBusTagToBusTitle().get(activeBusTag);
-                    BusStop[] busStops = RUDirectApplication.getBusData().getBusTagToBusStops().get(activeBusTag);
-                    BusStopTime prevTime = null;
+        // Add all the active bus stops to the graph
+        for (String activeBusTag : AppData.activeBuses) {
+            if (activeBusTag != null) {
+                Log.d(TAG, "Active bus tag: " + activeBusTag);
+                String busName = RUDirectApplication.getBusData().getBusTagToBusTitle().get(activeBusTag);
+                BusStop[] busStops = RUDirectApplication.getBusData().getBusTagToBusStops().get(activeBusTag);
+                BusStopTime prevTime = null;
 
-                    // Add vertex if the first bus stop is active
-                    if (busStops[0].isActive()) {
-                        addVertex(busName, busStops[0]);
-                        prevTime = busStops[0].getTimes().get(0);
-                    }
+                // Add vertex if the first bus stop is active
+                if (busStops[0].isActive()) {
+                    addVertex(busName, busStops[0]);
+                    prevTime = busStops[0].getTimes().get(0);
+                }
 
-                    // Iterate through all the bus stops
-                    for (int i = 1; i < busStops.length; i++) {
-                        // Add vertex if this bus stop is active
-                        if (busStops[i].isActive()) {
-                            addVertex(busName, busStops[i]);
-                            // Add edge between this bus stop and the previous bus stop if they are both active
-                            if (busStops[i - 1].isActive()) {
-                                prevTime = addEdge(busName, busStops[i - 1], busStops[i], prevTime);
-                            }
+                // Iterate through all the bus stops
+                for (int i = 1; i < busStops.length; i++) {
+                    // Add vertex if this bus stop is active
+                    if (busStops[i].isActive()) {
+                        addVertex(busName, busStops[i]);
+                        // Add edge between this bus stop and the previous bus stop if they are both active
+                        if (busStops[i - 1].isActive()) {
+                            prevTime = addEdge(busName, busStops[i - 1], busStops[i], prevTime);
                         }
                     }
+                }
 
-                    // Add edge from last bus stop to first bus stop
-                    if (busStops[busStops.length - 1].isActive() && busStops[0].isActive()) {
-                        addEdge(busName, busStops[busStops.length - 1], busStops[0], prevTime);
-                    }
+                // Add edge from last bus stop to first bus stop
+                if (busStops[busStops.length - 1].isActive() && busStops[0].isActive()) {
+                    addEdge(busName, busStops[busStops.length - 1], busStops[0], prevTime);
                 }
             }
-        } else {
-            Log.e(TAG, "Can't set up bus stops graph!");
         }
+        Log.d(TAG, "Bus stops graph has been set up.");
     }
 
     // Adds a weighted edge between two bus stops, giving preference to times with the same vehicle id
@@ -107,7 +103,7 @@ public class DirectionsUtil {
             }
             // Transfer to another vehicle
             else if (nextSmallestTime != null && j == busStopTimes.size() - 1) {
-                edge.setVehicleId(nextSmallestTime.getVehicleId());
+                edge.setVehicleId(prevTime.getVehicleId());
                 busStopsGraph.setEdgeWeight(edge, time.getMinutes() - prevTime.getMinutes());
                 Log.d(TAG, "Edge (vehicle transfer): " + (time.getMinutes() - prevTime.getMinutes()));
                 return nextSmallestTime;
@@ -116,6 +112,7 @@ public class DirectionsUtil {
 
         // Could not add edge to the graph, e.g. because the times for stop 2 were smaller than the times for stop 1
         busStopsGraph.removeEdge(edge);
+        Log.d("Removing edge", edge.toString());
         return null;
     }
 
@@ -153,9 +150,10 @@ public class DirectionsUtil {
 
     // Calculate and return the total travel time for the shortest path
     public static double getShortestPathTime(GraphPath<BusStop, BusRouteEdge> shortestPath) {
-        // TODO Add in initial wait time and vehicle transfer times!!!!!!!
-        // TODO I think vehicle transfer times might already be included? Check this!!!!!!
-        double initialWait = shortestPath.getStartVertex().getTimes().get(0).getMinutes();
+        // TODO Add in initial wait time
+        Log.d("Start vertex", "Times: " + shortestPath.getStartVertex().getTimes());
+//        double initialWait = shortestPath.getStartVertex().getTimes().get(0).getMinutes();
+        double initialWait = 0;
         return shortestPath.getWeight() + initialWait;
     }
 

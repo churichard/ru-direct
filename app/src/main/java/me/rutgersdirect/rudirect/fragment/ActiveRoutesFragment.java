@@ -19,12 +19,9 @@ import java.util.HashMap;
 import me.rutgersdirect.rudirect.R;
 import me.rutgersdirect.rudirect.activity.SettingsActivity;
 import me.rutgersdirect.rudirect.adapter.BusRouteAdapter;
-import me.rutgersdirect.rudirect.adapter.MainPagerAdapter;
 import me.rutgersdirect.rudirect.api.NextBusAPI;
 import me.rutgersdirect.rudirect.data.constants.RUDirectApplication;
-import me.rutgersdirect.rudirect.interfaces.NetworkCallFinishListener;
 import me.rutgersdirect.rudirect.ui.view.DividerItemDecoration;
-import me.rutgersdirect.rudirect.util.DirectionsUtil;
 import me.rutgersdirect.rudirect.util.RUDirectUtil;
 
 public class ActiveRoutesFragment extends BaseRouteFragment {
@@ -41,18 +38,13 @@ public class ActiveRoutesFragment extends BaseRouteFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        progressBar = (ProgressBar) mainActivity.findViewById(R.id.active_buses_progress_bar);
+        progressBar = (ProgressBar) mainActivity.findViewById(R.id.progress_spinner);
         progressBar.setVisibility(View.VISIBLE);
 
         setupRecyclerView();
         setupSwipeRefreshLayout();
 
         errorView = (TextView) mainActivity.findViewById(R.id.active_buses_error);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
         updateActiveRoutes();
     }
 
@@ -96,17 +88,12 @@ public class ActiveRoutesFragment extends BaseRouteFragment {
 
     // Sets up the RecyclerView
     public void updateActiveRoutes() {
-        DirectionsFragment directionsFragment = (DirectionsFragment) MainPagerAdapter.getRegisteredFragment(1);
-        new UpdateActiveRoutesTask().execute(directionsFragment);
+        new UpdateActiveRoutesTask().execute();
     }
 
-    private class UpdateActiveRoutesTask extends AsyncTask<NetworkCallFinishListener, Void, String[]> {
-        private NetworkCallFinishListener listener;
+    private class UpdateActiveRoutesTask extends AsyncTask<Void, Void, String[]> {
 
-        protected String[] doInBackground(NetworkCallFinishListener... listeners) {
-            if (listeners.length != 0) {
-                this.listener = listeners[0];
-            }
+        protected String[] doInBackground(Void... voids) {
             String[] activeBusTags = NextBusAPI.getActiveBusTags();
             if (RUDirectApplication.getBusData().getBusTagToBusTitle() == null) {
                 NextBusAPI.saveBusStops();
@@ -137,11 +124,7 @@ public class ActiveRoutesFragment extends BaseRouteFragment {
                 adapter.notifyDataSetChanged();
                 if (RUDirectUtil.isNetworkAvailable()) {
                     errorView.setText("No active buses.");
-                    if (listener != null) {
-                        listener.onBusTimesUpdated();
-                    }
                 } else {
-                    DirectionsUtil.isReady = false;
                     errorView.setText("Unable to get active routes. Check your Internet connection and try again.");
                     Snackbar.make(mainActivity.findViewById(R.id.active_routes_layout),
                             "No Internet connection. Please try again later.", Snackbar.LENGTH_SHORT).show();
@@ -151,9 +134,6 @@ public class ActiveRoutesFragment extends BaseRouteFragment {
                 errorView.setVisibility(View.GONE);
                 adapter.setBusRoutes(activeBuses);
                 adapter.notifyDataSetChanged();
-                if (listener != null) {
-                    listener.onBusTimesUpdated();
-                }
             }
             progressBar.setVisibility(View.GONE);
             mSwipeRefreshLayout.setRefreshing(false);

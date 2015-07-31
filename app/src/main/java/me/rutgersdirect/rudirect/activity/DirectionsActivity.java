@@ -10,6 +10,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import org.jgrapht.GraphPath;
@@ -24,11 +26,14 @@ import me.rutgersdirect.rudirect.util.DirectionsUtil;
 public class DirectionsActivity extends AppCompatActivity {
 
     private static final String TAG = DirectionsActivity.class.getSimpleName();
+    private ProgressBar progressSpinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_directions);
+
+        progressSpinner = (ProgressBar) findViewById(R.id.progress_spinner);
 
         // Get origin and destination
         Intent intent = getIntent();
@@ -52,42 +57,36 @@ public class DirectionsActivity extends AppCompatActivity {
         destinationTextView.setText("Destination: " + destination.getTitle());
 
         // Compute the shortest path
-        computeShortestPath(origin, destination);
+        // Check to see if the origin is equal to the destination
+        if (origin.getTitle().equals(destination.getTitle())) {
+            ((TextView) findViewById(R.id.directions_result)).setText("You're already at your destination!");
+        } else {
+            progressSpinner.setVisibility(View.VISIBLE);
+            new GetDirections().execute(origin, destination);
+        }
     }
 
     // Computes the shortest path
     private void computeShortestPath(BusStop origin, BusStop destination) {
         TextView result = (TextView) findViewById(R.id.directions_result);
 
-        // Check to see if the origin is equal to the destination
-        if (origin.getTitle().equals(destination.getTitle())) {
-            result.setText("You're already at your destination!");
-            return;
-        }
-
-        if (DirectionsUtil.isReady) {
-            // Calculate the shortest path between the origin and the destination
-            try {
-                GraphPath<BusStop, BusRouteEdge> shortestPath = DirectionsUtil.calculateShortestPath(origin, destination);
-                if (shortestPath != null) {
-                    // Display path and total time
-                    result.setText("Path: " + shortestPath.toString());
-                    ((TextView) findViewById(R.id.path_time))
-                            .setText("Total time: " + DirectionsUtil.getShortestPathTime(shortestPath));
-                } else {
-                    // No path available
-                    result.setText("There isn't a path from " + origin.toString() + " to "
-                            + destination.toString() + " right now!");
-                }
-            } catch (IllegalArgumentException e) {
-                Log.e(TAG, e.toString(), e);
+        // Calculate the shortest path between the origin and the destination
+        try {
+            GraphPath<BusStop, BusRouteEdge> shortestPath = DirectionsUtil.calculateShortestPath(origin, destination);
+            if (shortestPath != null) {
+                // Display path and total time
+                result.setText("Path: " + shortestPath.toString());
+                ((TextView) findViewById(R.id.path_time))
+                        .setText("Total time: " + DirectionsUtil.getShortestPathTime(shortestPath));
+            } else {
+                // No path available
                 result.setText("There isn't a path from " + origin.toString() + " to "
                         + destination.toString() + " right now!");
             }
-        } else {
-            Snackbar.make(findViewById(R.id.directions_activity_layout),
-                    "Directions are not available right now. Please try again later.", Snackbar.LENGTH_LONG).show();
-            new UpdateBusStopTimes().execute();
+        } catch (IllegalArgumentException e) {
+            Log.e(TAG, e.toString(), e);
+            result.setText("There isn't a path from " + origin.toString() + " to "
+                    + destination.toString() + " right now!");
         }
     }
 
@@ -109,9 +108,15 @@ public class DirectionsActivity extends AppCompatActivity {
         overridePendingTransition(0, R.anim.abc_shrink_fade_out_from_bottom);
     }
 
-    private class UpdateBusStopTimes extends AsyncTask<Void, Void, String[]> {
+    private class GetDirections extends AsyncTask<BusStop, Void, String[]> {
 
-        protected String[] doInBackground(Void... voids) {
+        private BusStop origin;
+        private BusStop destination;
+
+        protected String[] doInBackground(BusStop... stops) {
+            origin = stops[0];
+            destination = stops[1];
+
             if (RUDirectApplication.getBusData().getBusTagToBusTitle() == null) {
                 NextBusAPI.saveBusStops();
             }
@@ -130,10 +135,11 @@ public class DirectionsActivity extends AppCompatActivity {
                 Snackbar.make(findViewById(R.id.directions_activity_layout),
                         "Directions are not available right now. Please try again later.", Snackbar.LENGTH_LONG).show();
             } else {
-                // Build the bus stops graph
-                DirectionsUtil.isReady = true;
+                // Build the bus stops graph and compute the shortest path
                 DirectionsUtil.setupBusStopsGraph();
+                computeShortestPath(origin, destination);
             }
+            progressSpinner.setVisibility(View.GONE);
         }
     }
 }

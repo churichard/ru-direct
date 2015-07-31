@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/directions_activity_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -13,9 +13,14 @@
         android:layout_height="?attr/actionBarSize"
         android:elevation="5dp" />
 
+    <include
+        android:id="@+id/progress_spinner"
+        layout="@layout/progress_spinner" />
+
     <TextView
         android:id="@+id/origin_textview"
         style="@style/TextViewStyle"
+        android:layout_below="@id/toolbar"
         android:layout_marginBottom="5dp"
         android:layout_marginLeft="@dimen/directions_margin"
         android:layout_marginRight="@dimen/directions_margin"
@@ -24,6 +29,7 @@
     <TextView
         android:id="@+id/destination_textview"
         style="@style/TextViewStyle"
+        android:layout_below="@id/origin_textview"
         android:layout_marginBottom="5dp"
         android:layout_marginLeft="@dimen/directions_margin"
         android:layout_marginRight="@dimen/directions_margin" />
@@ -31,6 +37,7 @@
     <TextView
         android:id="@+id/path_time"
         style="@style/TextViewStyle"
+        android:layout_below="@id/destination_textview"
         android:layout_marginBottom="5dp"
         android:layout_marginLeft="@dimen/directions_margin"
         android:layout_marginRight="@dimen/directions_margin" />
@@ -38,6 +45,7 @@
     <ScrollView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@id/path_time"
         android:layout_marginLeft="@dimen/directions_margin"
         android:layout_marginRight="@dimen/directions_margin">
 
@@ -47,4 +55,4 @@
 
     </ScrollView>
 
-</LinearLayout>
+</RelativeLayout>
