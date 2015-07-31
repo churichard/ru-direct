@@ -18,6 +18,11 @@ public class BusStopTime implements Parcelable {
         this.vehicleId = -1;
     }
 
+    public BusStopTime(BusStopTime time) {
+        this.minutes = time.getMinutes();
+        this.vehicleId = time.getVehicleId();
+    }
+
     private BusStopTime(Parcel in) {
         minutes = in.readInt();
         vehicleId = in.readInt();

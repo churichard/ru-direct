@@ -3,7 +3,7 @@ package me.rutgersdirect.rudirect.util;
 import android.util.Log;
 
 import org.jgrapht.GraphPath;
-import org.jgrapht.alg.DijkstraShortestPath;
+import org.jgrapht.alg.KShortestPaths;
 import org.jgrapht.graph.DirectedWeightedPseudograph;
 
 import java.util.ArrayList;
@@ -119,21 +119,22 @@ public class DirectionsUtil {
     // Adds the bus stop to the graph while also handling duplicate bus stops
     private static void addVertex(String busName, BusStop busStop) {
         ArrayList<BusStop> stopsArrayList;
+        BusStop newBusStop = new BusStop(busStop);
 
-        if (busStopsGraph.containsVertex(busStop)) { // If the bus stop already exists in the graph
-            stopsArrayList = busStopsHashMap.get(busStop.getTitle());
-            busStop.setId(stopsArrayList.size());
-            busStopsGraph.addVertex(busStop);
+        if (busStopsGraph.containsVertex(newBusStop)) { // If the bus stop already exists in the graph
+            stopsArrayList = busStopsHashMap.get(newBusStop.getTitle());
+            newBusStop.setId(stopsArrayList.size());
+            busStopsGraph.addVertex(newBusStop);
             for (BusStop stop : stopsArrayList) {
-                addEdge(busName, busStop, stop, busStop.getTimes().get(0));
-                addEdge(busName, stop, busStop, stop.getTimes().get(0));
+                addEdge(busName, newBusStop, stop, newBusStop.getTimes().get(0));
+                addEdge(busName, stop, newBusStop, stop.getTimes().get(0));
             }
-            stopsArrayList.add(busStop);
+            stopsArrayList.add(newBusStop);
         } else { // If the bus stop doesn't exist in the graph
-            busStopsGraph.addVertex(busStop);
+            busStopsGraph.addVertex(newBusStop);
             stopsArrayList = new ArrayList<>();
-            stopsArrayList.add(busStop);
-            busStopsHashMap.put(busStop.getTitle(), stopsArrayList);
+            stopsArrayList.add(newBusStop);
+            busStopsHashMap.put(newBusStop.getTitle(), stopsArrayList);
         }
     }
 
@@ -143,15 +144,19 @@ public class DirectionsUtil {
         Log.d(TAG, "Vertex set: " + busStopsGraph.vertexSet().toString());
         Log.d(TAG, "Origin: " + origin.getTag() + " " + origin.getTitle());
         Log.d(TAG, "Destination: " + destination.getTag() + " " + destination.getTitle());
-        DijkstraShortestPath<BusStop, BusRouteEdge> shortestPath
-                = new DijkstraShortestPath<>(busStopsGraph, origin, destination);
-        return shortestPath.getPath();
+//        DijkstraShortestPath<BusStop, BusRouteEdge> shortestPath
+//                = new DijkstraShortestPath<>(busStopsGraph, origin, destination);
+//        return shortestPath.getPath();
+        GraphPath<BusStop, BusRouteEdge> shortestPath
+                = new KShortestPaths<>(busStopsGraph, origin, 1).getPaths(destination).get(0);
+        return shortestPath;
     }
 
     // Calculate and return the total travel time for the shortest path
     public static double getShortestPathTime(GraphPath<BusStop, BusRouteEdge> shortestPath) {
         // TODO Add in initial wait time
-        Log.d("Start vertex", "Times: " + shortestPath.getStartVertex().getTimes());
+        Log.d("Start vertex", "Title: " + shortestPath.getStartVertex().getTitle() + ", Times: " + shortestPath.getStartVertex().getTimes());
+        Log.d("End vertex", "Title: " + shortestPath.getEndVertex().getTitle() + ", Times: " + shortestPath.getEndVertex().getTimes().get(0).getMinutes());
 //        double initialWait = shortestPath.getStartVertex().getTimes().get(0).getMinutes();
         double initialWait = 0;
         return shortestPath.getWeight() + initialWait;

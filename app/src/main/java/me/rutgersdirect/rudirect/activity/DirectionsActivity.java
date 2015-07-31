@@ -22,6 +22,7 @@ import me.rutgersdirect.rudirect.data.constants.RUDirectApplication;
 import me.rutgersdirect.rudirect.data.model.BusRouteEdge;
 import me.rutgersdirect.rudirect.data.model.BusStop;
 import me.rutgersdirect.rudirect.util.DirectionsUtil;
+import me.rutgersdirect.rudirect.util.RUDirectUtil;
 
 public class DirectionsActivity extends AppCompatActivity {
 
@@ -132,8 +133,13 @@ public class DirectionsActivity extends AppCompatActivity {
 
         protected void onPostExecute(String[] activeBusTags) {
             if (activeBusTags.length == 1 && activeBusTags[0] == null) {
-                Snackbar.make(findViewById(R.id.directions_activity_layout),
-                        "Directions are not available right now. Please try again later.", Snackbar.LENGTH_LONG).show();
+                if (RUDirectUtil.isNetworkAvailable()) {
+                    Snackbar.make(findViewById(R.id.directions_activity_layout),
+                            "There are no active buses right now!", Snackbar.LENGTH_LONG).show();
+                } else {
+                    Snackbar.make(findViewById(R.id.directions_activity_layout),
+                            "No Internet connection. Please try again later.", Snackbar.LENGTH_LONG).show();
+                }
             } else {
                 // Build the bus stops graph and compute the shortest path
                 DirectionsUtil.setupBusStopsGraph();
