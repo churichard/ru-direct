@@ -101,7 +101,7 @@ public class DirectionsFragment extends Fragment
 
             // Create the adapter and set it to the spinners
             ArrayAdapter<BusStop> adapter =
-                    new ArrayAdapter<>(mainActivity, android.R.layout.simple_list_item_1, busStopArray);
+                    new ArrayAdapter<>(mainActivity, R.layout.list_spinner, busStopArray);
             originSpinner.setAdapter(adapter);
             originSpinner.setOnItemSelectedListener(this);
             destSpinner.setAdapter(adapter);

@@ -1,5 +1,6 @@
 package me.rutgersdirect.rudirect.adapter;
 
+import android.content.res.Resources;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,6 +14,7 @@ import java.util.Date;
 import java.util.List;
 
 import me.rutgersdirect.rudirect.R;
+import me.rutgersdirect.rudirect.data.constants.RUDirectApplication;
 import me.rutgersdirect.rudirect.data.model.BusRouteEdge;
 import me.rutgersdirect.rudirect.data.model.BusStop;
 import me.rutgersdirect.rudirect.ui.holder.DirectionsViewHolder;
@@ -21,6 +23,8 @@ import me.rutgersdirect.rudirect.util.DirectionsUtil;
 public class DirectionsAdapter extends RecyclerView.Adapter<DirectionsViewHolder> {
 
     private static final int MILLIS_IN_ONE_MINUTE = 60000;
+    private static final int BUS_STOP = 0;
+    private static final int BUS_ROUTE = 1;
     private String[] titles;
     private String[] times;
 
@@ -58,11 +62,19 @@ public class DirectionsAdapter extends RecyclerView.Adapter<DirectionsViewHolder
     @Override
     public DirectionsViewHolder onCreateViewHolder(final ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_directions, parent, false);
-        return new DirectionsViewHolder(v, new DirectionsViewHolder.DirectionsViewHolderClick() {
+        DirectionsViewHolder viewHolder = new DirectionsViewHolder(v, new DirectionsViewHolder.DirectionsViewHolderClick() {
             public void onClick(View v, int position) {
                 Log.d("DirectionsAdapter", "Title: " + titles[position] + " was clicked");
             }
         });
+        if (viewType == BUS_ROUTE) {
+            Resources resources = RUDirectApplication.getContext().getResources();
+            viewHolder.title.setTextColor(resources.getColor(android.R.color.white));
+            viewHolder.title.setBackgroundColor(resources.getColor(R.color.primary_color));
+            viewHolder.time.setTextColor(resources.getColor(android.R.color.white));
+            viewHolder.time.setBackgroundColor(resources.getColor(R.color.primary_color));
+        }
+        return viewHolder;
     }
 
     @Override
@@ -71,6 +83,11 @@ public class DirectionsAdapter extends RecyclerView.Adapter<DirectionsViewHolder
         if (times != null) {
             viewHolder.time.setText(times[position]);
         }
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return position % 2;
     }
 
     @Override

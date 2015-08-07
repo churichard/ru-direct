@@ -21,13 +21,25 @@
         android:layout_centerInParent="true" />
 
     <TextView
-        android:id="@+id/origin_textview"
+        android:id="@+id/directions_caution"
         style="@style/TextViewStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_below="@id/toolbar"
         android:layout_marginBottom="5dp"
         android:layout_marginLeft="@dimen/directions_margin"
         android:layout_marginRight="@dimen/directions_margin"
-        android:layout_marginTop="@dimen/directions_margin" />
+        android:layout_marginTop="@dimen/directions_margin"
+        android:text="@string/directions_caution_text"
+        android:textColor="@android:color/holo_red_dark" />
+
+    <TextView
+        android:id="@+id/origin_textview"
+        style="@style/TextViewStyle"
+        android:layout_below="@id/directions_caution"
+        android:layout_marginBottom="5dp"
+        android:layout_marginLeft="@dimen/directions_margin"
+        android:layout_marginRight="@dimen/directions_margin" />
 
     <TextView
         android:id="@+id/destination_textview"
