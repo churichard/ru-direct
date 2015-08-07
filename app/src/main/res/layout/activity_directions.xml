@@ -15,7 +15,10 @@
 
     <include
         android:id="@+id/progress_spinner"
-        layout="@layout/progress_spinner" />
+        layout="@layout/progress_spinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true" />
 
     <TextView
         android:id="@+id/origin_textview"
@@ -35,24 +38,18 @@
         android:layout_marginRight="@dimen/directions_margin" />
 
     <TextView
-        android:id="@+id/path_time"
+        android:id="@+id/path_time_textview"
         style="@style/TextViewStyle"
         android:layout_below="@id/destination_textview"
         android:layout_marginBottom="5dp"
         android:layout_marginLeft="@dimen/directions_margin"
         android:layout_marginRight="@dimen/directions_margin" />
 
-    <ScrollView
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/directions_recyclerview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/path_time"
-        android:layout_marginLeft="@dimen/directions_margin"
-        android:layout_marginRight="@dimen/directions_margin">
-
-        <TextView
-            android:id="@+id/directions_result"
-            style="@style/TextViewStyle" />
-
-    </ScrollView>
+        android:layout_below="@id/path_time_textview"
+        android:scrollbars="vertical" />
 
 </RelativeLayout>

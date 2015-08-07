@@ -23,6 +23,18 @@ public class BusRouteEdge extends DefaultWeightedEdge {
         this.vehicleId = vehicleId;
     }
 
+    public double getTravelTime() {
+        return getWeight();
+    }
+
+    public BusStop getSourceBusStop() {
+        return (BusStop) getSource();
+    }
+
+    public BusStop getTargetBusStop() {
+        return (BusStop) getTarget();
+    }
+
     @Override
     public String toString() {
         return "Route name: " + routeName

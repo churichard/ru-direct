@@ -8,6 +8,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import me.rutgersdirect.rudirect.data.constants.RUDirectApplication;
 import me.rutgersdirect.rudirect.data.model.BusData;
@@ -21,8 +22,9 @@ public class XMLBusTimesHandler extends DefaultHandler {
     private BusStop[] busStops;
     private String busTag;
     private boolean inBusTag;
-    private int currentStopIndex;
-    private ArrayList<BusStopTime> busStopTimes;
+    private String stopTag;
+    private HashMap<String, ArrayList<BusStopTime>> busStopTimes;
+    private ArrayList<BusStopTime> times;
 
     public XMLBusTimesHandler(String busTag) {
         this.busTag = busTag;
@@ -31,20 +33,21 @@ public class XMLBusTimesHandler extends DefaultHandler {
     public void startDocument() throws SAXException {
         busData = RUDirectApplication.getBusData();
         busStops = busData.getBusTagToBusStops().get(busTag);
+        busStopTimes = new HashMap<>();
         inBusTag = false;
-        currentStopIndex = 0;
     }
 
     public void startElement(String namespaceURI, String localName, String qName, Attributes atts)
             throws SAXException {
         if (qName.equalsIgnoreCase("predictions")) {
             inBusTag = true;
-            busStopTimes = new ArrayList<>();
+            stopTag = atts.getValue("stopTag");
+            times = new ArrayList<>();
         }
         if (inBusTag && qName.equalsIgnoreCase("prediction")) {
             BusStopTime time = new BusStopTime(Integer.parseInt(atts.getValue("minutes")),
                     Integer.parseInt(atts.getValue("vehicle")));
-            busStopTimes.add(time);
+            times.add(time);
         }
     }
 
@@ -52,16 +55,21 @@ public class XMLBusTimesHandler extends DefaultHandler {
         if (inBusTag && qName.equalsIgnoreCase("predictions")) {
             inBusTag = false;
 
-            if (busStopTimes.size() == 0) {
-                busStopTimes.add(new BusStopTime(-1)); // Offline bus
+            if (times.size() == 0) {
+                times.add(new BusStopTime(-1)); // Offline bus
             }
 
-            busStops[currentStopIndex].setTimes(busStopTimes);
-            currentStopIndex++;
+            busStopTimes.put(stopTag, times);
+
+            stopTag = null;
         }
     }
 
     public void endDocument() throws SAXException {
+        for (BusStop stop : busStops) {
+            stop.setTimes(busStopTimes.get(stop.getTag()));
+        }
+
         // Update bus data
         try {
             RUDirectApplication.getDatabaseHelper().getDao().createOrUpdate(busData);

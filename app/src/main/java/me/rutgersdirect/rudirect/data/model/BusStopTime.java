@@ -5,8 +5,8 @@ import android.os.Parcelable;
 
 public class BusStopTime implements Parcelable {
 
-    private int minutes;
-    private int vehicleId;
+    private transient int minutes;
+    private transient int vehicleId;
 
     public BusStopTime(int minutes, int vehicleId) {
         this.minutes = minutes;
@@ -16,11 +16,6 @@ public class BusStopTime implements Parcelable {
     public BusStopTime(int minutes) {
         this.minutes = minutes;
         this.vehicleId = -1;
-    }
-
-    public BusStopTime(BusStopTime time) {
-        this.minutes = time.getMinutes();
-        this.vehicleId = time.getVehicleId();
     }
 
     private BusStopTime(Parcel in) {

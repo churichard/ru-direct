@@ -1,5 +1,5 @@
 <resources>
-    <dimen name="listview_horizontal_margin">16dp</dimen>
-    <dimen name="listview_vertical_margin">4dp</dimen>
+    <dimen name="recyclerview_horizontal_margin">16dp</dimen>
+    <dimen name="recyclerview_vertical_margin">4dp</dimen>
     <dimen name="directions_margin">15dp</dimen>
 </resources>

@@ -7,6 +7,8 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
@@ -17,6 +19,7 @@ import android.widget.TextView;
 import org.jgrapht.GraphPath;
 
 import me.rutgersdirect.rudirect.R;
+import me.rutgersdirect.rudirect.adapter.DirectionsAdapter;
 import me.rutgersdirect.rudirect.api.NextBusAPI;
 import me.rutgersdirect.rudirect.data.constants.RUDirectApplication;
 import me.rutgersdirect.rudirect.data.model.BusRouteEdge;
@@ -27,6 +30,7 @@ import me.rutgersdirect.rudirect.util.RUDirectUtil;
 public class DirectionsActivity extends AppCompatActivity {
 
     private static final String TAG = DirectionsActivity.class.getSimpleName();
+    private RecyclerView directionsRecyclerView;
     private ProgressBar progressSpinner;
 
     @Override
@@ -51,6 +55,9 @@ public class DirectionsActivity extends AppCompatActivity {
                     R.drawable.ic_action_toolbar_back, getTheme()));
         }
 
+        // Setup recyclerview
+        setupRecyclerView();
+
         // Setup origin and destination textviews
         TextView originTextView = (TextView) findViewById(R.id.origin_textview);
         TextView destinationTextView = (TextView) findViewById(R.id.destination_textview);
@@ -60,34 +67,42 @@ public class DirectionsActivity extends AppCompatActivity {
         // Compute the shortest path
         // Check to see if the origin is equal to the destination
         if (origin.getTitle().equals(destination.getTitle())) {
-            ((TextView) findViewById(R.id.directions_result)).setText("You're already at your destination!");
+            directionsRecyclerView.setAdapter(new DirectionsAdapter(new String[]{"You're already at your destination!"}, null));
         } else {
             progressSpinner.setVisibility(View.VISIBLE);
             new GetDirections().execute(origin, destination);
         }
     }
 
+    // Set up RecyclerView
+    private void setupRecyclerView() {
+        // Initialize recycler view
+        directionsRecyclerView = (RecyclerView) findViewById(R.id.directions_recyclerview);
+        // Set layout manager
+        directionsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        // Set adapter
+        directionsRecyclerView.setAdapter(new DirectionsAdapter());
+    }
+
     // Computes the shortest path
     private void computeShortestPath(BusStop origin, BusStop destination) {
-        TextView result = (TextView) findViewById(R.id.directions_result);
-
         // Calculate the shortest path between the origin and the destination
         try {
             GraphPath<BusStop, BusRouteEdge> shortestPath = DirectionsUtil.calculateShortestPath(origin, destination);
             if (shortestPath != null) {
                 // Display path and total time
-                result.setText("Path: " + shortestPath.toString());
-                ((TextView) findViewById(R.id.path_time))
-                        .setText("Total time: " + DirectionsUtil.getShortestPathTime(shortestPath));
+                directionsRecyclerView.setAdapter(new DirectionsAdapter(shortestPath));
+                ((TextView) findViewById(R.id.path_time_textview))
+                        .setText("Total time: " + DirectionsUtil.getPathTime(shortestPath) + " minutes");
             } else {
                 // No path available
-                result.setText("There isn't a path from " + origin.toString() + " to "
-                        + destination.toString() + " right now!");
+                directionsRecyclerView.setAdapter(new DirectionsAdapter(new String[]{"There isn't a path from " + origin.toString() + " to "
+                        + destination.toString() + " right now!"}, null));
             }
         } catch (IllegalArgumentException e) {
             Log.e(TAG, e.toString(), e);
-            result.setText("There isn't a path from " + origin.toString() + " to "
-                    + destination.toString() + " right now!");
+            directionsRecyclerView.setAdapter(new DirectionsAdapter(new String[]{"There isn't a path from " + origin.toString() + " to "
+                    + destination.toString() + " right now!"}, null));
         }
     }
 

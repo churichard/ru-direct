@@ -8,6 +8,7 @@ import org.jgrapht.graph.DirectedWeightedPseudograph;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import me.rutgersdirect.rudirect.data.constants.AppData;
 import me.rutgersdirect.rudirect.data.constants.RUDirectApplication;
@@ -32,7 +33,7 @@ public class DirectionsUtil {
         // Add all the active bus stops to the graph
         for (String activeBusTag : AppData.activeBuses) {
             if (activeBusTag != null) {
-                Log.d(TAG, "Active bus tag: " + activeBusTag);
+                Log.d(TAG, "Active bus tag: " + activeBusTag + "\n_");
                 String busName = RUDirectApplication.getBusData().getBusTagToBusTitle().get(activeBusTag);
                 BusStop[] busStops = RUDirectApplication.getBusData().getBusTagToBusStops().get(activeBusTag);
                 BusStopTime prevTime = null;
@@ -81,7 +82,6 @@ public class DirectionsUtil {
         // Iterate through all the times for the bus stop to get the one with the correct vehicle id
         for (int j = 0; j < busStopTimes.size(); j++) {
             BusStopTime time = busStopTimes.get(j);
-            Log.d(TAG, "Stop: " + stop1.getTitle() + ", Vehicle ID: " + time.getVehicleId() + ", Time: " + time.getMinutes());
 
             // Check to see that the time for this bus stop is greater than the time for the previous bus stop
             if (time.getMinutes() - prevTime.getMinutes() < 0) {
@@ -98,68 +98,66 @@ public class DirectionsUtil {
             if (vehicleId == time.getVehicleId()) {
                 edge.setVehicleId(vehicleId);
                 busStopsGraph.setEdgeWeight(edge, time.getMinutes() - prevTime.getMinutes());
-                Log.d(TAG, "Edge (same vehicle): " + (time.getMinutes() - prevTime.getMinutes()));
+                Log.d(TAG, "Edge: " + stop1.getTitle() + " to " + stop2.getTitle());
+                Log.d(TAG, "Vehicle ID: " + time.getVehicleId() + ", Time (same vehicle): " + (time.getMinutes() - prevTime.getMinutes()));
                 return time;
             }
             // Transfer to another vehicle
             else if (nextSmallestTime != null && j == busStopTimes.size() - 1) {
                 edge.setVehicleId(prevTime.getVehicleId());
                 busStopsGraph.setEdgeWeight(edge, time.getMinutes() - prevTime.getMinutes());
-                Log.d(TAG, "Edge (vehicle transfer): " + (time.getMinutes() - prevTime.getMinutes()));
+                Log.d(TAG, "Edge: " + stop1.getTitle() + " to " + stop2.getTitle());
+                Log.d(TAG, "Vehicle ID: " + time.getVehicleId() + ", Time (vehicle transfer): " + (time.getMinutes() - prevTime.getMinutes()));
                 return nextSmallestTime;
             }
         }
 
         // Could not add edge to the graph, e.g. because the times for stop 2 were smaller than the times for stop 1
         busStopsGraph.removeEdge(edge);
-        Log.d("Removing edge", edge.toString());
         return null;
     }
 
     // Adds the bus stop to the graph while also handling duplicate bus stops
     private static void addVertex(String busName, BusStop busStop) {
         ArrayList<BusStop> stopsArrayList;
-        BusStop newBusStop = new BusStop(busStop);
 
-        if (busStopsGraph.containsVertex(newBusStop)) { // If the bus stop already exists in the graph
-            stopsArrayList = busStopsHashMap.get(newBusStop.getTitle());
-            newBusStop.setId(stopsArrayList.size());
-            busStopsGraph.addVertex(newBusStop);
+        if (busStopsGraph.containsVertex(busStop)) { // If the bus stop already exists in the graph
+            stopsArrayList = busStopsHashMap.get(busStop.getTitle());
+            busStop.setId(stopsArrayList.size());
+            busStopsGraph.addVertex(busStop);
             for (BusStop stop : stopsArrayList) {
-                addEdge(busName, newBusStop, stop, newBusStop.getTimes().get(0));
-                addEdge(busName, stop, newBusStop, stop.getTimes().get(0));
+                addEdge(busName, busStop, stop, busStop.getTimes().get(0));
+                addEdge(busName, stop, busStop, stop.getTimes().get(0));
             }
-            stopsArrayList.add(newBusStop);
+            stopsArrayList.add(busStop);
         } else { // If the bus stop doesn't exist in the graph
-            busStopsGraph.addVertex(newBusStop);
+            busStopsGraph.addVertex(busStop);
             stopsArrayList = new ArrayList<>();
-            stopsArrayList.add(newBusStop);
-            busStopsHashMap.put(newBusStop.getTitle(), stopsArrayList);
+            stopsArrayList.add(busStop);
+            busStopsHashMap.put(busStop.getTitle(), stopsArrayList);
         }
     }
 
     // Calculate the shortest path from the origin to the destination
     public static GraphPath<BusStop, BusRouteEdge> calculateShortestPath(BusStop origin, BusStop destination)
             throws IllegalArgumentException {
-        Log.d(TAG, "Vertex set: " + busStopsGraph.vertexSet().toString());
-        Log.d(TAG, "Origin: " + origin.getTag() + " " + origin.getTitle());
-        Log.d(TAG, "Destination: " + destination.getTag() + " " + destination.getTitle());
 //        DijkstraShortestPath<BusStop, BusRouteEdge> shortestPath
 //                = new DijkstraShortestPath<>(busStopsGraph, origin, destination);
 //        return shortestPath.getPath();
-        GraphPath<BusStop, BusRouteEdge> shortestPath
-                = new KShortestPaths<>(busStopsGraph, origin, 1).getPaths(destination).get(0);
-        return shortestPath;
+        List<GraphPath<BusStop, BusRouteEdge>> shortestPathList
+                = new KShortestPaths<>(busStopsGraph, origin, 1).getPaths(destination);
+        return shortestPathList == null ? null : shortestPathList.get(0);
     }
 
-    // Calculate and return the total travel time for the shortest path
-    public static double getShortestPathTime(GraphPath<BusStop, BusRouteEdge> shortestPath) {
-        // TODO Add in initial wait time
-        Log.d("Start vertex", "Title: " + shortestPath.getStartVertex().getTitle() + ", Times: " + shortestPath.getStartVertex().getTimes());
-        Log.d("End vertex", "Title: " + shortestPath.getEndVertex().getTitle() + ", Times: " + shortestPath.getEndVertex().getTimes().get(0).getMinutes());
-//        double initialWait = shortestPath.getStartVertex().getTimes().get(0).getMinutes();
-        double initialWait = 0;
-        return shortestPath.getWeight() + initialWait;
+    // Calculate and return the initial wait for a given path
+    public static double getInitialWait(GraphPath<BusStop, BusRouteEdge> path) {
+        ArrayList<BusStop> busStops = busStopsHashMap.get(path.getStartVertex().getTitle());
+        return busStops.get(path.getStartVertex().getId()).getTimes().get(0).getMinutes();
+    }
+
+    // Calculate and return the total travel time for a graph path
+    public static double getPathTime(GraphPath<BusStop, BusRouteEdge> path) {
+        return path.getWeight() + getInitialWait(path);
     }
 
     // Print out the vertices of the bus stops graph and their corresponding edges

@@ -26,19 +26,6 @@ public class BusStop implements Parcelable, Serializable, Comparable<BusStop> {
         this.isExpanded = false;
     }
 
-    public BusStop(BusStop stop) {
-        this.id = stop.getId();
-        this.tag = stop.getTag();
-        this.title = stop.getTitle();
-        this.latitude = stop.getLatitude();
-        this.longitude = stop.getLongitude();
-        this.times = new ArrayList<>(stop.getTimes().size());
-        for (BusStopTime time : stop.getTimes()) {
-            this.times.add(new BusStopTime(time));
-        }
-        this.isExpanded = false;
-    }
-
     private BusStop(Parcel in) {
         tag = in.readString();
         title = in.readString();
