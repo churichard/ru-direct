@@ -42,6 +42,8 @@
         android:layout_below="@id/destination_spinner"
         android:layout_centerHorizontal="true"
         android:background="@color/primary_color"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
         android:text="@string/find_route"
         android:textColor="@android:color/white" />
 

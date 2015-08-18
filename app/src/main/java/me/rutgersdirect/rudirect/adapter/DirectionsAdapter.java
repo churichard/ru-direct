@@ -1,6 +1,7 @@
 package me.rutgersdirect.rudirect.adapter;
 
 import android.content.res.Resources;
+import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -27,16 +28,19 @@ public class DirectionsAdapter extends RecyclerView.Adapter<DirectionsViewHolder
     private static final int BUS_ROUTE = 1;
     private String[] titles;
     private String[] times;
+    private String[] vehicleIds;
 
     public DirectionsAdapter(GraphPath<BusStop, BusRouteEdge> path) {
         List<BusRouteEdge> busStopEdges = path.getEdgeList();
         titles = new String[busStopEdges.size() * 2 + 1];
         times = new String[busStopEdges.size() * 2 + 1];
+        vehicleIds = new String[busStopEdges.size() * 2 + 1];
         long time = new Date().getTime();
 
         titles[0] = busStopEdges.get(0).getSourceBusStop().getTitle();
-        time += ((int) DirectionsUtil.getInitialWait(path) * MILLIS_IN_ONE_MINUTE);
+        time += ((int) DirectionsUtil.getInitialWait() * MILLIS_IN_ONE_MINUTE);
         times[0] = getTimeInHHMM(time);
+        vehicleIds[0] = "";
         int j = 1;
         for (int i = 0; i < busStopEdges.size(); i++) {
             titles[j] = busStopEdges.get(i).getRouteName();
@@ -45,6 +49,8 @@ public class DirectionsAdapter extends RecyclerView.Adapter<DirectionsViewHolder
             time += ((int) busStopEdges.get(i).getTravelTime() * MILLIS_IN_ONE_MINUTE);
             times[j] = (int) busStopEdges.get(i).getTravelTime() + " min";
             times[j + 1] = getTimeInHHMM(time);
+            vehicleIds[j] = "(Bus ID: " + busStopEdges.get(i).getVehicleId() + ")";
+            vehicleIds[j + 1] = "";
             j += 2;
         }
     }
@@ -73,6 +79,9 @@ public class DirectionsAdapter extends RecyclerView.Adapter<DirectionsViewHolder
             viewHolder.title.setBackgroundColor(resources.getColor(R.color.primary_color));
             viewHolder.time.setTextColor(resources.getColor(android.R.color.white));
             viewHolder.time.setBackgroundColor(resources.getColor(R.color.primary_color));
+        } else {
+            viewHolder.title.setTypeface(null, Typeface.BOLD);
+            viewHolder.time.setTypeface(null, Typeface.BOLD);
         }
         return viewHolder;
     }
@@ -81,7 +90,7 @@ public class DirectionsAdapter extends RecyclerView.Adapter<DirectionsViewHolder
     public void onBindViewHolder(DirectionsViewHolder viewHolder, int position) {
         viewHolder.title.setText(titles[position]);
         if (times != null) {
-            viewHolder.time.setText(times[position]);
+            viewHolder.time.setText(times[position] + " " + vehicleIds[position]);
         }
     }
 

@@ -9,7 +9,7 @@ import java.util.ArrayList;
 public class BusStop implements Parcelable, Serializable, Comparable<BusStop> {
 
     private static final long serialVersionUID = 1060767342449380984L;
-    private int id = 0;
+    private transient int id;
     private String tag;
     private String title;
     private String latitude;
@@ -18,6 +18,7 @@ public class BusStop implements Parcelable, Serializable, Comparable<BusStop> {
     private boolean isExpanded;
 
     public BusStop(String tag, String title, ArrayList<BusStopTime> times, String latitude, String longitude) {
+        this.id = 0;
         this.tag = tag;
         this.title = title;
         this.times = times;
@@ -27,12 +28,26 @@ public class BusStop implements Parcelable, Serializable, Comparable<BusStop> {
     }
 
     private BusStop(Parcel in) {
+        id = 0;
         tag = in.readString();
         title = in.readString();
         times = new ArrayList<>();
         times = in.readArrayList(BusStopTime.class.getClassLoader());
         latitude = in.readString();
         longitude = in.readString();
+        isExpanded = false;
+    }
+
+    public BusStop(BusStop busStop) {
+        id = 0;
+        tag = busStop.getTag();
+        title = busStop.getTitle();
+        times = new ArrayList<>();
+        for (BusStopTime time : busStop.getTimes()) {
+            times.add(new BusStopTime(time));
+        }
+        latitude = busStop.getLatitude();
+        longitude = busStop.getLongitude();
         isExpanded = false;
     }
 

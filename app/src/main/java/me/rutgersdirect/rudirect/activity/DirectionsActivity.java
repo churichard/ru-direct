@@ -93,7 +93,7 @@ public class DirectionsActivity extends AppCompatActivity {
                 // Display path and total time
                 directionsRecyclerView.setAdapter(new DirectionsAdapter(shortestPath));
                 ((TextView) findViewById(R.id.path_time_textview))
-                        .setText("Total time: " + DirectionsUtil.getPathTime(shortestPath) + " minutes");
+                        .setText("Total time: " + DirectionsUtil.getTotalPathTime() + " minutes");
             } else {
                 // No path available
                 directionsRecyclerView.setAdapter(new DirectionsAdapter(new String[]{"There isn't a path from " + origin.toString() + " to "
