@@ -31,31 +31,17 @@
         android:layout_marginRight="@dimen/directions_margin"
         android:layout_marginTop="@dimen/directions_margin"
         android:text="@string/directions_caution_text"
-        android:textColor="@android:color/holo_red_dark" />
-
-    <TextView
-        android:id="@+id/origin_textview"
-        style="@style/TextViewStyle"
-        android:layout_below="@id/directions_caution"
-        android:layout_marginBottom="5dp"
-        android:layout_marginLeft="@dimen/directions_margin"
-        android:layout_marginRight="@dimen/directions_margin" />
-
-    <TextView
-        android:id="@+id/destination_textview"
-        style="@style/TextViewStyle"
-        android:layout_below="@id/origin_textview"
-        android:layout_marginBottom="5dp"
-        android:layout_marginLeft="@dimen/directions_margin"
-        android:layout_marginRight="@dimen/directions_margin" />
+        android:textColor="@android:color/holo_red_dark"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/path_time_textview"
         style="@style/TextViewStyle"
-        android:layout_below="@id/destination_textview"
+        android:layout_below="@id/directions_caution"
         android:layout_marginBottom="5dp"
         android:layout_marginLeft="@dimen/directions_margin"
-        android:layout_marginRight="@dimen/directions_margin" />
+        android:layout_marginRight="@dimen/directions_margin"
+        android:textStyle="bold" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/directions_recyclerview"

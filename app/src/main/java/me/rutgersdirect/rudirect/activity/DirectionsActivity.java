@@ -31,6 +31,7 @@ public class DirectionsActivity extends AppCompatActivity {
 
     private static final String TAG = DirectionsActivity.class.getSimpleName();
     private RecyclerView directionsRecyclerView;
+    private TextView pathTimeTextView;
     private ProgressBar progressSpinner;
 
     @Override
@@ -39,6 +40,7 @@ public class DirectionsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_directions);
 
         progressSpinner = (ProgressBar) findViewById(R.id.progress_spinner);
+        pathTimeTextView = (TextView) findViewById(R.id.path_time_textview);
 
         // Get origin and destination
         Intent intent = getIntent();
@@ -58,16 +60,10 @@ public class DirectionsActivity extends AppCompatActivity {
         // Setup recyclerview
         setupRecyclerView();
 
-        // Setup origin and destination textviews
-        TextView originTextView = (TextView) findViewById(R.id.origin_textview);
-        TextView destinationTextView = (TextView) findViewById(R.id.destination_textview);
-        originTextView.setText("Origin: " + origin.getTitle());
-        destinationTextView.setText("Destination: " + destination.getTitle());
-
         // Compute the shortest path
         // Check to see if the origin is equal to the destination
         if (origin.getTitle().equals(destination.getTitle())) {
-            directionsRecyclerView.setAdapter(new DirectionsAdapter(new String[]{"You're already at your destination!"}, null));
+            pathTimeTextView.setText("You're already at your destination!");
         } else {
             progressSpinner.setVisibility(View.VISIBLE);
             new GetDirections().execute(origin, destination);
@@ -92,17 +88,16 @@ public class DirectionsActivity extends AppCompatActivity {
             if (shortestPath != null) {
                 // Display path and total time
                 directionsRecyclerView.setAdapter(new DirectionsAdapter(shortestPath));
-                ((TextView) findViewById(R.id.path_time_textview))
-                        .setText("Total time: " + DirectionsUtil.getTotalPathTime() + " minutes");
+                pathTimeTextView.setText("Total time: " + DirectionsUtil.getTotalPathTime() + " minutes");
             } else {
                 // No path available
-                directionsRecyclerView.setAdapter(new DirectionsAdapter(new String[]{"There isn't a path from " + origin.toString() + " to "
-                        + destination.toString() + " right now!"}, null));
+                pathTimeTextView.setText("There isn't a path from " + origin.toString() + " to "
+                        + destination.toString() + " right now!");
             }
         } catch (IllegalArgumentException e) {
             Log.e(TAG, e.toString(), e);
-            directionsRecyclerView.setAdapter(new DirectionsAdapter(new String[]{"There isn't a path from " + origin.toString() + " to "
-                    + destination.toString() + " right now!"}, null));
+            pathTimeTextView.setText("There isn't a path from " + origin.toString() + " to "
+                    + destination.toString() + " right now!");
         }
     }
 
@@ -149,9 +144,11 @@ public class DirectionsActivity extends AppCompatActivity {
         protected void onPostExecute(String[] activeBusTags) {
             if (activeBusTags.length == 1 && activeBusTags[0] == null) {
                 if (RUDirectUtil.isNetworkAvailable()) {
+                    pathTimeTextView.setText("There are no active buses right now!");
                     Snackbar.make(findViewById(R.id.directions_activity_layout),
                             "There are no active buses right now!", Snackbar.LENGTH_LONG).show();
                 } else {
+                    pathTimeTextView.setText("No Internet connection. Please try again later.");
                     Snackbar.make(findViewById(R.id.directions_activity_layout),
                             "No Internet connection. Please try again later.", Snackbar.LENGTH_LONG).show();
                 }

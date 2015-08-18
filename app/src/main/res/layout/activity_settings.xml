@@ -9,7 +9,8 @@
         android:id="@+id/toolbar"
         layout="@layout/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize" />
+        android:layout_height="?attr/actionBarSize"
+        android:elevation="5dp" />
 
     <FrameLayout
         android:id="@+id/fragment_container"

@@ -24,33 +24,54 @@ import me.rutgersdirect.rudirect.util.DirectionsUtil;
 public class DirectionsAdapter extends RecyclerView.Adapter<DirectionsViewHolder> {
 
     private static final int MILLIS_IN_ONE_MINUTE = 60000;
-    private static final int BUS_STOP = 0;
+    private static final int INNER_BUS_STOP = 0;
     private static final int BUS_ROUTE = 1;
+    private static final int OUTER_BUS_STOP = 2;
+    private int size;
     private String[] titles;
     private String[] times;
     private String[] vehicleIds;
 
     public DirectionsAdapter(GraphPath<BusStop, BusRouteEdge> path) {
         List<BusRouteEdge> busStopEdges = path.getEdgeList();
-        titles = new String[busStopEdges.size() * 2 + 1];
-        times = new String[busStopEdges.size() * 2 + 1];
-        vehicleIds = new String[busStopEdges.size() * 2 + 1];
+        size = busStopEdges.size() * 2 + 1;
+        titles = new String[size];
+        times = new String[size];
+        vehicleIds = new String[size];
         long time = new Date().getTime();
 
+        // Set title
         titles[0] = busStopEdges.get(0).getSourceBusStop().getTitle();
-        time += ((int) DirectionsUtil.getInitialWait() * MILLIS_IN_ONE_MINUTE);
+        // Set initial wait time
+        int tempInitialWait = (int) DirectionsUtil.getInitialWait();
+        if (tempInitialWait == 0) { // Handle cases where the initial wait time is 0
+            time += 500;
+        } else {
+            time += tempInitialWait * MILLIS_IN_ONE_MINUTE;
+        }
         times[0] = getTimeInHHMM(time);
+        // Set vehicle id
         vehicleIds[0] = "";
+
         int j = 1;
         for (int i = 0; i < busStopEdges.size(); i++) {
+            // Set title
             titles[j] = busStopEdges.get(i).getRouteName();
             titles[j + 1] = busStopEdges.get(i).getTargetBusStop().getTitle();
-
-            time += ((int) busStopEdges.get(i).getTravelTime() * MILLIS_IN_ONE_MINUTE);
-            times[j] = (int) busStopEdges.get(i).getTravelTime() + " min";
+            // Set travel time
+            int tempTravelTime = (int) busStopEdges.get(i).getTravelTime();
+            if (tempTravelTime == 0) { // Handle cases where the travel time is 0
+                time += 500;
+                times[j] = "<1 min";
+            } else {
+                time += tempTravelTime * MILLIS_IN_ONE_MINUTE;
+                times[j] = tempTravelTime + " min";
+            }
             times[j + 1] = getTimeInHHMM(time);
+            // Set vehicle id
             vehicleIds[j] = "(Bus ID: " + busStopEdges.get(i).getVehicleId() + ")";
             vehicleIds[j + 1] = "";
+
             j += 2;
         }
     }
@@ -73,22 +94,36 @@ public class DirectionsAdapter extends RecyclerView.Adapter<DirectionsViewHolder
                 Log.d("DirectionsAdapter", "Title: " + titles[position] + " was clicked");
             }
         });
+        Resources resources = RUDirectApplication.getContext().getResources();
         if (viewType == BUS_ROUTE) {
-            Resources resources = RUDirectApplication.getContext().getResources();
             viewHolder.title.setTextColor(resources.getColor(android.R.color.white));
             viewHolder.title.setBackgroundColor(resources.getColor(R.color.primary_color));
             viewHolder.time.setTextColor(resources.getColor(android.R.color.white));
             viewHolder.time.setBackgroundColor(resources.getColor(R.color.primary_color));
-        } else {
+        } else if (viewType == OUTER_BUS_STOP) {
             viewHolder.title.setTypeface(null, Typeface.BOLD);
+            viewHolder.title.setTextColor(resources.getColor(android.R.color.black));
+            viewHolder.title.setTextSize(20);
             viewHolder.time.setTypeface(null, Typeface.BOLD);
+            viewHolder.time.setTextColor(resources.getColor(android.R.color.black));
+            viewHolder.time.setTextSize(20);
         }
         return viewHolder;
     }
 
     @Override
     public void onBindViewHolder(DirectionsViewHolder viewHolder, int position) {
+        // Set title
         viewHolder.title.setText(titles[position]);
+        // Set icon
+        if (viewHolder.getItemViewType() == OUTER_BUS_STOP) {
+            viewHolder.icon.setImageResource(R.drawable.bus_stop_circle);
+        } else if (viewHolder.getItemViewType() == BUS_ROUTE) {
+            viewHolder.icon.setImageResource(R.drawable.bus_route_circle);
+        } else if (viewHolder.getItemViewType() == INNER_BUS_STOP) {
+            viewHolder.icon.setImageResource(R.drawable.bus_route_circle_no_fill);
+        }
+        // Set time
         if (times != null) {
             viewHolder.time.setText(times[position] + " " + vehicleIds[position]);
         }
@@ -96,7 +131,10 @@ public class DirectionsAdapter extends RecyclerView.Adapter<DirectionsViewHolder
 
     @Override
     public int getItemViewType(int position) {
-        return position % 2;
+        if (position == 0 || position == size - 1) return OUTER_BUS_STOP;
+        else if (position % 2 == 0 && (titles[position].equals(titles[position - 2])
+                || titles[position].equals(titles[position + 2]))) return OUTER_BUS_STOP;
+        else return position % 2;
     }
 
     @Override
