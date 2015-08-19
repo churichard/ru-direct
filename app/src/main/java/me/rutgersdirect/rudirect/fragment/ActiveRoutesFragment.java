@@ -94,17 +94,10 @@ public class ActiveRoutesFragment extends BaseRouteFragment {
     private class UpdateActiveRoutesTask extends AsyncTask<Void, Void, String[]> {
 
         protected String[] doInBackground(Void... voids) {
-            String[] activeBusTags = NextBusAPI.getActiveBusTags();
             if (RUDirectApplication.getBusData().getBusTagToBusTitle() == null) {
                 NextBusAPI.saveBusStops();
             }
-            if (RUDirectApplication.getBusData().getBusTagToBusStops() != null) {
-                activeBusTags = NextBusAPI.getActiveBusTags();
-                for (String busTag : activeBusTags) {
-                    NextBusAPI.saveBusStopTimes(busTag);
-                }
-            }
-            return activeBusTags;
+            return NextBusAPI.getActiveBusTags();
         }
 
         protected void onPostExecute(String[] activeBusTags) {
