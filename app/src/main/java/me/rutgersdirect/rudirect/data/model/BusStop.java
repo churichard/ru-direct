@@ -38,19 +38,6 @@ public class BusStop implements Parcelable, Serializable, Comparable<BusStop> {
         isExpanded = false;
     }
 
-    public BusStop(BusStop busStop) {
-        id = 0;
-        tag = busStop.getTag();
-        title = busStop.getTitle();
-        times = new ArrayList<>();
-        for (BusStopTime time : busStop.getTimes()) {
-            times.add(new BusStopTime(time));
-        }
-        latitude = busStop.getLatitude();
-        longitude = busStop.getLongitude();
-        isExpanded = false;
-    }
-
     public BusStop() {
         // Needed by ormlite
     }

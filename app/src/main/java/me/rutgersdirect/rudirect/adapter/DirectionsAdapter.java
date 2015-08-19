@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import org.jgrapht.GraphPath;
 
 import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -18,30 +19,27 @@ import me.rutgersdirect.rudirect.R;
 import me.rutgersdirect.rudirect.data.constants.RUDirectApplication;
 import me.rutgersdirect.rudirect.data.model.BusRouteEdge;
 import me.rutgersdirect.rudirect.data.model.BusStop;
-import me.rutgersdirect.rudirect.ui.holder.DirectionsViewHolder;
+import me.rutgersdirect.rudirect.data.model.DirectionsBusRoute;
+import me.rutgersdirect.rudirect.data.model.DirectionsInnerBusStop;
+import me.rutgersdirect.rudirect.data.model.DirectionsItem;
+import me.rutgersdirect.rudirect.data.model.DirectionsOuterBusStop;
+import me.rutgersdirect.rudirect.interfaces.DirectionsViewHolderClick;
+import me.rutgersdirect.rudirect.ui.holder.DirectionsItemViewHolder;
 import me.rutgersdirect.rudirect.util.DirectionsUtil;
 
-public class DirectionsAdapter extends RecyclerView.Adapter<DirectionsViewHolder> {
+public class DirectionsAdapter extends RecyclerView.Adapter<DirectionsItemViewHolder> {
 
     private static final int MILLIS_IN_ONE_MINUTE = 60000;
     private static final int INNER_BUS_STOP = 0;
-    private static final int BUS_ROUTE = 1;
-    private static final int OUTER_BUS_STOP = 2;
-    private int size;
-    private String[] titles;
-    private String[] times;
-    private String[] vehicleIds;
+    private static final int OUTER_BUS_STOP = 1;
+    private static final int BUS_ROUTE = 2;
+    private ArrayList<DirectionsItem> items;
 
     public DirectionsAdapter(GraphPath<BusStop, BusRouteEdge> path) {
         List<BusRouteEdge> busStopEdges = path.getEdgeList();
-        size = busStopEdges.size() * 2 + 1;
-        titles = new String[size];
-        times = new String[size];
-        vehicleIds = new String[size];
+        items = new ArrayList<>();
         long time = new Date().getTime();
 
-        // Set title
-        titles[0] = busStopEdges.get(0).getSourceBusStop().getTitle();
         // Set initial wait time
         int tempInitialWait = (int) DirectionsUtil.getInitialWait();
         if (tempInitialWait == 0) { // Handle cases where the initial wait time is 0
@@ -49,57 +47,67 @@ public class DirectionsAdapter extends RecyclerView.Adapter<DirectionsViewHolder
         } else {
             time += tempInitialWait * MILLIS_IN_ONE_MINUTE;
         }
-        times[0] = getTimeInHHMM(time);
-        // Set vehicle id
-        vehicleIds[0] = "";
 
-        int j = 1;
-        for (int i = 0; i < busStopEdges.size(); i++) {
-            // Set title
-            titles[j] = busStopEdges.get(i).getRouteName();
-            titles[j + 1] = busStopEdges.get(i).getTargetBusStop().getTitle();
+        // Set title
+        items.add(new DirectionsOuterBusStop(R.drawable.bus_stop_circle,
+                busStopEdges.get(0).getSourceBusStop().getTitle(), getTimeInHHMM(time)));
+        items.add(new DirectionsBusRoute(android.R.color.transparent, busStopEdges.get(0).getRouteName(), null));
+
+        for (int i = 0; i < busStopEdges.size() - 1; i++) {
             // Set travel time
             int tempTravelTime = (int) busStopEdges.get(i).getTravelTime();
             if (tempTravelTime == 0) { // Handle cases where the travel time is 0
                 time += 500;
-                times[j] = "<1 min";
             } else {
                 time += tempTravelTime * MILLIS_IN_ONE_MINUTE;
-                times[j] = tempTravelTime + " min";
             }
-            times[j + 1] = getTimeInHHMM(time);
-            // Set vehicle id
-            vehicleIds[j] = "(Bus ID: " + busStopEdges.get(i).getVehicleId() + ")";
-            vehicleIds[j + 1] = "";
 
-            j += 2;
+            // Handle vehicle transfers
+            if (items.get(items.size() - 1).getTitle().equals(busStopEdges.get(i).getTargetBusStop().getTitle())) {
+                items.remove(items.get(items.size() - 1));
+                items.add(new DirectionsOuterBusStop(R.drawable.bus_stop_circle,
+                        busStopEdges.get(i).getTargetBusStop().getTitle(), getTimeInHHMM(time)));
+                items.add(new DirectionsBusRoute(android.R.color.transparent,
+                        busStopEdges.get(i + 1).getRouteName(), null));
+                continue;
+            }
+
+            items.add(new DirectionsInnerBusStop(android.R.color.transparent,
+                    busStopEdges.get(i).getTargetBusStop().getTitle(), getTimeInHHMM(time)));
         }
-    }
 
-    public DirectionsAdapter(String[] titles, String[] times) {
-        this.titles = titles;
-        this.times = times;
+        // Add destination item
+        int tempTravelTime = (int) busStopEdges.get(busStopEdges.size() - 1).getTravelTime();
+        if (tempTravelTime == 0) { // Handle cases where the travel time is 0
+            time += 500;
+        } else {
+            time += tempTravelTime * MILLIS_IN_ONE_MINUTE;
+        }
+
+        items.add(new DirectionsOuterBusStop(R.drawable.bus_stop_circle,
+                busStopEdges.get(busStopEdges.size() - 1).getTargetBusStop().getTitle(), getTimeInHHMM(time)));
     }
 
     public DirectionsAdapter() {
-        this.titles = null;
-        this.times = null;
+        this.items = null;
     }
 
     @Override
-    public DirectionsViewHolder onCreateViewHolder(final ViewGroup parent, int viewType) {
+    public DirectionsItemViewHolder onCreateViewHolder(final ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_directions, parent, false);
-        DirectionsViewHolder viewHolder = new DirectionsViewHolder(v, new DirectionsViewHolder.DirectionsViewHolderClick() {
+        DirectionsItemViewHolder viewHolder = new DirectionsItemViewHolder(v, new DirectionsViewHolderClick() {
             public void onClick(View v, int position) {
-                Log.d("DirectionsAdapter", "Title: " + titles[position] + " was clicked");
+                Log.d("DirectionsAdapter", "Title: " + items.get(position).getTitle() + " was clicked");
             }
         });
+
+        // Stylize item
         Resources resources = RUDirectApplication.getContext().getResources();
         if (viewType == BUS_ROUTE) {
-            viewHolder.title.setTextColor(resources.getColor(android.R.color.white));
-            viewHolder.title.setBackgroundColor(resources.getColor(R.color.primary_color));
-            viewHolder.time.setTextColor(resources.getColor(android.R.color.white));
-            viewHolder.time.setBackgroundColor(resources.getColor(R.color.primary_color));
+            viewHolder.title.setTextColor(resources.getColor(R.color.primary_color));
+            viewHolder.title.setTypeface(null, Typeface.BOLD);
+            viewHolder.title.setCompoundDrawablePadding(20);
+            viewHolder.title.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_directions_bus, 0, 0, 0);
         } else if (viewType == OUTER_BUS_STOP) {
             viewHolder.title.setTypeface(null, Typeface.BOLD);
             viewHolder.title.setTextColor(resources.getColor(android.R.color.black));
@@ -112,35 +120,27 @@ public class DirectionsAdapter extends RecyclerView.Adapter<DirectionsViewHolder
     }
 
     @Override
-    public void onBindViewHolder(DirectionsViewHolder viewHolder, int position) {
+    public void onBindViewHolder(DirectionsItemViewHolder viewHolder, int position) {
+        DirectionsItem item = items.get(position);
         // Set title
-        viewHolder.title.setText(titles[position]);
+        viewHolder.title.setText(item.getTitle());
         // Set icon
-        if (viewHolder.getItemViewType() == OUTER_BUS_STOP) {
-            viewHolder.icon.setImageResource(R.drawable.bus_stop_circle);
-        } else if (viewHolder.getItemViewType() == BUS_ROUTE) {
-            viewHolder.icon.setImageResource(R.drawable.bus_route_circle);
-        } else if (viewHolder.getItemViewType() == INNER_BUS_STOP) {
-            viewHolder.icon.setImageResource(R.drawable.bus_route_circle_no_fill);
-        }
+        viewHolder.icon.setImageResource(item.getIconId());
         // Set time
-        if (times != null) {
-            viewHolder.time.setText(times[position] + " " + vehicleIds[position]);
-        }
+        viewHolder.time.setText(item.getTime());
     }
 
     @Override
     public int getItemViewType(int position) {
-        if (position == 0 || position == size - 1) return OUTER_BUS_STOP;
-        else if (position % 2 == 0 && (titles[position].equals(titles[position - 2])
-                || titles[position].equals(titles[position + 2]))) return OUTER_BUS_STOP;
-        else return position % 2;
+        if (items.get(position) instanceof DirectionsInnerBusStop) return INNER_BUS_STOP;
+        else if (items.get(position) instanceof DirectionsOuterBusStop) return OUTER_BUS_STOP;
+        else return BUS_ROUTE;
     }
 
     @Override
     public int getItemCount() {
-        if (titles != null) {
-            return titles.length;
+        if (items != null) {
+            return items.size();
         }
         return 0;
     }
