@@ -6,16 +6,16 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import me.rutgersdirect.rudirect.R;
-import me.rutgersdirect.rudirect.interfaces.DirectionsViewHolderClick;
+import me.rutgersdirect.rudirect.interfaces.ViewHolderClickListener;
 
 public class DirectionsItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
     public ImageView icon;
     public TextView title;
     public TextView time;
-    public DirectionsViewHolderClick mListener;
+    public ViewHolderClickListener mListener;
 
-    public DirectionsItemViewHolder(View v, DirectionsViewHolderClick listener) {
+    public DirectionsItemViewHolder(View v, ViewHolderClickListener listener) {
         super(v);
 
         icon = (ImageView) v.findViewById(R.id.directions_icon);

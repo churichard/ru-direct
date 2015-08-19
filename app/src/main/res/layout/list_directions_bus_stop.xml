@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/directions_bus_stop_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/directions_vertical_padding"
+    android:layout_marginBottom="10dp"
+    android:layout_marginTop="20dp"
     android:paddingLeft="@dimen/directions_margin"
-    android:paddingRight="@dimen/directions_margin"
-    android:paddingTop="@dimen/directions_vertical_padding">
+    android:paddingRight="@dimen/directions_margin">
 
     <ImageView
         android:id="@+id/directions_icon"
@@ -13,9 +14,9 @@
         android:layout_height="16dp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_centerVertical="true"
         android:layout_marginEnd="5dp"
         android:layout_marginRight="5dp"
+        android:layout_marginTop="7dp"
         android:contentDescription="@null"
         android:paddingLeft="2dp"
         android:paddingRight="2dp" />
@@ -23,9 +24,8 @@
     <TextView
         android:id="@+id/directions_time"
         style="@style/TextViewStyle"
-        android:layout_centerVertical="true"
-        android:layout_marginEnd="6dp"
-        android:layout_marginRight="6dp"
+        android:layout_marginEnd="15dp"
+        android:layout_marginRight="15dp"
         android:layout_toEndOf="@id/directions_icon"
         android:layout_toRightOf="@id/directions_icon"
         android:textAppearance="?android:attr/textAppearanceMedium"
@@ -36,7 +36,9 @@
         style="@style/TextViewStyle"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
+        android:layout_toEndOf="@id/directions_time"
+        android:layout_toRightOf="@id/directions_time"
+        android:gravity="end"
         android:paddingLeft="2dp"
         android:paddingRight="2dp"
         android:textAppearance="?android:attr/textAppearanceMedium"

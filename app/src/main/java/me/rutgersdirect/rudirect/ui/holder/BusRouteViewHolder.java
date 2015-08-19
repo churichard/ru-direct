@@ -5,13 +5,14 @@ import android.view.View;
 import android.widget.TextView;
 
 import me.rutgersdirect.rudirect.R;
+import me.rutgersdirect.rudirect.interfaces.ViewHolderClickListener;
 
 public class BusRouteViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
     public TextView title;
-    public BusRouteViewHolderClick mListener;
+    public ViewHolderClickListener mListener;
 
-    public BusRouteViewHolder(View v, BusRouteViewHolderClick listener) {
+    public BusRouteViewHolder(View v, ViewHolderClickListener listener) {
         super(v);
 
         title = (TextView) v.findViewById(R.id.bus_route_name);
@@ -23,9 +24,5 @@ public class BusRouteViewHolder extends RecyclerView.ViewHolder implements View.
     @Override
     public void onClick(View v) {
         mListener.onClick(v, getLayoutPosition());
-    }
-
-    public interface BusRouteViewHolderClick {
-        void onClick(View v, int position);
     }
 }

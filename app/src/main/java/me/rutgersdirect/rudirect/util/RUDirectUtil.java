@@ -3,6 +3,7 @@ package me.rutgersdirect.rudirect.util;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.util.DisplayMetrics;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -36,5 +37,11 @@ public class RUDirectUtil {
             return busNames;
         }
         return null;
+    }
+
+    // Convert from dp to px
+    public static int dpToPx(int dp) {
+        DisplayMetrics displayMetrics = RUDirectApplication.getContext().getResources().getDisplayMetrics();
+        return (int) ((dp * displayMetrics.density) + 0.5);
     }
 }

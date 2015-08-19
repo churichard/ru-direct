@@ -81,23 +81,17 @@ public class DirectionsActivity extends AppCompatActivity {
     }
 
     // Computes the shortest path
-    private void computeShortestPath(BusStop origin, BusStop destination) {
+    private GraphPath<BusStop, BusRouteEdge> computeShortestPath(BusStop origin, BusStop destination) {
         // Calculate the shortest path between the origin and the destination
         try {
-            GraphPath<BusStop, BusRouteEdge> shortestPath = DirectionsUtil.calculateShortestPath(origin, destination);
-            if (shortestPath != null) {
-                // Display path and total time
-                directionsRecyclerView.setAdapter(new DirectionsAdapter(shortestPath));
-                pathTimeTextView.setText("Total time: " + DirectionsUtil.getTotalPathTime() + " minutes");
-            } else {
-                // No path available
-                pathTimeTextView.setText("There isn't a path from " + origin.toString() + " to "
-                        + destination.toString() + " right now!");
-            }
+            return DirectionsUtil.calculateShortestPath(origin, destination);
         } catch (IllegalArgumentException e) {
-            Log.e(TAG, e.toString(), e);
+            // Log.e(TAG, e.toString(), e);
+            Log.e(TAG, "There isn't a path from " + origin.toString() + " to " + destination.toString()
+                    + " right now!");
             pathTimeTextView.setText("There isn't a path from " + origin.toString() + " to "
                     + destination.toString() + " right now!");
+            return null;
         }
     }
 
@@ -123,6 +117,7 @@ public class DirectionsActivity extends AppCompatActivity {
 
         private BusStop origin;
         private BusStop destination;
+        private GraphPath<BusStop, BusRouteEdge> path;
 
         protected String[] doInBackground(BusStop... stops) {
             origin = stops[0];
@@ -138,6 +133,11 @@ public class DirectionsActivity extends AppCompatActivity {
                     NextBusAPI.saveBusStopTimes(busTag);
                 }
             }
+
+            // Build the bus stops graph and compute the shortest path
+            DirectionsUtil.setupBusStopsGraph();
+            path = computeShortestPath(origin, destination);
+
             return activeBusTags;
         }
 
@@ -153,9 +153,15 @@ public class DirectionsActivity extends AppCompatActivity {
                             "No Internet connection. Please try again later.", Snackbar.LENGTH_LONG).show();
                 }
             } else {
-                // Build the bus stops graph and compute the shortest path
-                DirectionsUtil.setupBusStopsGraph();
-                computeShortestPath(origin, destination);
+                if (path != null) {
+                    // Display path and total time
+                    directionsRecyclerView.setAdapter(new DirectionsAdapter(path));
+                    pathTimeTextView.setText("Total time: " + (int) DirectionsUtil.getTotalPathTime() + " minutes");
+                } else {
+                    // No path available
+                    pathTimeTextView.setText("There isn't a path from " + origin.toString() + " to "
+                            + destination.toString() + " right now!");
+                }
             }
             progressSpinner.setVisibility(View.GONE);
         }

@@ -15,6 +15,7 @@ import me.rutgersdirect.rudirect.R;
 import me.rutgersdirect.rudirect.data.constants.RUDirectApplication;
 import me.rutgersdirect.rudirect.data.model.BusStop;
 import me.rutgersdirect.rudirect.data.model.BusStopTime;
+import me.rutgersdirect.rudirect.interfaces.ViewHolderClickListener;
 import me.rutgersdirect.rudirect.ui.holder.BusStopViewHolder;
 
 public class BusStopAdapter extends RecyclerView.Adapter<BusStopViewHolder> {
@@ -35,7 +36,7 @@ public class BusStopAdapter extends RecyclerView.Adapter<BusStopViewHolder> {
     @Override
     public BusStopViewHolder onCreateViewHolder(final ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_bus_stops, parent, false);
-        return new BusStopViewHolder(v, new BusStopViewHolder.BusStopViewHolderClick() {
+        return new BusStopViewHolder(v, new ViewHolderClickListener() {
             public void onClick(View v, int position) {
                 expToggleRequest = true;
 

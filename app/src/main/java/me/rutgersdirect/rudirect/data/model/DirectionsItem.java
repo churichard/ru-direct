@@ -2,21 +2,13 @@ package me.rutgersdirect.rudirect.data.model;
 
 public class DirectionsItem {
 
-    private int iconId;
     private String title;
     private String time;
+    private int iconId;
 
-    public DirectionsItem(int iconId, String title, String time) {
-        this.iconId = iconId;
+    public DirectionsItem(String title, String time, int iconId) {
         this.title = title;
         this.time = time;
-    }
-
-    public int getIconId() {
-        return iconId;
-    }
-
-    public void setIconId(int iconId) {
         this.iconId = iconId;
     }
 
@@ -34,5 +26,13 @@ public class DirectionsItem {
 
     public void setTime(String time) {
         this.time = time;
+    }
+
+    public int getIconId() {
+        return iconId;
+    }
+
+    public void setIconId(int iconId) {
+        this.iconId = iconId;
     }
 }

@@ -14,6 +14,7 @@ import me.rutgersdirect.rudirect.activity.BusStopsActivity;
 import me.rutgersdirect.rudirect.api.NextBusAPI;
 import me.rutgersdirect.rudirect.data.constants.RUDirectApplication;
 import me.rutgersdirect.rudirect.data.model.BusData;
+import me.rutgersdirect.rudirect.interfaces.ViewHolderClickListener;
 import me.rutgersdirect.rudirect.ui.holder.BusRouteViewHolder;
 import me.rutgersdirect.rudirect.util.ShowBusStopsHelper;
 
@@ -43,7 +44,7 @@ public class BusRouteAdapter extends RecyclerView.Adapter<BusRouteViewHolder> {
     @Override
     public BusRouteViewHolder onCreateViewHolder(final ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_bus_routes, parent, false);
-        return new BusRouteViewHolder(v, new BusRouteViewHolder.BusRouteViewHolderClick() {
+        return new BusRouteViewHolder(v, new ViewHolderClickListener() {
             public void onClick(View v, int position) {
                 String bus = busRoutes[position];
                 String busTag = null;
