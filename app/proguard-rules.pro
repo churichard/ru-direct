@@ -15,3 +15,27 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
+
+# Okio
+-dontwarn okio.**
+
+# OrmLite
+-keep class com.j256.**
+-keepclassmembers class com.j256.** { *; }
+-keep enum com.j256.**
+-keepclassmembers enum com.j256.** { *; }
+-keep interface com.j256.**
+-keepclassmembers interface com.j256.** { *; }
+
+-keepclassmembers class * { 
+    public <init>(android.content.Context); 
+ } 
+
+-keepattributes *Annotation*
+
+-keep class org.rudirect.android.data.model.**
+-keepclassmembers class org.rudirect.android.data.model.** { *; }
+
+# Design library components
+-keep public class * extends android.support.design.widget.CoordinatorLayout.Behavior { *; }
+-keep public class * extends android.support.design.widget.ViewOffsetBehavior { *; }
