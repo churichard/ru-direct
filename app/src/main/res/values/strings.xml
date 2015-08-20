@@ -42,6 +42,15 @@
     <string name="settings">Settings</string>
     <string name="ok">OK</string>
 
+    <!-- Google Analytics -->
+    <string name="debug_tracker_id">UA-66536908-1</string>
+    <string name="release_tracker_id">UA-66536908-2</string>
+    <string name="main_screen">Main-Screen</string>
+    <string name="bus_stops_screen">Bus-Stops-Screen</string>
+    <string name="directions_screen">Directions-Screen</string>
+    <string name="settings_screen">Settings-Screen</string>
+    <string name="attributions_screen">Attributions-Screen</string>
+
     <!-- Google Play Services error messages -->
     <string name="common_google_play_services_install_text_phone" msgid="2122112764540849864">
         You need Google Play Services in order to view route maps.</string>

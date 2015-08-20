@@ -11,9 +11,11 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.common.GoogleApiAvailability;
 
 import org.rudirect.android.R;
+import org.rudirect.android.data.constants.RUDirectApplication;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -41,6 +43,10 @@ public class AttributionsActivity extends ActionBarActivity {
 
         // Build attributions text and set it to the textview text
         ((TextView) findViewById(R.id.attributions_textview)).setText(getAttributionsMessage());
+
+        // Log the screen
+        RUDirectApplication.getTracker().setScreenName(getString(R.string.attributions_screen));
+        RUDirectApplication.getTracker().send(new HitBuilders.ScreenViewBuilder().build());
     }
 
     // Builds the attributions message and returns it

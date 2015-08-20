@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.google.gms.google-services'
 
 android {
     compileSdkVersion 22
@@ -26,6 +27,7 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.google.android.gms:play-services-maps:7.5.0' // Google Maps API
     compile 'com.google.android.gms:play-services-location:7.5.0' // Google Location services
+    compile 'com.google.android.gms:play-services-analytics:7.5.0' // Google Analytics
     compile 'com.android.support:appcompat-v7:22.2.0' // AppCompat
     compile 'com.android.support:support-v13:22.2.0' // Android Support v13
     compile 'com.android.support:support-v4:22.2.0' // Android Support v4

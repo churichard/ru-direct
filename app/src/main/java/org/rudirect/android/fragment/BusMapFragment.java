@@ -18,12 +18,12 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 
-import org.rudirect.android.api.NextBusAPI;
-import org.rudirect.android.data.constants.AppData;
-import org.rudirect.android.data.model.BusStop;
 import org.rudirect.android.R;
 import org.rudirect.android.activity.BusStopsActivity;
+import org.rudirect.android.api.NextBusAPI;
+import org.rudirect.android.data.constants.AppData;
 import org.rudirect.android.data.model.BusPathSegment;
+import org.rudirect.android.data.model.BusStop;
 import org.rudirect.android.util.ShowBusPathHelper;
 
 import java.util.ArrayList;
@@ -60,6 +60,7 @@ public class BusMapFragment extends MapFragment implements OnMapReadyCallback {
     @Override
     public void onMapReady(final GoogleMap map) {
         mMap = map;
+        mMap.getUiSettings().setMapToolbarEnabled(false);
         BusStop stop = busStopsActivity.getBusStops()[0];
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
                 getLatLng(stop.getLatitude(), stop.getLongitude()), 13.0f));

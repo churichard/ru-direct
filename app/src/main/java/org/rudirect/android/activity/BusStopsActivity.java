@@ -13,6 +13,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
+import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
@@ -54,6 +55,10 @@ public class BusStopsActivity extends AppCompatActivity
         setupViewPagerAndTabLayout();
 
         mGoogleApiClient = buildGoogleApiClient();
+
+        // Log the screen
+        RUDirectApplication.getTracker().setScreenName(getString(R.string.bus_stops_screen));
+        RUDirectApplication.getTracker().send(new HitBuilders.ScreenViewBuilder().build());
     }
 
     // Setup toolbar

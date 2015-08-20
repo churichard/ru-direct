@@ -9,6 +9,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
+import com.google.android.gms.analytics.HitBuilders;
+
+import org.rudirect.android.data.constants.RUDirectApplication;
 import org.rudirect.android.fragment.SettingsFragment;
 import org.rudirect.android.R;
 
@@ -34,6 +37,10 @@ public class SettingsActivity extends AppCompatActivity {
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.fragment_container, new SettingsFragment());
         fragmentTransaction.commit();
+
+        // Log the screen
+        RUDirectApplication.getTracker().setScreenName(getString(R.string.settings_screen));
+        RUDirectApplication.getTracker().send(new HitBuilders.ScreenViewBuilder().build());
     }
 
     @Override

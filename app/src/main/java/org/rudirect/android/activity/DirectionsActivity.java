@@ -16,6 +16,8 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.google.android.gms.analytics.HitBuilders;
+
 import org.jgrapht.GraphPath;
 import org.rudirect.android.adapter.DirectionsAdapter;
 import org.rudirect.android.api.NextBusAPI;
@@ -59,7 +61,6 @@ public class DirectionsActivity extends AppCompatActivity {
         // Setup recyclerview
         setupRecyclerView();
 
-        // Compute the shortest path
         // Check to see if the origin is equal to the destination
         if (origin.getTitle().equals(destination.getTitle())) {
             pathTimeTextView.setText("You're already at your destination!");
@@ -67,6 +68,10 @@ public class DirectionsActivity extends AppCompatActivity {
             progressSpinner.setVisibility(View.VISIBLE);
             new GetDirections().execute(origin, destination);
         }
+
+        // Log the screen
+        RUDirectApplication.getTracker().setScreenName(getString(R.string.directions_screen));
+        RUDirectApplication.getTracker().send(new HitBuilders.ScreenViewBuilder().build());
     }
 
     // Set up RecyclerView

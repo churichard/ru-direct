@@ -4,8 +4,12 @@ import android.app.Application;
 import android.content.Context;
 import android.util.Log;
 
+import com.google.android.gms.analytics.GoogleAnalytics;
+import com.google.android.gms.analytics.Tracker;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 
+import org.rudirect.android.BuildConfig;
+import org.rudirect.android.R;
 import org.rudirect.android.data.model.BusData;
 import org.rudirect.android.database.DatabaseHelper;
 
@@ -17,6 +21,7 @@ public class RUDirectApplication extends Application {
     private static Context mContext;
     private static DatabaseHelper databaseHelper;
     private static BusData busData;
+    private static Tracker mTracker;
 
     @Override
     public void onCreate() {
@@ -53,6 +58,18 @@ public class RUDirectApplication extends Application {
             }
         }
         return busData;
+    }
+
+    public static synchronized Tracker getTracker() {
+        if (mTracker == null) {
+            GoogleAnalytics analytics = GoogleAnalytics.getInstance(getContext());
+            if (!BuildConfig.DEBUG) {
+                mTracker = analytics.newTracker(getContext().getString(R.string.release_tracker_id));
+            } else {
+                mTracker = analytics.newTracker(getContext().getString(R.string.debug_tracker_id));
+            }
+        }
+        return mTracker;
     }
 
     @Override
