@@ -9,8 +9,8 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.widget.TextView;
 
-import org.rudirect.android.activity.MainActivity;
 import org.rudirect.android.R;
+import org.rudirect.android.activity.MainActivity;
 
 public class BaseRouteFragment extends Fragment implements AppBarLayout.OnOffsetChangedListener {
 
