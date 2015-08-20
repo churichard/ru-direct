@@ -19,14 +19,15 @@ import android.widget.TextView;
 import com.google.android.gms.analytics.HitBuilders;
 
 import org.jgrapht.GraphPath;
+import org.rudirect.android.R;
 import org.rudirect.android.adapter.DirectionsAdapter;
 import org.rudirect.android.api.NextBusAPI;
+import org.rudirect.android.data.constants.AppData;
 import org.rudirect.android.data.constants.RUDirectApplication;
 import org.rudirect.android.data.model.BusRouteEdge;
 import org.rudirect.android.data.model.BusStop;
 import org.rudirect.android.util.DirectionsUtil;
 import org.rudirect.android.util.RUDirectUtil;
-import org.rudirect.android.R;
 
 public class DirectionsActivity extends AppCompatActivity {
 
@@ -71,7 +72,9 @@ public class DirectionsActivity extends AppCompatActivity {
 
         // Log the screen
         RUDirectApplication.getTracker().setScreenName(getString(R.string.directions_screen));
-        RUDirectApplication.getTracker().send(new HitBuilders.ScreenViewBuilder().build());
+        RUDirectApplication.getTracker().send(new HitBuilders.ScreenViewBuilder()
+                .setCustomDimension(AppData.ORIGIN_DIMEN, origin.toString())
+                .setCustomDimension(AppData.DESTINATION_DIMEN, destination.toString()).build());
     }
 
     // Set up RecyclerView

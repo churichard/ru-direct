@@ -16,4 +16,10 @@ public class AppData {
     // Bus tag to latitude segments / longitude segments
     public static HashMap<String, ArrayList<String>> activeLonsHashMap;
     public static HashMap<String, ArrayList<String>> activeLatsHashMap;
+
+    // Google Analytics
+    public static final int ROUTE_NAME_DIMEN = 1;
+    public static final int PAGE_CLICKED_FROM_DIMEN = 2;
+    public static final int ORIGIN_DIMEN = 3;
+    public static final int DESTINATION_DIMEN = 4;
 }

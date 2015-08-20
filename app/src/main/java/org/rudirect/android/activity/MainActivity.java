@@ -6,7 +6,6 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
-import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.HitBuilders;
 
 import org.rudirect.android.R;
@@ -35,9 +34,6 @@ public class MainActivity extends AppCompatActivity {
         // Set up tab layout
         TabLayout tabLayout = (TabLayout) findViewById(R.id.sliding_tabs);
         tabLayout.setupWithViewPager(viewPager);
-
-        // TODO Remove this line
-        GoogleAnalytics.getInstance(RUDirectApplication.getContext()).setDryRun(true);
 
         // Log the screen
         RUDirectApplication.getTracker().setScreenName(getString(R.string.main_screen));

@@ -8,6 +8,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
@@ -22,6 +23,7 @@ import org.rudirect.android.R;
 import org.rudirect.android.activity.BusStopsActivity;
 import org.rudirect.android.api.NextBusAPI;
 import org.rudirect.android.data.constants.AppData;
+import org.rudirect.android.data.constants.RUDirectApplication;
 import org.rudirect.android.data.model.BusPathSegment;
 import org.rudirect.android.data.model.BusStop;
 import org.rudirect.android.util.ShowBusPathHelper;
@@ -106,8 +108,12 @@ public class BusMapFragment extends MapFragment implements OnMapReadyCallback {
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
-        isVisible = isVisibleToUser;
-        if (isVisible) {
+        if (isVisibleToUser) {
+            RUDirectApplication.getTracker().send(new HitBuilders.EventBuilder()
+                    .setCategory(getString(R.string.route_map_category))
+                    .setAction(getString(R.string.view_action))
+                    .setLabel(busStopsActivity.getTitle().toString())
+                    .build());
             new UpdateMarkers().execute();
         }
     }

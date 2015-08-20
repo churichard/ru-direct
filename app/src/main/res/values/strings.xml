@@ -16,6 +16,7 @@
     <!-- Intents -->
     <string name="bus_tag_message">Bus Tag</string>
     <string name="bus_stops_message">Bus Stops</string>
+    <string name="page_clicked_from_message">Page Clicked From</string>
     <string name="origin_text_message">Origin</string>
     <string name="destination_text_message">Destination</string>
 
@@ -45,11 +46,21 @@
     <!-- Google Analytics -->
     <string name="debug_tracker_id">UA-66536908-1</string>
     <string name="release_tracker_id">UA-66536908-2</string>
+
     <string name="main_screen">Main-Screen</string>
     <string name="bus_stops_screen">Bus-Stops-Screen</string>
     <string name="directions_screen">Directions-Screen</string>
     <string name="settings_screen">Settings-Screen</string>
     <string name="attributions_screen">Attributions-Screen</string>
+
+    <string name="active_routes_category">Active-Routes-Page</string>
+    <string name="directions_selector_category">Directions-Selector-Page</string>
+    <string name="all_routes_category">All-Routes-Page</string>
+    <string name="route_times_category">Route-Times-Page</string>
+    <string name="route_map_category">Route-Map-Page</string>
+
+    <string name="view_action">View</string>
+    <string name="click_action">Click</string>
 
     <!-- Google Play Services error messages -->
     <string name="common_google_play_services_install_text_phone" msgid="2122112764540849864">

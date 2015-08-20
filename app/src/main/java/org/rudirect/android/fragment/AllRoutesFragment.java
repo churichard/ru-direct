@@ -14,6 +14,8 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.google.android.gms.analytics.HitBuilders;
+
 import org.rudirect.android.activity.SettingsActivity;
 import org.rudirect.android.adapter.MainPagerAdapter;
 import org.rudirect.android.data.constants.RUDirectApplication;
@@ -127,6 +129,17 @@ public class AllRoutesFragment extends BaseRouteFragment {
             if (listener != null) {
                 listener.onBusStopsUpdated();
             }
+        }
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser) {
+            RUDirectApplication.getTracker().send(new HitBuilders.EventBuilder()
+                    .setCategory(getString(R.string.all_routes_category))
+                    .setAction(getString(R.string.view_action))
+                    .build());
         }
     }
 }

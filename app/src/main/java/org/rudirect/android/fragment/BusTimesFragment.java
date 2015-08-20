@@ -16,6 +16,9 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.google.android.gms.analytics.HitBuilders;
+
+import org.rudirect.android.data.constants.RUDirectApplication;
 import org.rudirect.android.ui.view.DividerItemDecoration;
 import org.rudirect.android.R;
 import org.rudirect.android.activity.BusStopsActivity;
@@ -171,5 +174,17 @@ public class BusTimesFragment extends Fragment implements AppBarLayout.OnOffsetC
 
     public ProgressBar getProgressBar() {
         return progressBar;
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser) {
+            RUDirectApplication.getTracker().send(new HitBuilders.EventBuilder()
+                    .setCategory(getString(R.string.route_times_category))
+                    .setAction(getString(R.string.view_action))
+                    .setLabel(busStopsActivity.getTitle().toString())
+                    .build());
+        }
     }
 }

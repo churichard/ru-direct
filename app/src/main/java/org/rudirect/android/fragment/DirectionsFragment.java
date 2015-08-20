@@ -15,13 +15,15 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
 
+import com.google.android.gms.analytics.HitBuilders;
+
+import org.rudirect.android.R;
+import org.rudirect.android.activity.DirectionsActivity;
 import org.rudirect.android.activity.MainActivity;
 import org.rudirect.android.activity.SettingsActivity;
 import org.rudirect.android.data.constants.RUDirectApplication;
 import org.rudirect.android.data.model.BusStop;
 import org.rudirect.android.interfaces.NetworkCallFinishListener;
-import org.rudirect.android.R;
-import org.rudirect.android.activity.DirectionsActivity;
 import org.rudirect.android.util.RUDirectUtil;
 
 import java.util.Arrays;
@@ -144,5 +146,16 @@ public class DirectionsFragment extends Fragment
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser) {
+            RUDirectApplication.getTracker().send(new HitBuilders.EventBuilder()
+                    .setCategory(getString(R.string.directions_selector_category))
+                    .setAction(getString(R.string.view_action))
+                    .build());
+        }
     }
 }

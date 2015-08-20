@@ -13,6 +13,7 @@ import org.rudirect.android.activity.BusStopsActivity;
 import org.rudirect.android.api.NextBusAPI;
 import org.rudirect.android.data.constants.RUDirectApplication;
 import org.rudirect.android.data.model.BusData;
+import org.rudirect.android.fragment.ActiveRoutesFragment;
 import org.rudirect.android.interfaces.ViewHolderClickListener;
 import org.rudirect.android.ui.holder.BusRouteViewHolder;
 import org.rudirect.android.R;
@@ -64,6 +65,11 @@ public class BusRouteAdapter extends RecyclerView.Adapter<BusRouteViewHolder> {
 
                     intent.putExtra(context.getString(R.string.bus_tag_message), busTag);
                     intent.putExtra(context.getString(R.string.bus_stops_message), NextBusAPI.getBusStops(busTag));
+                    if (fragment instanceof ActiveRoutesFragment) {
+                        intent.putExtra(context.getString(R.string.page_clicked_from_message), "Active Routes");
+                    } else {
+                        intent.putExtra(context.getString(R.string.page_clicked_from_message), "All Routes");
+                    }
 
                     activity.startActivity(intent);
                     activity.overridePendingTransition(R.anim.abc_grow_fade_in_from_bottom, 0);

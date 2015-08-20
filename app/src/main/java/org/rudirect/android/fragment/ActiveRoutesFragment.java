@@ -14,12 +14,14 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import org.rudirect.android.activity.SettingsActivity;
-import org.rudirect.android.ui.view.DividerItemDecoration;
+import com.google.android.gms.analytics.HitBuilders;
+
 import org.rudirect.android.R;
+import org.rudirect.android.activity.SettingsActivity;
 import org.rudirect.android.adapter.BusRouteAdapter;
 import org.rudirect.android.api.NextBusAPI;
 import org.rudirect.android.data.constants.RUDirectApplication;
+import org.rudirect.android.ui.view.DividerItemDecoration;
 import org.rudirect.android.util.RUDirectUtil;
 
 import java.util.HashMap;
@@ -130,6 +132,17 @@ public class ActiveRoutesFragment extends BaseRouteFragment {
             }
             progressBar.setVisibility(View.GONE);
             mSwipeRefreshLayout.setRefreshing(false);
+        }
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser) {
+            RUDirectApplication.getTracker().send(new HitBuilders.EventBuilder()
+                    .setCategory(getString(R.string.active_routes_category))
+                    .setAction(getString(R.string.view_action))
+                    .build());
         }
     }
 }

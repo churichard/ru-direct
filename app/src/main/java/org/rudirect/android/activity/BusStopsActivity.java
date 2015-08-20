@@ -18,10 +18,11 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 
+import org.rudirect.android.R;
 import org.rudirect.android.adapter.BusStopsPagerAdapter;
+import org.rudirect.android.data.constants.AppData;
 import org.rudirect.android.data.constants.RUDirectApplication;
 import org.rudirect.android.data.model.BusStop;
-import org.rudirect.android.R;
 
 import java.util.Arrays;
 
@@ -47,9 +48,11 @@ public class BusStopsActivity extends AppCompatActivity
         busTag = intent.getStringExtra(getString(R.string.bus_tag_message));
         Parcelable[] busStopParceArray = intent.getParcelableArrayExtra(getString(R.string.bus_stops_message));
         busStops = Arrays.copyOf(busStopParceArray, busStopParceArray.length, BusStop[].class);
+        String pageClickedFrom = intent.getStringExtra(getString(R.string.page_clicked_from_message));
 
         // Set the title to the name of the bus
-        setTitle(RUDirectApplication.getBusData().getBusTagToBusTitle().get(busTag));
+        String title = RUDirectApplication.getBusData().getBusTagToBusTitle().get(busTag);
+        setTitle(title);
 
         setupToolbar();
         setupViewPagerAndTabLayout();
@@ -58,7 +61,9 @@ public class BusStopsActivity extends AppCompatActivity
 
         // Log the screen
         RUDirectApplication.getTracker().setScreenName(getString(R.string.bus_stops_screen));
-        RUDirectApplication.getTracker().send(new HitBuilders.ScreenViewBuilder().build());
+        RUDirectApplication.getTracker().send(new HitBuilders.ScreenViewBuilder()
+                .setCustomDimension(AppData.ROUTE_NAME_DIMEN, title)
+                .setCustomDimension(AppData.PAGE_CLICKED_FROM_DIMEN, pageClickedFrom).build());
     }
 
     // Setup toolbar
