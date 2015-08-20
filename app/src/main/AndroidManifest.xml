@@ -19,6 +19,11 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyB985eFpAH1MCdG59YPkcdyuyVPgJOb8Gk" />
 
+        <service
+            android:name="com.google.android.gms.analytics.AnalyticsService"
+            android:enabled="true"
+            android:exported="false" />
+
         <activity
             android:name="org.rudirect.android.activity.MainActivity"
             android:alwaysRetainTaskState="true"
