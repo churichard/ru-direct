@@ -96,8 +96,6 @@ public class DirectionsActivity extends AppCompatActivity {
             // Log.e(TAG, e.toString(), e);
             Log.e(TAG, "There isn't a path from " + origin.toString() + " to " + destination.toString()
                     + " right now!");
-            pathTimeTextView.setText("There isn't a path from " + origin.toString() + " to "
-                    + destination.toString() + " right now!");
             return null;
         }
     }
