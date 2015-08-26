@@ -63,6 +63,8 @@
     <string name="click_action">Click</string>
 
     <!-- Google Play Services error messages -->
+    <string name="common_google_play_services_update_text" msgid="448354684997260580">
+        You need Google Play Services in order to view route maps.</string>
     <string name="common_google_play_services_install_text_phone" msgid="2122112764540849864">
         You need Google Play Services in order to view route maps.</string>
     <string name="common_google_play_services_install_text_tablet" msgid="7351599665250191022">

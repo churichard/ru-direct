@@ -9,6 +9,8 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
@@ -42,12 +44,14 @@ public class BusMapFragment extends MapFragment implements OnMapReadyCallback {
     private ArrayList<Marker> activeBusMarkers;
     private BusPathSegment[] pathSegments;
     private boolean isVisible;
+    private boolean connectedToPlayServices;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         busStopsActivity = (BusStopsActivity) getActivity();
         setHasOptionsMenu(true);
+        connectedToPlayServices = GooglePlayServicesUtil.isGooglePlayServicesAvailable(busStopsActivity) == ConnectionResult.SUCCESS;
     }
 
     @Override
@@ -56,18 +60,20 @@ public class BusMapFragment extends MapFragment implements OnMapReadyCallback {
         activeBusMarkers = new ArrayList<>();
         busStopMarkers = new ArrayList<>();
         isVisible = false;
-        new ShowBusPathHelper().execute(busStopsActivity.getBusTag(), this);
+        if (connectedToPlayServices) new ShowBusPathHelper().execute(busStopsActivity.getBusTag(), this);
     }
 
     @Override
     public void onMapReady(final GoogleMap map) {
-        mMap = map;
-        mMap.getUiSettings().setMapToolbarEnabled(false);
-        BusStop stop = busStopsActivity.getBusStops()[0];
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
-                getLatLng(stop.getLatitude(), stop.getLongitude()), 13.0f));
-        mMap.setMyLocationEnabled(true);
-        drawRoute();
+        if (connectedToPlayServices) {
+            mMap = map;
+            mMap.getUiSettings().setMapToolbarEnabled(false);
+            BusStop stop = busStopsActivity.getBusStops()[0];
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
+                    getLatLng(stop.getLatitude(), stop.getLongitude()), 13.0f));
+            mMap.setMyLocationEnabled(true);
+            drawRoute();
+        }
     }
 
     @Override
@@ -79,9 +85,7 @@ public class BusMapFragment extends MapFragment implements OnMapReadyCallback {
         refreshHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                if (mMap != null && isVisible) {
-                    new UpdateMarkers().execute();
-                }
+                if (mMap != null && isVisible) new UpdateMarkers().execute();
                 refreshHandler.postDelayed(this, ACTIVE_BUS_REFRESH_INTERVAL);
             }
         }, ACTIVE_BUS_REFRESH_INTERVAL);
@@ -98,7 +102,7 @@ public class BusMapFragment extends MapFragment implements OnMapReadyCallback {
         int id = item.getItemId();
 
         if (id == R.id.refresh) {
-            new UpdateMarkers().execute();
+            if (connectedToPlayServices) new UpdateMarkers().execute();
             return true;
         }
 
@@ -108,13 +112,14 @@ public class BusMapFragment extends MapFragment implements OnMapReadyCallback {
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
-        if (isVisibleToUser) {
+        isVisible = isVisibleToUser;
+        if (isVisible) {
             RUDirectApplication.getTracker().send(new HitBuilders.EventBuilder()
                     .setCategory(getString(R.string.route_map_category))
                     .setAction(getString(R.string.view_action))
                     .setLabel(busStopsActivity.getTitle().toString())
                     .build());
-            new UpdateMarkers().execute();
+            if (connectedToPlayServices) new UpdateMarkers().execute();
         }
     }
 
