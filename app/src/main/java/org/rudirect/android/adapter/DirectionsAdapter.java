@@ -43,8 +43,9 @@ public class DirectionsAdapter extends RecyclerView.Adapter<DirectionsItemViewHo
         time += calcWaitTime((int) DirectionsUtil.getInitialWait());
         // Add origin bus stop and initial route
         items.add(new DirectionsOuterBusStop(busStopEdges.get(0).getSourceBusStop().getTitle(),
-                getTimeInHHMM(time), R.drawable.bus_stop_circle));
-        items.add(new DirectionsBusRoute(busStopEdges.get(0).getRouteName(), null, R.drawable.ic_directions_bus));
+                busStopEdges.get(0).getSourceBusStop().getTag(), getTimeInHHMM(time), R.drawable.bus_stop_circle));
+        items.add(new DirectionsBusRoute(busStopEdges.get(0).getRouteName()
+                + " (Bus #" + busStopEdges.get(0).getVehicleId() + ")", R.drawable.ic_directions_bus));
 
         // Iterate through all the edges
         for (int i = 0; i < busStopEdges.size() - 1; i++) {
@@ -54,21 +55,27 @@ public class DirectionsAdapter extends RecyclerView.Adapter<DirectionsItemViewHo
             // Handle vehicle transfers
             if (items.get(items.size() - 1).getTitle().equals(busStopEdges.get(i).getTargetBusStop().getTitle())) {
                 items.remove(items.get(items.size() - 1));
-                items.add(new DirectionsOuterBusStop(busStopEdges.get(i).getTargetBusStop().getTitle(),
-                        getTimeInHHMM(time), R.drawable.bus_stop_circle));
-                items.add(new DirectionsBusRoute(busStopEdges.get(i + 1).getRouteName(), null, R.drawable.ic_directions_bus));
+                if (items.get(items.size() - 1).getTag().equals(busStopEdges.get(i).getTargetBusStop().getTag())) {
+                    items.add(new DirectionsOuterBusStop(busStopEdges.get(i).getTargetBusStop().getTitle(),
+                            busStopEdges.get(i).getTargetBusStop().getTag(), getTimeInHHMM(time), R.drawable.bus_stop_circle));
+                    items.add(new DirectionsBusRoute(busStopEdges.get(i + 1).getRouteName()
+                            + " (Bus #" + busStopEdges.get(i + 1).getVehicleId() + ")", R.drawable.ic_directions_bus));
+                } else {
+                    items.add(new DirectionsInnerBusStop(busStopEdges.get(i).getTargetBusStop().getTitle(),
+                            busStopEdges.get(i).getTargetBusStop().getTag(), getTimeInHHMM(time), android.R.color.transparent));
+                }
                 continue;
             }
 
             // Add inner bus stop
             items.add(new DirectionsInnerBusStop(busStopEdges.get(i).getTargetBusStop().getTitle(),
-                    getTimeInHHMM(time), android.R.color.transparent));
+                    busStopEdges.get(i).getTargetBusStop().getTag(), getTimeInHHMM(time), android.R.color.transparent));
         }
 
         // Add destination bus stop
         time += calcWaitTime((int) busStopEdges.get(busStopEdges.size() - 1).getTravelTime());
         items.add(new DirectionsOuterBusStop(busStopEdges.get(busStopEdges.size() - 1).getTargetBusStop().getTitle(),
-                getTimeInHHMM(time), R.drawable.bus_stop_circle));
+                busStopEdges.get(busStopEdges.size() - 1).getTargetBusStop().getTag(), getTimeInHHMM(time), R.drawable.bus_stop_circle));
     }
 
     public DirectionsAdapter() {

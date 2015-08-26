@@ -3,11 +3,13 @@ package org.rudirect.android.data.model;
 public class DirectionsItem {
 
     private String title;
+    private String tag;
     private String time;
     private int iconId;
 
-    public DirectionsItem(String title, String time, int iconId) {
+    public DirectionsItem(String title, String tag, String time, int iconId) {
         this.title = title;
+        this.tag = tag;
         this.time = time;
         this.iconId = iconId;
     }
@@ -18,6 +20,14 @@ public class DirectionsItem {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getTag() {
+        return tag;
+    }
+
+    public void setTag(String tag) {
+        this.tag = tag;
     }
 
     public String getTime() {

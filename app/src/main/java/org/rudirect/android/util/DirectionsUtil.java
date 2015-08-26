@@ -3,6 +3,7 @@ package org.rudirect.android.util;
 import android.util.Log;
 
 import org.jgrapht.GraphPath;
+import org.jgrapht.alg.DijkstraShortestPath;
 import org.jgrapht.alg.KShortestPaths;
 import org.jgrapht.graph.DirectedWeightedPseudograph;
 import org.rudirect.android.data.model.BusRouteEdge;
@@ -150,7 +151,7 @@ public class DirectionsUtil {
     // Calculate the shortest path from the origin to the destination
     public static GraphPath<BusStop, BusRouteEdge> calculateShortestPath(BusStop origin, BusStop destination)
             throws IllegalArgumentException {
-        List<GraphPath<BusStop, BusRouteEdge>> shortestPathList = null;
+        GraphPath<BusStop, BusRouteEdge> shortestPath = null;
         double shortestPathTime = Double.MAX_VALUE;
         outer:
         for (int i = 0; i < busStopsGraph.vertexSet().size(); i++) {
@@ -158,19 +159,19 @@ public class DirectionsUtil {
             for (int j = 0; j < busStopsGraph.vertexSet().size(); j++) {
                 destination.setId(j);
                 try {
-                    List<GraphPath<BusStop, BusRouteEdge>> newShortestPathList
-                            = new KShortestPaths<>(busStopsGraph, origin, 1).getPaths(destination);
+                    GraphPath<BusStop, BusRouteEdge> newShortestPath
+                            = new DijkstraShortestPath<>(busStopsGraph, origin, destination).getPath();
 
-                    if (newShortestPathList == null) {
+                    if (newShortestPath == null) {
                         break;
                     } else {
-                        double newInitialWait = getInitialWait(newShortestPathList.get(0));
-                        double newTravelTime = getTravelTime(newShortestPathList.get(0));
+                        double newInitialWait = getInitialWait(newShortestPath);
+                        double newTravelTime = getTravelTime(newShortestPath);
                         double newPathTime = newInitialWait + newTravelTime;
-                        if (shortestPathList == null || newPathTime < shortestPathTime) {
+                        if (shortestPath == null || newPathTime < shortestPathTime) {
                             initialWait = newInitialWait;
                             totalPathTime = newPathTime;
-                            shortestPathList = newShortestPathList;
+                            shortestPath = newShortestPath;
                             shortestPathTime = newPathTime;
                         }
                     }
@@ -189,7 +190,7 @@ public class DirectionsUtil {
         }
         origin.setId(0);
         destination.setId(0);
-        return shortestPathList == null ? null : shortestPathList.get(0);
+        return shortestPath == null ? null : shortestPath;
     }
 
     // Calculate and return the initial wait for a given path
