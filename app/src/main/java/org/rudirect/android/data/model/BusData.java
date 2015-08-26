@@ -3,7 +3,12 @@ package org.rudirect.android.data.model;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 
+import org.rudirect.android.util.RUDirectUtil;
+
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.TreeSet;
 
 public class BusData {
 
@@ -68,5 +73,23 @@ public class BusData {
 
     public void setBusTagToBusPathSegments(HashMap<String, BusPathSegment[]> busTagToBusPathSegments) {
         this.busTagToBusPathSegments = busTagToBusPathSegments;
+    }
+
+    public BusStop[] getBusStops() {
+        // Create list of bus stops
+        TreeSet<BusStop> busStops = new TreeSet<>(new Comparator<BusStop>() {
+            @Override
+            public int compare(BusStop stop1, BusStop stop2) {
+                if (stop1 == stop2) {
+                    return 0;
+                }
+                return stop1.getTitle().compareTo(stop2.getTitle());
+            }
+        });
+        String[] busTags = RUDirectUtil.mapKeySetToSortedArray(busTagToBusStops);
+        for (String busTag : busTags) {
+            busStops.addAll(Arrays.asList(busTagToBusStops.get(busTag)));
+        }
+        return busStops.toArray(new BusStop[busStops.size()]);
     }
 }

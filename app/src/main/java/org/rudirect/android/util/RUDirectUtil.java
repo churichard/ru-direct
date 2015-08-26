@@ -1,11 +1,13 @@
 package org.rudirect.android.util;
 
 import android.content.Context;
+import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.DisplayMetrics;
 
 import org.rudirect.android.data.constants.RUDirectApplication;
+import org.rudirect.android.data.model.BusStop;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -43,5 +45,21 @@ public class RUDirectUtil {
     public static int dpToPx(int dp) {
         DisplayMetrics displayMetrics = RUDirectApplication.getContext().getResources().getDisplayMetrics();
         return (int) ((dp * displayMetrics.density) + 0.5);
+    }
+
+    // Gets stop nearest to location.
+    public static BusStop getNearestStop(Location location) {
+        double minDist = Double.MAX_VALUE;
+        BusStop closestStop = null;
+        for (BusStop stop : RUDirectApplication.getBusData().getBusStops()) {
+            double dist = Math.sqrt(Math.pow(Double.parseDouble(stop.getLatitude()) - location.getLatitude(), 2) +
+                    Math.pow(Double.parseDouble(stop.getLongitude()) - location.getLongitude(), 2));
+            if (dist < minDist) {
+                minDist = dist;
+                closestStop = stop;
+            }
+        }
+
+        return closestStop;
     }
 }

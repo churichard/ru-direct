@@ -2,6 +2,8 @@ package org.rudirect.android.fragment;
 
 import android.app.Fragment;
 import android.content.Intent;
+import android.content.IntentSender;
+import android.location.Location;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.view.LayoutInflater;
@@ -13,9 +15,13 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.Spinner;
 
 import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
 
 import org.rudirect.android.R;
 import org.rudirect.android.activity.DirectionsActivity;
@@ -26,17 +32,21 @@ import org.rudirect.android.data.model.BusStop;
 import org.rudirect.android.interfaces.NetworkCallFinishListener;
 import org.rudirect.android.util.RUDirectUtil;
 
-import java.util.Arrays;
-import java.util.Comparator;
 import java.util.HashMap;
-import java.util.TreeSet;
 
 public class DirectionsFragment extends Fragment
-        implements AdapterView.OnItemSelectedListener, NetworkCallFinishListener {
+        implements AdapterView.OnItemSelectedListener, NetworkCallFinishListener,
+            GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+
+    private static final int REQUEST_RESOLVE_ERROR = 5001;
 
     private MainActivity mainActivity;
+    private GoogleApiClient mGoogleApiClient;
+    private boolean mResolvingError = false;
+    private ArrayAdapter<BusStop> busStopArrayAdapter;
     private Spinner originSpinner;
     private Spinner destSpinner;
+    private ImageButton originGeolocateButton;
     private BusStop origin;
     private BusStop destination;
 
@@ -45,6 +55,15 @@ public class DirectionsFragment extends Fragment
         super.onCreate(savedInstanceState);
         mainActivity = (MainActivity) getActivity();
         setHasOptionsMenu(true);
+        mGoogleApiClient = buildGoogleApiClient();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (!mResolvingError) {
+            mGoogleApiClient.connect();
+        }
     }
 
     @Override
@@ -58,6 +77,20 @@ public class DirectionsFragment extends Fragment
 
         originSpinner = (Spinner) mainActivity.findViewById(R.id.origin_spinner);
         destSpinner = (Spinner) mainActivity.findViewById(R.id.destination_spinner);
+
+        originGeolocateButton = (ImageButton) mainActivity.findViewById(R.id.origin_geolocate_button);
+        originGeolocateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+                BusStop nearest = RUDirectUtil.getNearestStop(location);
+                if (nearest != null) {
+                    origin = nearest;
+
+                    originSpinner.setSelection(busStopArrayAdapter.getPosition(origin));
+                }
+            }
+        });
 
         // Set up find route button
         Button findRouteButton = (Button) mainActivity.findViewById(R.id.find_route_button);
@@ -81,32 +114,17 @@ public class DirectionsFragment extends Fragment
         HashMap<String, BusStop[]> busTagsToBusStops = RUDirectApplication.getBusData().getBusTagToBusStops();
 
         if (busTagsToBusStops != null) {
-            // Create list of bus stops
-            TreeSet<BusStop> busStops = new TreeSet<>(new Comparator<BusStop>() {
-                @Override
-                public int compare(BusStop stop1, BusStop stop2) {
-                    if (stop1 == stop2) {
-                        return 0;
-                    }
-                    return stop1.getTitle().compareTo(stop2.getTitle());
-                }
-            });
-            String[] busTags = RUDirectUtil.mapKeySetToSortedArray(busTagsToBusStops);
-            for (String busTag : busTags) {
-                busStops.addAll(Arrays.asList(busTagsToBusStops.get(busTag)));
-            }
-            BusStop[] busStopArray = busStops.toArray(new BusStop[busStops.size()]);
+            BusStop[] busStopArray = RUDirectApplication.getBusData().getBusStops();
 
             // Initialize origin and destination
             origin = busStopArray[0];
             destination = busStopArray[0];
 
-            // Create the adapter and set it to the spinners
-            ArrayAdapter<BusStop> adapter =
-                    new ArrayAdapter<>(mainActivity, R.layout.list_spinner, busStopArray);
-            originSpinner.setAdapter(adapter);
+            // Create the busStopArrayAdapter and set it to the spinners
+            busStopArrayAdapter = new ArrayAdapter<>(mainActivity, R.layout.list_spinner, busStopArray);
+            originSpinner.setAdapter(busStopArrayAdapter);
             originSpinner.setOnItemSelectedListener(this);
-            destSpinner.setAdapter(adapter);
+            destSpinner.setAdapter(busStopArrayAdapter);
             destSpinner.setOnItemSelectedListener(this);
         }
     }
@@ -156,6 +174,36 @@ public class DirectionsFragment extends Fragment
                     .setCategory(getString(R.string.directions_selector_category))
                     .setAction(getString(R.string.view_action))
                     .build());
+        }
+    }
+
+    // Build Google Api Client for displaying maps
+    private synchronized GoogleApiClient buildGoogleApiClient() {
+        return new GoogleApiClient.Builder(mainActivity)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
+    }
+
+    @Override
+    public void onConnected(Bundle bundle) { /* Do nothing */ }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+        mGoogleApiClient.connect();
+    }
+
+    // Connection to Google Play Services failed
+    @Override
+    public void onConnectionFailed(ConnectionResult result) {
+        if (!mResolvingError && result.hasResolution()) {
+            try {
+                mResolvingError = true;
+                result.startResolutionForResult(mainActivity, REQUEST_RESOLVE_ERROR);
+            } catch (IntentSender.SendIntentException e) {
+                mGoogleApiClient.connect();
+            }
         }
     }
 }
