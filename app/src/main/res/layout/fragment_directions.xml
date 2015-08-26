@@ -12,12 +12,26 @@
 
     <Spinner
         android:id="@+id/origin_spinner"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/select_origin_textview"
-        android:layout_centerHorizontal="true"
+        android:layout_toLeftOf="@+id/origin_geolocate_button"
         android:layout_marginBottom="30dp"
+        android:layout_alignParentLeft="true"
         android:background="@drawable/spinner_outline" />
+
+    <ImageButton
+        android:id="@+id/origin_geolocate_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/origin_spinner"
+        android:layout_alignBottom="@id/origin_spinner"
+        android:padding="15dp"
+        android:layout_marginLeft="15dp"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:background="@android:color/transparent"
+        android:src="@android:drawable/ic_menu_mylocation"/>
 
     <TextView
         android:id="@+id/select_destination_textview"
@@ -28,11 +42,12 @@
 
     <Spinner
         android:id="@+id/destination_spinner"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/select_destination_textview"
-        android:layout_centerHorizontal="true"
         android:layout_marginBottom="40dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentLeft="true"
         android:background="@drawable/spinner_outline" />
 
     <Button
