@@ -15,7 +15,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.Spinner;
 
 import com.google.android.gms.analytics.HitBuilders;
@@ -46,7 +45,6 @@ public class DirectionsFragment extends Fragment
     private ArrayAdapter<BusStop> busStopArrayAdapter;
     private Spinner originSpinner;
     private Spinner destSpinner;
-    private ImageButton originGeolocateButton;
     private BusStop origin;
     private BusStop destination;
 
@@ -77,20 +75,6 @@ public class DirectionsFragment extends Fragment
 
         originSpinner = (Spinner) mainActivity.findViewById(R.id.origin_spinner);
         destSpinner = (Spinner) mainActivity.findViewById(R.id.destination_spinner);
-
-        originGeolocateButton = (ImageButton) mainActivity.findViewById(R.id.origin_geolocate_button);
-        originGeolocateButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-                BusStop nearest = RUDirectUtil.getNearestStop(location);
-                if (nearest != null) {
-                    origin = nearest;
-
-                    originSpinner.setSelection(busStopArrayAdapter.getPosition(origin));
-                }
-            }
-        });
 
         // Set up find route button
         Button findRouteButton = (Button) mainActivity.findViewById(R.id.find_route_button);
@@ -174,6 +158,12 @@ public class DirectionsFragment extends Fragment
                     .setCategory(getString(R.string.directions_selector_category))
                     .setAction(getString(R.string.view_action))
                     .build());
+
+            Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+            if (location != null) {
+                origin = RUDirectUtil.getNearestStop(location);
+                originSpinner.setSelection(busStopArrayAdapter.getPosition(origin));
+            }
         }
     }
 

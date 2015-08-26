@@ -52,10 +52,11 @@ public class RUDirectUtil {
         double minDist = Double.MAX_VALUE;
         BusStop closestStop = null;
         for (BusStop stop : RUDirectApplication.getBusData().getBusStops()) {
-            double dist = Math.sqrt(Math.pow(Double.parseDouble(stop.getLatitude()) - location.getLatitude(), 2) +
-                    Math.pow(Double.parseDouble(stop.getLongitude()) - location.getLongitude(), 2));
-            if (dist < minDist) {
-                minDist = dist;
+            double lat = Double.parseDouble(stop.getLatitude()) - location.getLatitude();
+            double lon = Double.parseDouble(stop.getLongitude()) - location.getLongitude();
+            double distSq = lat * lat + lon * lon;
+            if (distSq < minDist) {
+                minDist = distSq;
                 closestStop = stop;
             }
         }
