@@ -14,17 +14,16 @@
             android:summary="@string/pref_graphic_designer_summary"
             android:title="@string/pref_graphic_designer_title" />
         <Preference
+            android:key="@string/contributors_key"
+            android:title="@string/pref_contributors_title" />
+        <Preference
             android:key="@string/special_thanks_key"
             android:title="@string/pref_special_thanks_title" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_about_title">
         <Preference
-            android:key="@string/version_key"
-            android:title="@string/pref_version_title" />
-    </PreferenceCategory>
-    <PreferenceCategory android:title="@string/pref_legal_title">
-        <Preference
             android:key="@string/open_source_software_key"
             android:title="@string/pref_open_source_software_title" />
+        <Preference android:key="@string/version_key" />
     </PreferenceCategory>
 </PreferenceScreen>

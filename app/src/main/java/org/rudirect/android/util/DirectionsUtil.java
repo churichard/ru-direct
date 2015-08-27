@@ -4,18 +4,15 @@ import android.util.Log;
 
 import org.jgrapht.GraphPath;
 import org.jgrapht.alg.DijkstraShortestPath;
-import org.jgrapht.alg.KShortestPaths;
 import org.jgrapht.graph.DirectedWeightedPseudograph;
+import org.rudirect.android.data.constants.AppData;
+import org.rudirect.android.data.constants.RUDirectApplication;
 import org.rudirect.android.data.model.BusRouteEdge;
 import org.rudirect.android.data.model.BusStop;
+import org.rudirect.android.data.model.BusStopTime;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-
-import org.rudirect.android.data.constants.AppData;
-import org.rudirect.android.data.constants.RUDirectApplication;
-import org.rudirect.android.data.model.BusStopTime;
 
 public class DirectionsUtil {
 

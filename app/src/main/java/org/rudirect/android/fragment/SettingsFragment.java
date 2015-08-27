@@ -29,6 +29,20 @@ public class SettingsFragment extends PreferenceFragment {
 
     // Setup contributors
     private void setupContributors() {
+        Preference contributorsPref = findPreference(getString(R.string.contributors_key));
+        contributorsPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setTitle(R.string.pref_contributors_title)
+                        .setMessage(R.string.contributors_message)
+                        .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) { /* Do nothing */ }
+                        }).create().show();
+                return true;
+            }
+        });
+
         Preference specialThanksPref = findPreference(getString(R.string.special_thanks_key));
         specialThanksPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
@@ -44,20 +58,10 @@ public class SettingsFragment extends PreferenceFragment {
         });
     }
 
-    //Version Information
-    private void setupVersion(){
+    // Setup version information
+    private void setupVersion() {
         Preference versionPref = findPreference(getString(R.string.version_key));
-        versionPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            public boolean onPreferenceClick(Preference preference) {
-                AlertDialog.Builder builderV = new AlertDialog.Builder(getActivity());
-                builderV.setTitle(R.string.pref_version_title)
-                        .setMessage("RU Direct v" + BuildConfig.VERSION_NAME + " \n\n- Fix bug where directions crashes for certain bus stop combinations")
-                        .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) { /* Do nothing */ }
-                        }).create().show();
-                return true;
-            }
-        });
+        versionPref.setTitle("RU Direct v" + BuildConfig.VERSION_NAME);
     }
 
     // Setup open source software license text
