@@ -1,5 +1,6 @@
 package org.rudirect.android.fragment;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;
 import android.content.IntentSender;
@@ -12,10 +13,11 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.Spinner;
 
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.common.ConnectionResult;
@@ -33,17 +35,17 @@ import org.rudirect.android.util.RUDirectUtil;
 
 import java.util.HashMap;
 
-public class DirectionsFragment extends Fragment implements AdapterView.OnItemSelectedListener,
-        NetworkCallFinishListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+public class DirectionsFragment extends Fragment implements NetworkCallFinishListener,
+        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     private static final int REQUEST_RESOLVE_ERROR = 5001;
 
-    private MainActivity mainActivity;
     private GoogleApiClient mGoogleApiClient;
     private boolean mResolvingError = false;
-    private ArrayAdapter<BusStop> busStopArrayAdapter;
-    private Spinner originSpinner;
-    private Spinner destSpinner;
+
+    private MainActivity mainActivity;
+    private AutoCompleteTextView originACTextView;
+    private AutoCompleteTextView destACTextView;
     private BusStop origin;
     private BusStop destination;
 
@@ -72,8 +74,8 @@ public class DirectionsFragment extends Fragment implements AdapterView.OnItemSe
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        originSpinner = (Spinner) mainActivity.findViewById(R.id.origin_spinner);
-        destSpinner = (Spinner) mainActivity.findViewById(R.id.destination_spinner);
+        originACTextView = (AutoCompleteTextView) mainActivity.findViewById(R.id.origin_ac_textview);
+        destACTextView = (AutoCompleteTextView) mainActivity.findViewById(R.id.dest_ac_textview);
 
         // Set up find route button
         Button findRouteButton = (Button) mainActivity.findViewById(R.id.find_route_button);
@@ -90,50 +92,64 @@ public class DirectionsFragment extends Fragment implements AdapterView.OnItemSe
             }
         });
 
-        populateSpinners();
+        initACTextViews();
     }
 
-    public void populateSpinners() {
+    private void initACTextViews() {
         HashMap<String, BusStop[]> busTagsToBusStops = RUDirectApplication.getBusData().getBusTagToBusStops();
 
         if (busTagsToBusStops != null) {
             BusStop[] busStopArray = RUDirectApplication.getBusData().getBusStops();
+            ArrayAdapter<BusStop> busStopArrayAdapter = new ArrayAdapter<>(mainActivity, R.layout.list_autocomplete_textview, busStopArray);
 
-            // Create the busStopArrayAdapter and set it to the spinners
-            busStopArrayAdapter = new ArrayAdapter<>(mainActivity, R.layout.list_spinner, busStopArray);
-            originSpinner.setAdapter(busStopArrayAdapter);
-            originSpinner.setOnItemSelectedListener(this);
-            destSpinner.setAdapter(busStopArrayAdapter);
-            destSpinner.setOnItemSelectedListener(this);
+            // Create the busStopArrayAdapter and set it to the autocomplete textviews
+            setupACTextView(originACTextView, busStopArrayAdapter, true);
+            setupACTextView(destACTextView, busStopArrayAdapter, false);
 
             // Initialize origin and destination
-            Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-            if (location != null) {
-                origin = RUDirectUtil.getNearestStop(location);
-                originSpinner.setSelection(busStopArrayAdapter.getPosition(origin));
-            } else {
-                origin = busStopArray[0];
-            }
+            boolean originSet = setOriginToNearestBusStop();
+            if (!originSet) origin = busStopArray[0];
             destination = busStopArray[0];
         }
     }
 
-    @Override
-    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        if (parent == originSpinner) {
-            origin = (BusStop) parent.getItemAtPosition(position);
-        } else if (parent == destSpinner) {
-            destination = (BusStop) parent.getItemAtPosition(position);
+    private void setupACTextView(AutoCompleteTextView textView, ArrayAdapter<BusStop> busStopArrayAdapter, boolean isOrigin) {
+        textView.setThreshold(1); // Start autocompleting after 1 char is typed
+        textView.setAdapter(busStopArrayAdapter); // Set the array adapter
+
+        // Hide the keyboard when the focus is not on the textviews
+        textView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus) {
+                    hideSoftKeyboard(v);
+                }
+            }
+        });
+
+        // Set the origin/destination when an item is clicked
+        AdapterView.OnItemClickListener listener;
+        if (isOrigin) {
+            listener = new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    origin = (BusStop) parent.getItemAtPosition(position);
+                }
+            };
+        } else {
+            listener = new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    destination = (BusStop) parent.getItemAtPosition(position);
+                }
+            };
         }
+        textView.setOnItemClickListener(listener);
     }
 
     @Override
-    public void onNothingSelected(AdapterView<?> parent) { /* Do nothing */ }
-
-    @Override
     public void onBusStopsUpdated() {
-        // Populate the directions spinners
-        populateSpinners();
+        initACTextViews();
     }
 
     @Override
@@ -164,12 +180,24 @@ public class DirectionsFragment extends Fragment implements AdapterView.OnItemSe
                     .setAction(getString(R.string.view_action))
                     .build());
 
-            Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-            if (location != null) {
-                origin = RUDirectUtil.getNearestStop(location);
-                originSpinner.setSelection(busStopArrayAdapter.getPosition(origin));
-            }
+            setOriginToNearestBusStop();
         }
+    }
+
+    private boolean setOriginToNearestBusStop() {
+        Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+        if (location != null) {
+            origin = RUDirectUtil.getNearestStop(location);
+            originACTextView.setText(origin.getTitle());
+            originACTextView.dismissDropDown();
+            return true;
+        }
+        return false;
+    }
+
+    private void hideSoftKeyboard(View v) {
+        InputMethodManager inputMethodManager = (InputMethodManager) mainActivity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(v.getWindowToken(), 0);
     }
 
     // Build Google Api Client

@@ -8,8 +8,8 @@
     <string name="attributions_activity_name">Open Source Licenses</string>
 
     <!-- Directions -->
-    <string name="select_origin_text">Select your starting point:</string>
-    <string name="select_destination_text">Select your destination:</string>
+    <string name="origin_text">Starting point:</string>
+    <string name="destination_text">Destination:</string>
     <string name="find_route">Find route</string>
     <string name="directions_caution_text">Directions are still in beta! Use with caution!</string>
 
