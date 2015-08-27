@@ -9,8 +9,8 @@ android {
         applicationId "org.rudirect.android"
         minSdkVersion 14
         targetSdkVersion 22
-        versionCode 4
-        versionName "1.0.3"
+        versionCode 5
+        versionName "1.0.4"
     }
     buildTypes {
         release {
@@ -28,11 +28,11 @@ dependencies {
     compile 'com.google.android.gms:play-services-maps:7.5.0' // Google Maps API
     compile 'com.google.android.gms:play-services-location:7.5.0' // Google Location services
     compile 'com.google.android.gms:play-services-analytics:7.5.0' // Google Analytics
-    compile 'com.android.support:appcompat-v7:22.2.0' // AppCompat
-    compile 'com.android.support:support-v13:22.2.0' // Android Support v13
-    compile 'com.android.support:support-v4:22.2.0' // Android Support v4
-    compile 'com.android.support:design:22.2.0' // Android Design
-    compile 'com.android.support:recyclerview-v7:22.2.0' // RecyclerView
+    compile 'com.android.support:appcompat-v7:22.2.1' // AppCompat
+    compile 'com.android.support:support-v13:22.2.1' // Android Support v13
+    compile 'com.android.support:support-v4:22.2.1' // Android Support v4
+    compile 'com.android.support:design:22.2.1' // Android Design
+    compile 'com.android.support:recyclerview-v7:22.2.1' // RecyclerView
     compile 'org.jgrapht:jgrapht-core:0.9.1' // JGraphT
     compile 'com.squareup.okhttp:okhttp:2.4.0' // OkHttp
     compile files('libs/ormlite-core-4.48.jar') // Ormlite Core
