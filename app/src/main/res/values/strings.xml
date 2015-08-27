@@ -33,6 +33,9 @@
     <string name="pref_graphic_designer_summary">Carin Yao</string>
     <string name="special_thanks_key">pref_special_thanks</string>
     <string name="special_thanks_message"><b>Andy Le</b>\nFor providing moral support and entertainment in FB chat</string>
+    <string name="version_key">pref_version</string>
+    <string name="pref_about_title">About</string>
+    <string name="pref_version_title">Version</string>
     <string name="pref_legal_title">Legal</string>
     <string name="pref_open_source_software_title">Open Source Licenses</string>
     <string name="open_source_software_key">pref_open_source_software</string>

@@ -17,6 +17,11 @@
             android:key="@string/special_thanks_key"
             android:title="@string/pref_special_thanks_title" />
     </PreferenceCategory>
+    <PreferenceCategory android:title="@string/pref_about_title">
+        <Preference
+            android:key="@string/version_key"
+            android:title="@string/pref_version_title" />
+    </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_legal_title">
         <Preference
             android:key="@string/open_source_software_key"
