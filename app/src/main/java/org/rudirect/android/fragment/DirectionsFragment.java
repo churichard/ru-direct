@@ -163,6 +163,12 @@ public class DirectionsFragment extends Fragment implements AdapterView.OnItemSe
                     .setCategory(getString(R.string.directions_selector_category))
                     .setAction(getString(R.string.view_action))
                     .build());
+
+            Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+            if (location != null) {
+                origin = RUDirectUtil.getNearestStop(location);
+                originSpinner.setSelection(busStopArrayAdapter.getPosition(origin));
+            }
         }
     }
 

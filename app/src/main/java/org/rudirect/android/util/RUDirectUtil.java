@@ -47,16 +47,18 @@ public class RUDirectUtil {
         return (int) ((dp * displayMetrics.density) + 0.5);
     }
 
-    // Gets stop nearest to location.
+    // Returns the bus stop nearest to the argument location
     public static BusStop getNearestStop(Location location) {
-        double minDist = Double.MAX_VALUE;
+        BusStop[] busStops = RUDirectApplication.getBusData().getBusStops();
         BusStop closestStop = null;
-        for (BusStop stop : RUDirectApplication.getBusData().getBusStops()) {
+        double minDistSq = Double.MAX_VALUE;
+
+        for (BusStop stop : busStops) {
             double lat = Double.parseDouble(stop.getLatitude()) - location.getLatitude();
             double lon = Double.parseDouble(stop.getLongitude()) - location.getLongitude();
             double distSq = lat * lat + lon * lon;
-            if (distSq < minDist) {
-                minDist = distSq;
+            if (distSq < minDistSq) {
+                minDistSq = distSq;
                 closestStop = stop;
             }
         }

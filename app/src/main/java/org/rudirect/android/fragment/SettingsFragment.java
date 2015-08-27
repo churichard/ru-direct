@@ -23,7 +23,7 @@ public class SettingsFragment extends PreferenceFragment {
 
         addPreferencesFromResource(R.xml.preferences);
         setupContributors();
-        setupVersion();
+        setupVersionInfo();
         setupAttributions();
     }
 
@@ -59,7 +59,7 @@ public class SettingsFragment extends PreferenceFragment {
     }
 
     // Setup version information
-    private void setupVersion() {
+    private void setupVersionInfo() {
         Preference versionPref = findPreference(getString(R.string.version_key));
         versionPref.setTitle("RU Direct v" + BuildConfig.VERSION_NAME);
     }
