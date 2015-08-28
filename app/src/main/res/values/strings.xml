@@ -8,9 +8,11 @@
     <string name="attributions_activity_name">Open Source Licenses</string>
 
     <!-- Directions -->
-    <string name="origin_text">Starting point:</string>
-    <string name="destination_text">Destination:</string>
+    <string name="origin_text">Starting bus stop:</string>
+    <string name="destination_text">Destination bus stop:</string>
     <string name="find_route">Find route</string>
+    <string name="directions_textview_error">This is not a valid bus stop!</string>
+    <string name="directions_snackbar_error">Please enter a valid bus stop!</string>
     <string name="directions_caution_text">Directions are still in beta! Use with caution!</string>
 
     <!-- Intents -->

@@ -1,23 +1,26 @@
 package org.rudirect.android.fragment;
 
-import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.design.widget.Snackbar;
+import android.text.SpannableStringBuilder;
+import android.text.style.ImageSpan;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.common.ConnectionResult;
@@ -44,10 +47,9 @@ public class DirectionsFragment extends Fragment implements NetworkCallFinishLis
     private boolean mResolvingError = false;
 
     private MainActivity mainActivity;
+    private RelativeLayout relativeLayout;
     private AutoCompleteTextView originACTextView;
     private AutoCompleteTextView destACTextView;
-    private BusStop origin;
-    private BusStop destination;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -77,17 +79,56 @@ public class DirectionsFragment extends Fragment implements NetworkCallFinishLis
         originACTextView = (AutoCompleteTextView) mainActivity.findViewById(R.id.origin_ac_textview);
         destACTextView = (AutoCompleteTextView) mainActivity.findViewById(R.id.dest_ac_textview);
 
+        // Hide the keyboard when the textviews are not in focus
+        relativeLayout = (RelativeLayout) mainActivity.findViewById(R.id.directions_relative_layout);
+        relativeLayout.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                RUDirectUtil.hideKeyboard(mainActivity.getCurrentFocus());
+                return true;
+            }
+        });
+
         // Set up find route button
         Button findRouteButton = (Button) mainActivity.findViewById(R.id.find_route_button);
         findRouteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                RUDirectUtil.hideKeyboard(view);
+                BusStop origin = null;
+                BusStop destination = null;
+
+                BusStop[] busStops = RUDirectApplication.getBusData().getBusStops();
+                for (BusStop stop : busStops) {
+                    if (stop.getTitle().equalsIgnoreCase(originACTextView.getText().toString())) {
+                        origin = stop;
+                    }
+                    if (stop.getTitle().equalsIgnoreCase(destACTextView.getText().toString())) {
+                        destination = stop;
+                    }
+                    if (origin != null && destination != null) break;
+                }
+
+                if (origin == null) {
+                    originACTextView.setError(getString(R.string.directions_textview_error));
+                }
+                if (destination == null) {
+                    destACTextView.setError(getString(R.string.directions_textview_error));
+                }
+
                 if (origin != null && destination != null) {
                     Intent intent = new Intent(mainActivity, DirectionsActivity.class);
                     intent.putExtra(getString(R.string.origin_text_message), (Parcelable) origin);
                     intent.putExtra(getString(R.string.destination_text_message), (Parcelable) destination);
                     startActivity(intent);
                     mainActivity.overridePendingTransition(R.anim.abc_grow_fade_in_from_bottom, 0);
+                } else {
+                    relativeLayout.requestFocus();
+                    SpannableStringBuilder builder = new SpannableStringBuilder();
+                    builder.append(" ");
+                    builder.setSpan(new ImageSpan(mainActivity, android.R.drawable.stat_notify_error), 0, 1, 0);
+                    builder.append("\t\t").append(getString(R.string.directions_snackbar_error));
+                    Snackbar.make(relativeLayout, builder, Snackbar.LENGTH_SHORT).show();
                 }
             }
         });
@@ -95,6 +136,7 @@ public class DirectionsFragment extends Fragment implements NetworkCallFinishLis
         initACTextViews();
     }
 
+    // Initialize the autocomplete textviews
     private void initACTextViews() {
         HashMap<String, BusStop[]> busTagsToBusStops = RUDirectApplication.getBusData().getBusTagToBusStops();
 
@@ -102,49 +144,27 @@ public class DirectionsFragment extends Fragment implements NetworkCallFinishLis
             BusStop[] busStopArray = RUDirectApplication.getBusData().getBusStops();
             ArrayAdapter<BusStop> busStopArrayAdapter = new ArrayAdapter<>(mainActivity, R.layout.list_autocomplete_textview, busStopArray);
 
-            // Create the busStopArrayAdapter and set it to the autocomplete textviews
-            setupACTextView(originACTextView, busStopArrayAdapter, true);
-            setupACTextView(destACTextView, busStopArrayAdapter, false);
+            // Setup the autocomplete textviews
+            setupACTextView(originACTextView, busStopArrayAdapter);
+            setupACTextView(destACTextView, busStopArrayAdapter);
 
             // Initialize origin and destination
-            boolean originSet = setOriginToNearestBusStop();
-            if (!originSet) origin = busStopArray[0];
-            destination = busStopArray[0];
+            setOriginToNearestBusStop();
         }
     }
 
-    private void setupACTextView(AutoCompleteTextView textView, ArrayAdapter<BusStop> busStopArrayAdapter, boolean isOrigin) {
+    // Set up the autocomplete textview
+    private void setupACTextView(AutoCompleteTextView textView, ArrayAdapter<BusStop> busStopArrayAdapter) {
         textView.setThreshold(1); // Start autocompleting after 1 char is typed
         textView.setAdapter(busStopArrayAdapter); // Set the array adapter
 
-        // Hide the keyboard when the focus is not on the textviews
-        textView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        // Hide the keyboard when an autocomplete option is selected
+        textView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (!hasFocus) {
-                    hideSoftKeyboard(v);
-                }
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                RUDirectUtil.hideKeyboard(mainActivity.getCurrentFocus());
             }
         });
-
-        // Set the origin/destination when an item is clicked
-        AdapterView.OnItemClickListener listener;
-        if (isOrigin) {
-            listener = new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    origin = (BusStop) parent.getItemAtPosition(position);
-                }
-            };
-        } else {
-            listener = new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    destination = (BusStop) parent.getItemAtPosition(position);
-                }
-            };
-        }
-        textView.setOnItemClickListener(listener);
     }
 
     @Override
@@ -184,20 +204,13 @@ public class DirectionsFragment extends Fragment implements NetworkCallFinishLis
         }
     }
 
-    private boolean setOriginToNearestBusStop() {
+    // Sets the origin autocomplete textview to the nearest bus stop
+    private void setOriginToNearestBusStop() {
         Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         if (location != null) {
-            origin = RUDirectUtil.getNearestStop(location);
-            originACTextView.setText(origin.getTitle());
+            originACTextView.setText(RUDirectUtil.getNearestStop(location).getTitle());
             originACTextView.dismissDropDown();
-            return true;
         }
-        return false;
-    }
-
-    private void hideSoftKeyboard(View v) {
-        InputMethodManager inputMethodManager = (InputMethodManager) mainActivity.getSystemService(Activity.INPUT_METHOD_SERVICE);
-        inputMethodManager.hideSoftInputFromWindow(v.getWindowToken(), 0);
     }
 
     // Build Google Api Client
