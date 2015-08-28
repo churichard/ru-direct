@@ -2,6 +2,7 @@ package org.rudirect.android.data.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -27,6 +28,7 @@ public class BusStop implements Parcelable, Serializable, Comparable<BusStop> {
         this.isExpanded = false;
     }
 
+    @SuppressWarnings("unchecked")
     private BusStop(Parcel in) {
         id = 0;
         tag = in.readString();
@@ -148,7 +150,7 @@ public class BusStop implements Parcelable, Serializable, Comparable<BusStop> {
     }
 
     @Override
-    public int compareTo(BusStop busStop) {
+    public int compareTo(@NonNull BusStop busStop) {
         if (this == busStop) {
             return 0;
         }

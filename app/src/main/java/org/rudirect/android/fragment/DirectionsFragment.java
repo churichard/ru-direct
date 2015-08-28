@@ -201,6 +201,7 @@ public class DirectionsFragment extends Fragment implements NetworkCallFinishLis
                     .build());
 
             setOriginToNearestBusStop();
+            originACTextView.setError(null);
         }
     }
 
