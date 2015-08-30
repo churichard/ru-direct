@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import org.rudirect.android.R;
 import org.rudirect.android.activity.BusStopsActivity;
 import org.rudirect.android.api.NextBusAPI;
 import org.rudirect.android.data.constants.RUDirectApplication;
@@ -16,7 +17,6 @@ import org.rudirect.android.data.model.BusData;
 import org.rudirect.android.fragment.ActiveRoutesFragment;
 import org.rudirect.android.interfaces.ViewHolderClickListener;
 import org.rudirect.android.ui.holder.BusRouteViewHolder;
-import org.rudirect.android.R;
 import org.rudirect.android.util.ShowBusStopsHelper;
 
 public class BusRouteAdapter extends RecyclerView.Adapter<BusRouteViewHolder> {
@@ -80,7 +80,7 @@ public class BusRouteAdapter extends RecyclerView.Adapter<BusRouteViewHolder> {
 
     // Replace the contents of a view
     @Override
-    public void onBindViewHolder(BusRouteViewHolder viewHolder, int position) {
+    public void onBindViewHolder(final BusRouteViewHolder viewHolder, final int position) {
         viewHolder.title.setText(busRoutes[position]);
     }
 

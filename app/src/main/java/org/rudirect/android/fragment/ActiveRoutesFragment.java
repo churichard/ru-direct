@@ -88,7 +88,7 @@ public class ActiveRoutesFragment extends BaseRouteFragment {
         mSwipeRefreshLayout.setColorSchemeResources(R.color.primary_color);
     }
 
-    // Sets up the RecyclerView
+    // Update active routes
     public void updateActiveRoutes() {
         new UpdateActiveRoutesTask().execute();
     }
