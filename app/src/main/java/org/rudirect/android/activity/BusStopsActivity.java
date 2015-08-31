@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Parcelable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.view.ViewPager;
@@ -22,9 +21,7 @@ import org.rudirect.android.R;
 import org.rudirect.android.adapter.BusStopsPagerAdapter;
 import org.rudirect.android.data.constants.AppData;
 import org.rudirect.android.data.constants.RUDirectApplication;
-import org.rudirect.android.data.model.BusStop;
-
-import java.util.Arrays;
+import org.rudirect.android.data.model.BusRoute;
 
 public class BusStopsActivity extends AppCompatActivity
         implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
@@ -33,9 +30,9 @@ public class BusStopsActivity extends AppCompatActivity
     private static boolean firstMapLoad = true;
 
     private GoogleApiClient mGoogleApiClient;
-    private String busTag;
-    private BusStop[] busStops;
     private boolean mResolvingError = false;
+
+    private BusRoute route;
 
     @Override
     @SuppressWarnings("unchecked")
@@ -43,17 +40,13 @@ public class BusStopsActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bus_stops);
 
-        // Gets the bus tag, stop titles, and stop times
+        // Get intent extras
         Intent intent = getIntent();
-        busTag = intent.getStringExtra(getString(R.string.bus_tag_message));
-        Parcelable[] busStopParceArray = intent.getParcelableArrayExtra(getString(R.string.bus_stops_message));
-        busStops = Arrays.copyOf(busStopParceArray, busStopParceArray.length, BusStop[].class);
+        String busTag = intent.getStringExtra(getString(R.string.bus_tag_message));
+        route = RUDirectApplication.getBusData().getBusTagsToBusRoutes().get(busTag);
         String pageClickedFrom = intent.getStringExtra(getString(R.string.page_clicked_from_message));
 
-        // Set the title to the name of the bus
-        String title = RUDirectApplication.getBusData().getBusTagToBusTitle().get(busTag);
-        setTitle(title);
-
+        setTitle(route.getTitle());
         setupToolbar();
         setupViewPagerAndTabLayout();
 
@@ -62,7 +55,7 @@ public class BusStopsActivity extends AppCompatActivity
         // Log the screen
         RUDirectApplication.getTracker().setScreenName(getString(R.string.bus_stops_screen));
         RUDirectApplication.getTracker().send(new HitBuilders.ScreenViewBuilder()
-                .setCustomDimension(AppData.ROUTE_NAME_DIMEN, title)
+                .setCustomDimension(AppData.ROUTE_NAME_DIMEN, route.getTitle())
                 .setCustomDimension(AppData.PAGE_CLICKED_FROM_DIMEN, pageClickedFrom).build());
     }
 
@@ -145,16 +138,8 @@ public class BusStopsActivity extends AppCompatActivity
         }
     }
 
-    public String getBusTag() {
-        return busTag;
-    }
-
-    public BusStop[] getBusStops() {
-        return busStops;
-    }
-
-    public void setBusStops(BusStop[] busStops) {
-        this.busStops = busStops;
+    public BusRoute getRoute() {
+        return route;
     }
 
     // Build Google Api Client for displaying maps

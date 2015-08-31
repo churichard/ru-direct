@@ -1,12 +1,12 @@
 package org.rudirect.android.data.model;
 
+import android.location.Location;
+
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 
-import org.rudirect.android.util.RUDirectUtil;
-
 import java.util.Arrays;
-import java.util.Comparator;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.TreeSet;
 
@@ -15,17 +15,9 @@ public class BusData {
     @DatabaseField(id = true)
     private final int ID = 9000;
     @DatabaseField(dataType = DataType.SERIALIZABLE)
-    private HashMap<String, String> busTagToBusTitle;
-    @DatabaseField(dataType = DataType.SERIALIZABLE)
-    private HashMap<String, String> busTitleToBusTag;
+    private HashMap<String, BusRoute> busTagsToBusRoutes;
 
-    @DatabaseField(dataType = DataType.SERIALIZABLE)
-    private HashMap<String, BusStop[]> busTagToBusStops;
-    @DatabaseField(dataType = DataType.SERIALIZABLE)
-    private HashMap<String, BusPathSegment[]> busTagToBusPathSegments;
-
-    @DatabaseField(dataType = DataType.SERIALIZABLE)
-    private HashMap<String, String[]> stopTitleToStopTags;
+    private static BusRoute[] activeRoutes; // Active bus routes
 
     public BusData() {
         // Needed for ormlite
@@ -35,61 +27,64 @@ public class BusData {
         return ID;
     }
 
-    public HashMap<String, String> getBusTagToBusTitle() {
-        return busTagToBusTitle;
+    public HashMap<String, BusRoute> getBusTagsToBusRoutes() {
+        return busTagsToBusRoutes;
     }
 
-    public void setBusTagToBusTitle(HashMap<String, String> busTagToBusTitle) {
-        this.busTagToBusTitle = busTagToBusTitle;
+    public void setBusTagsToBusRoutes(HashMap<String, BusRoute> busTagsToBusRoutes) {
+        this.busTagsToBusRoutes = busTagsToBusRoutes;
     }
 
-    public HashMap<String, String> getBusTitleToBusTag() {
-        return busTitleToBusTag;
+    public static BusRoute[] getActiveRoutes() {
+        return activeRoutes;
     }
 
-    public void setBusTitleToBusTag(HashMap<String, String> busTitleToBusTag) {
-        this.busTitleToBusTag = busTitleToBusTag;
+    public static void setActiveRoutes(BusRoute[] activeRoutes) {
+        BusData.activeRoutes = activeRoutes;
     }
 
-    public HashMap<String, BusStop[]> getBusTagToBusStops() {
-        return busTagToBusStops;
-    }
-
-    public void setBusTagToBusStops(HashMap<String, BusStop[]> busTagToBusStops) {
-        this.busTagToBusStops = busTagToBusStops;
-    }
-
-    public HashMap<String, String[]> getStopTitleToStopTags() {
-        return stopTitleToStopTags;
-    }
-
-    public void setStopTitleToStopTags(HashMap<String, String[]> stopTitleToStopTags) {
-        this.stopTitleToStopTags = stopTitleToStopTags;
-    }
-
-    public HashMap<String, BusPathSegment[]> getBusTagToBusPathSegments() {
-        return busTagToBusPathSegments;
-    }
-
-    public void setBusTagToBusPathSegments(HashMap<String, BusPathSegment[]> busTagToBusPathSegments) {
-        this.busTagToBusPathSegments = busTagToBusPathSegments;
-    }
-
-    public BusStop[] getBusStops() {
+    // Returns a list of all bus stops in sorted order
+    public BusStop[] getAllBusStops() {
         // Create list of bus stops
-        TreeSet<BusStop> busStops = new TreeSet<>(new Comparator<BusStop>() {
-            @Override
-            public int compare(BusStop stop1, BusStop stop2) {
-                if (stop1 == stop2) {
-                    return 0;
-                }
-                return stop1.getTitle().compareTo(stop2.getTitle());
+        TreeSet<BusStop> busStops = new TreeSet<>();
+        BusRoute[] busRoutes = getBusRoutes();
+        if (busRoutes != null) {
+            for (BusRoute route : busRoutes) {
+                busStops.addAll(Arrays.asList(route.getBusStops()));
             }
-        });
-        String[] busTags = RUDirectUtil.mapKeySetToSortedArray(busTagToBusStops);
-        for (String busTag : busTags) {
-            busStops.addAll(Arrays.asList(busTagToBusStops.get(busTag)));
+            return busStops.toArray(new BusStop[busStops.size()]);
+        } else {
+            return null;
         }
-        return busStops.toArray(new BusStop[busStops.size()]);
+    }
+
+    // Returns a list of the bus routes in sorted order
+    public BusRoute[] getBusRoutes() {
+        if (busTagsToBusRoutes != null) {
+            Collection<BusRoute> routeCollection = busTagsToBusRoutes.values();
+            BusRoute[] busRoutes = routeCollection.toArray(new BusRoute[routeCollection.size()]);
+            Arrays.sort(busRoutes);
+            return busRoutes;
+        }
+        return null;
+    }
+
+    // Returns the bus stop nearest to the argument location
+    public BusStop getNearestStop(Location location) {
+        BusStop[] busStops = getAllBusStops();
+        BusStop closestStop = null;
+        double minDistSq = Double.MAX_VALUE;
+
+        for (BusStop stop : busStops) {
+            double lat = stop.getLatitude() - location.getLatitude();
+            double lon = stop.getLongitude() - location.getLongitude();
+            double distSq = lat * lat + lon * lon;
+            if (distSq < minDistSq) {
+                minDistSq = distSq;
+                closestStop = stop;
+            }
+        }
+
+        return closestStop;
     }
 }

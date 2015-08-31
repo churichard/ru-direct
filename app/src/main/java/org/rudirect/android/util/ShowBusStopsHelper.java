@@ -5,9 +5,9 @@ import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
-import org.rudirect.android.activity.BusStopsActivity;
 import org.rudirect.android.adapter.BusStopAdapter;
 import org.rudirect.android.api.NextBusAPI;
+import org.rudirect.android.data.model.BusRoute;
 import org.rudirect.android.data.model.BusStop;
 import org.rudirect.android.fragment.BusTimesFragment;
 
@@ -18,12 +18,12 @@ public class ShowBusStopsHelper extends AsyncTask<Object, Void, Void> {
 
     @Override
     protected Void doInBackground(Object... objects) {
-        String tag = (String) objects[0];
+        BusRoute route = (BusRoute) objects[0];
         fragment = (Fragment) objects[1];
 
         // Save bus stop times and get the bus stops
-        NextBusAPI.saveBusStopTimes(tag);
-        busStops = NextBusAPI.getBusStops(tag);
+        NextBusAPI.saveBusStopTimes(route);
+        busStops = route.getBusStops();
 
         return null;
     }
@@ -39,9 +39,6 @@ public class ShowBusStopsHelper extends AsyncTask<Object, Void, Void> {
             BusStopAdapter busStopAdapter = (BusStopAdapter) busTimesRecyclerView.getAdapter();
             busStopAdapter.setBusStops(busStops);
             busStopAdapter.notifyDataSetChanged();
-            if (busTimesFragment.isAdded()) {
-                ((BusStopsActivity) busTimesFragment.getActivity()).setBusStops(busStops);
-            }
 
             // Update progress bar and swipe refresh layout
             busTimesFragment.getProgressBar().setVisibility(View.GONE);

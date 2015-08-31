@@ -24,14 +24,11 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import org.rudirect.android.R;
 import org.rudirect.android.activity.BusStopsActivity;
 import org.rudirect.android.api.NextBusAPI;
-import org.rudirect.android.data.constants.AppData;
 import org.rudirect.android.data.constants.RUDirectApplication;
 import org.rudirect.android.data.model.BusPathSegment;
 import org.rudirect.android.data.model.BusStop;
-import org.rudirect.android.util.ShowBusPathHelper;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class BusMapFragment extends MapFragment implements OnMapReadyCallback {
 
@@ -60,7 +57,10 @@ public class BusMapFragment extends MapFragment implements OnMapReadyCallback {
         activeBusMarkers = new ArrayList<>();
         busStopMarkers = new ArrayList<>();
         isVisible = false;
-        if (connectedToPlayServices) new ShowBusPathHelper().execute(busStopsActivity.getBusTag(), this);
+        if (connectedToPlayServices) {
+            pathSegments = busStopsActivity.getRoute().getBusPathSegments();
+            getMapAsync(this);
+        }
     }
 
     @Override
@@ -68,7 +68,7 @@ public class BusMapFragment extends MapFragment implements OnMapReadyCallback {
         if (connectedToPlayServices) {
             mMap = map;
             mMap.getUiSettings().setMapToolbarEnabled(false);
-            BusStop stop = busStopsActivity.getBusStops()[0];
+            BusStop stop = busStopsActivity.getRoute().getBusStops()[0];
             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
                     getLatLng(stop.getLatitude(), stop.getLongitude()), 13.0f));
             mMap.setMyLocationEnabled(true);
@@ -134,8 +134,8 @@ public class BusMapFragment extends MapFragment implements OnMapReadyCallback {
             PolylineOptions polylineOptions = new PolylineOptions();
             polylineOptions.color(polyLineColor);
 
-            String[] latitudes = pathSegment.getLatitudes();
-            String[] longitudes = pathSegment.getLongitudes();
+            double[] latitudes = pathSegment.getLatitudes();
+            double[] longitudes = pathSegment.getLongitudes();
             int size = latitudes.length;
             for (int j = 0; j < size; j++) {
                 polylineOptions.add(getLatLng(latitudes[j], longitudes[j]));
@@ -145,8 +145,8 @@ public class BusMapFragment extends MapFragment implements OnMapReadyCallback {
         }
     }
 
-    private LatLng getLatLng(String latitude, String longitude) {
-        return new LatLng(Double.parseDouble(latitude), Double.parseDouble(longitude));
+    private LatLng getLatLng(double latitude, double longitude) {
+        return new LatLng(latitude, longitude);
     }
 
     public void setPathSegments(BusPathSegment[] pathSegments) {
@@ -157,41 +157,33 @@ public class BusMapFragment extends MapFragment implements OnMapReadyCallback {
     private class UpdateMarkers extends AsyncTask<Void, Void, Void> {
         @Override
         protected Void doInBackground(Void... voids) {
-            NextBusAPI.updateActiveBuses();
+            NextBusAPI.updateActiveRoutes();
             return null;
         }
 
         @Override
         protected void onPostExecute(Void v) {
             // Update active bus locations
-            if (AppData.activeLatsHashMap != null && AppData.activeLonsHashMap != null) {
-                HashMap<String, ArrayList<String>> activeLatsHashMap = AppData.activeLatsHashMap;
-                HashMap<String, ArrayList<String>> activeLonsHashMap = AppData.activeLonsHashMap;
-                String busTag = busStopsActivity.getBusTag();
+            ArrayList<double[]> activeBusLocations = busStopsActivity.getRoute().getActiveBusLocations();
+            if (activeBusLocations != null) {
+                // Clear map of active bus markers
+                for (int i = 0; i < activeBusMarkers.size(); i++) {
+                    activeBusMarkers.get(i).remove();
+                }
+                activeBusMarkers.clear();
 
-                ArrayList<String> activeLats = activeLatsHashMap.get(busTag);
-                ArrayList<String> activeLons = activeLonsHashMap.get(busTag);
-
-                if (activeLats != null && activeLons != null) {
-                    // Clear map of active bus markers
-                    for (int i = 0; i < activeBusMarkers.size(); i++) {
-                        activeBusMarkers.get(i).remove();
-                    }
-                    activeBusMarkers.clear();
-
-                    // Add active bus markers
-                    for (int i = 0; i < activeLats.size(); i++) {
-                        MarkerOptions markerOptions = new MarkerOptions()
-                                .position(getLatLng(activeLats.get(i), activeLons.get(i)))
-                                .title("Active Bus")
-                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_bus));
-                        activeBusMarkers.add(mMap.addMarker(markerOptions));
-                    }
+                // Add active bus markers
+                for (int i = 0; i < activeBusLocations.size(); i++) {
+                    MarkerOptions markerOptions = new MarkerOptions()
+                            .position(getLatLng(activeBusLocations.get(i)[0], activeBusLocations.get(i)[1]))
+                            .title("Active Bus")
+                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_bus));
+                    activeBusMarkers.add(mMap.addMarker(markerOptions));
                 }
             }
 
             // Draw the bus stop markers
-            BusStop[] busStops = busStopsActivity.getBusStops();
+            BusStop[] busStops = busStopsActivity.getRoute().getBusStops();
             if (busStopMarkers.isEmpty()) { // Create the markers
                 for (BusStop stop : busStops) {
                     MarkerOptions markerOptions = new MarkerOptions()

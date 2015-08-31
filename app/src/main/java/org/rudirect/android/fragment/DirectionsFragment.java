@@ -36,8 +36,6 @@ import org.rudirect.android.data.model.BusStop;
 import org.rudirect.android.interfaces.NetworkCallFinishListener;
 import org.rudirect.android.util.RUDirectUtil;
 
-import java.util.HashMap;
-
 public class DirectionsFragment extends Fragment implements NetworkCallFinishListener,
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
@@ -98,7 +96,7 @@ public class DirectionsFragment extends Fragment implements NetworkCallFinishLis
                 BusStop origin = null;
                 BusStop destination = null;
 
-                BusStop[] busStops = RUDirectApplication.getBusData().getBusStops();
+                BusStop[] busStops = RUDirectApplication.getBusData().getAllBusStops();
                 for (BusStop stop : busStops) {
                     if (stop.getTitle().equalsIgnoreCase(originACTextView.getText().toString())) {
                         origin = stop;
@@ -138,10 +136,8 @@ public class DirectionsFragment extends Fragment implements NetworkCallFinishLis
 
     // Initialize the autocomplete textviews
     private void initACTextViews() {
-        HashMap<String, BusStop[]> busTagsToBusStops = RUDirectApplication.getBusData().getBusTagToBusStops();
-
-        if (busTagsToBusStops != null) {
-            BusStop[] busStopArray = RUDirectApplication.getBusData().getBusStops();
+        BusStop[] busStopArray = RUDirectApplication.getBusData().getAllBusStops();
+        if (busStopArray != null) {
             ArrayAdapter<BusStop> busStopArrayAdapter = new ArrayAdapter<>(mainActivity, R.layout.list_autocomplete_textview, busStopArray);
 
             // Setup the autocomplete textviews
@@ -209,7 +205,7 @@ public class DirectionsFragment extends Fragment implements NetworkCallFinishLis
     private void setOriginToNearestBusStop() {
         Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         if (location != null) {
-            originACTextView.setText(RUDirectUtil.getNearestStop(location).getTitle());
+            originACTextView.setText(RUDirectApplication.getBusData().getNearestStop(location).getTitle());
             originACTextView.dismissDropDown();
         }
     }

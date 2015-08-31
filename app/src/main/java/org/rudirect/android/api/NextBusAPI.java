@@ -6,7 +6,9 @@ import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
 
-import org.rudirect.android.data.constants.RUDirectApplication;
+import org.rudirect.android.data.constants.AppData;
+import org.rudirect.android.data.model.BusData;
+import org.rudirect.android.data.model.BusRoute;
 import org.rudirect.android.data.model.BusStop;
 import org.rudirect.android.data.model.BusStopTime;
 import org.xml.sax.SAXException;
@@ -20,9 +22,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
-import org.rudirect.android.data.constants.AppData;
-import org.rudirect.android.data.model.BusPathSegment;
-
 public class NextBusAPI {
 
     private static final String TAG = NextBusAPI.class.getSimpleName();
@@ -35,9 +34,7 @@ public class NextBusAPI {
             okHttpClient = new OkHttpClient();
         }
 
-        Request request = new Request.Builder()
-                .url(url)
-                .build();
+        Request request = new Request.Builder().url(url).build();
         try {
             Response response = okHttpClient.newCall(request).execute();
             return response.body().byteStream();
@@ -66,21 +63,14 @@ public class NextBusAPI {
         }
     }
 
-    // Saves directions
-    public static void saveDirections() {
-        for (String activeBus : AppData.activeBuses) {
-            saveBusStopTimes(activeBus);
-        }
-    }
-
-    // Saves the bus stops to the database
-    public static void saveBusStops() {
-        parseXML(AppData.ALL_ROUTES_URL, new XMLBusStopHandler());
+    // Saves the bus routes to the database
+    public static void saveBusRoutes() {
+        parseXML(AppData.ALL_ROUTES_URL, new XMLBusRouteHandler());
     }
 
     // Saves the bus stop times to the database
-    public static void saveBusStopTimes(String busTag) {
-        BusStop[] busStops = RUDirectApplication.getBusData().getBusTagToBusStops().get(busTag);
+    public static void saveBusStopTimes(BusRoute route) {
+        BusStop[] busStops = route.getBusStops();
 
         if (busStops != null) {
             // Set no Internet stop times and create predictions link
@@ -89,32 +79,22 @@ public class NextBusAPI {
             busStopTimes.add(new BusStopTime(-1));
             for (BusStop stop : busStops) {
                 stop.setTimes(busStopTimes);
-                link.append("&stops=").append(busTag).append("%7Cnull%7C").append(stop.getTag());
+                link.append("&stops=").append(route.getTag()).append("%7Cnull%7C").append(stop.getTag());
             }
 
-            parseXML(link.toString(), new XMLBusTimesHandler(busTag));
+            parseXML(link.toString(), new XMLBusTimesHandler(busStops));
         }
     }
 
-    // Updates active buses
-    public static void updateActiveBuses() {
-        parseXML(AppData.VEHICLE_LOCATIONS_URL, new XMLActiveBusHandler());
+    // Updates active routes
+    public static void updateActiveRoutes() {
+        parseXML(AppData.VEHICLE_LOCATIONS_URL, new XMLActiveRouteHandler());
     }
 
-    // Returns a list of the active buses
-    public static String[] getActiveBusTags() {
-        AppData.activeBuses = new String[1]; // Default value if no Internet / no active buses
-        updateActiveBuses();
-        return AppData.activeBuses;
-    }
-
-    // Takes in a bus tag and returns a list of bus stops (only called after saving bus stops)
-    public static BusStop[] getBusStops(String busTag) {
-        return RUDirectApplication.getBusData().getBusTagToBusStops().get(busTag);
-    }
-
-    // Takes in a bus tag and returns a list of bus path segments (only called after saving bus stops)
-    public static BusPathSegment[] getBusPathSegments(String busTag) {
-        return RUDirectApplication.getBusData().getBusTagToBusPathSegments().get(busTag);
+    // Returns an array of the active routes
+    public static BusRoute[] getActiveRoutes() {
+        BusData.setActiveRoutes(new BusRoute[1]); // Default value if no Internet / no active buses
+        updateActiveRoutes();
+        return BusData.getActiveRoutes();
     }
 }

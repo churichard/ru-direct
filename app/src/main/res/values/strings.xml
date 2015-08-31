@@ -17,7 +17,6 @@
 
     <!-- Intents -->
     <string name="bus_tag_message">Bus Tag</string>
-    <string name="bus_stops_message">Bus Stops</string>
     <string name="page_clicked_from_message">Page Clicked From</string>
     <string name="origin_text_message">Origin</string>
     <string name="destination_text_message">Destination</string>

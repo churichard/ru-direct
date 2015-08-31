@@ -24,6 +24,7 @@ import org.rudirect.android.adapter.DirectionsAdapter;
 import org.rudirect.android.api.NextBusAPI;
 import org.rudirect.android.data.constants.AppData;
 import org.rudirect.android.data.constants.RUDirectApplication;
+import org.rudirect.android.data.model.BusRoute;
 import org.rudirect.android.data.model.BusRouteEdge;
 import org.rudirect.android.data.model.BusStop;
 import org.rudirect.android.util.DirectionsUtil;
@@ -59,7 +60,7 @@ public class DirectionsActivity extends AppCompatActivity {
                     R.drawable.ic_action_toolbar_back, getTheme()));
         }
 
-        // Setup recyclerview
+        // Setup RecyclerView
         setupRecyclerView();
 
         // Check to see if the origin is equal to the destination
@@ -118,36 +119,33 @@ public class DirectionsActivity extends AppCompatActivity {
         overridePendingTransition(0, R.anim.abc_shrink_fade_out_from_bottom);
     }
 
-    private class GetDirections extends AsyncTask<BusStop, Void, String[]> {
+    private class GetDirections extends AsyncTask<BusStop, Void, BusRoute[]> {
 
         private BusStop origin;
         private BusStop destination;
         private GraphPath<BusStop, BusRouteEdge> path;
 
-        protected String[] doInBackground(BusStop... stops) {
+        protected BusRoute[] doInBackground(BusStop... stops) {
             origin = stops[0];
             destination = stops[1];
 
-            if (RUDirectApplication.getBusData().getBusTagToBusTitle() == null) {
-                NextBusAPI.saveBusStops();
+            if (RUDirectApplication.getBusData().getBusTagsToBusRoutes() == null) {
+                NextBusAPI.saveBusRoutes();
             }
-            String[] activeBusTags = NextBusAPI.getActiveBusTags();
-            if (RUDirectApplication.getBusData().getBusTagToBusStops() != null) {
-                activeBusTags = NextBusAPI.getActiveBusTags();
-                for (String busTag : activeBusTags) {
-                    NextBusAPI.saveBusStopTimes(busTag);
-                }
+            BusRoute[] activeRoutes = NextBusAPI.getActiveRoutes();
+            for (BusRoute route : activeRoutes) {
+                NextBusAPI.saveBusStopTimes(route);
             }
 
             // Build the bus stops graph and compute the shortest path
             DirectionsUtil.setupBusStopsGraph();
             path = computeShortestPath(origin, destination);
 
-            return activeBusTags;
+            return activeRoutes;
         }
 
-        protected void onPostExecute(String[] activeBusTags) {
-            if (activeBusTags.length == 1 && activeBusTags[0] == null) {
+        protected void onPostExecute(BusRoute[] activeRoutes) {
+            if (activeRoutes.length == 1 && activeRoutes[0] == null) {
                 if (RUDirectUtil.isNetworkAvailable()) {
                     pathTimeTextView.setText("There are no active buses right now!");
                     Snackbar.make(findViewById(R.id.directions_activity_layout),

@@ -21,10 +21,9 @@ import org.rudirect.android.activity.SettingsActivity;
 import org.rudirect.android.adapter.BusRouteAdapter;
 import org.rudirect.android.api.NextBusAPI;
 import org.rudirect.android.data.constants.RUDirectApplication;
+import org.rudirect.android.data.model.BusRoute;
 import org.rudirect.android.ui.view.DividerItemDecoration;
 import org.rudirect.android.util.RUDirectUtil;
-
-import java.util.HashMap;
 
 public class ActiveRoutesFragment extends BaseRouteFragment {
 
@@ -93,26 +92,18 @@ public class ActiveRoutesFragment extends BaseRouteFragment {
         new UpdateActiveRoutesTask().execute();
     }
 
-    private class UpdateActiveRoutesTask extends AsyncTask<Void, Void, String[]> {
+    private class UpdateActiveRoutesTask extends AsyncTask<Void, Void, BusRoute[]> {
 
-        protected String[] doInBackground(Void... voids) {
-            if (RUDirectApplication.getBusData().getBusTagToBusTitle() == null) {
-                NextBusAPI.saveBusStops();
+        protected BusRoute[] doInBackground(Void... voids) {
+            if (RUDirectApplication.getBusData().getBusTagsToBusRoutes() == null) {
+                NextBusAPI.saveBusRoutes();
             }
-            return NextBusAPI.getActiveBusTags();
+            return NextBusAPI.getActiveRoutes();
         }
 
-        protected void onPostExecute(String[] activeBusTags) {
-            // Fill active bus array with active bus names
-            String[] activeBuses = new String[activeBusTags.length];
-            HashMap<String, String> busTagsToBusTitles = RUDirectApplication.getBusData().getBusTagToBusTitle();
-            if (busTagsToBusTitles != null) {
-                for (int i = 0; i < activeBusTags.length; i++) {
-                    activeBuses[i] = busTagsToBusTitles.get(activeBusTags[i]);
-                }
-            }
+        protected void onPostExecute(BusRoute[] activeRoutes) {
             BusRouteAdapter adapter = (BusRouteAdapter) activeBusesRecyclerView.getAdapter();
-            if (activeBusTags.length == 1 && activeBuses[0] == null) {
+            if (activeRoutes.length == 1 && activeRoutes[0] == null) {
                 // Setup error message
                 errorView.setVisibility(View.VISIBLE);
                 adapter.setBusRoutes(null);
@@ -127,7 +118,7 @@ public class ActiveRoutesFragment extends BaseRouteFragment {
             } else {
                 // Show active buses
                 errorView.setVisibility(View.GONE);
-                adapter.setBusRoutes(activeBuses);
+                adapter.setBusRoutes(activeRoutes);
                 adapter.notifyDataSetChanged();
             }
             progressBar.setVisibility(View.GONE);

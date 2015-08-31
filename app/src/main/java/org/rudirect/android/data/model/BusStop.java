@@ -13,12 +13,12 @@ public class BusStop implements Parcelable, Serializable, Comparable<BusStop> {
     private transient int id;
     private String tag;
     private String title;
-    private String latitude;
-    private String longitude;
+    private double latitude;
+    private double longitude;
     private transient ArrayList<BusStopTime> times;
-    private boolean isExpanded;
+    private transient boolean isExpanded;
 
-    public BusStop(String tag, String title, ArrayList<BusStopTime> times, String latitude, String longitude) {
+    public BusStop(String tag, String title, ArrayList<BusStopTime> times, double latitude, double longitude) {
         this.id = 0;
         this.tag = tag;
         this.title = title;
@@ -28,15 +28,13 @@ public class BusStop implements Parcelable, Serializable, Comparable<BusStop> {
         this.isExpanded = false;
     }
 
-    @SuppressWarnings("unchecked")
     private BusStop(Parcel in) {
         id = 0;
         tag = in.readString();
         title = in.readString();
-        times = new ArrayList<>();
-        times = in.readArrayList(BusStopTime.class.getClassLoader());
-        latitude = in.readString();
-        longitude = in.readString();
+        times = in.createTypedArrayList(BusStopTime.CREATOR);
+        latitude = in.readDouble();
+        longitude = in.readDouble();
         isExpanded = false;
     }
 
@@ -48,9 +46,9 @@ public class BusStop implements Parcelable, Serializable, Comparable<BusStop> {
     public void writeToParcel(Parcel out, int flags) {
         out.writeString(tag);
         out.writeString(title);
-        out.writeList(times);
-        out.writeString(latitude);
-        out.writeString(longitude);
+        out.writeTypedList(times);
+        out.writeDouble(latitude);
+        out.writeDouble(longitude);
     }
 
     @Override
@@ -108,19 +106,19 @@ public class BusStop implements Parcelable, Serializable, Comparable<BusStop> {
         this.isExpanded = isExpanded;
     }
 
-    public String getLatitude() {
+    public double getLatitude() {
         return latitude;
     }
 
-    public void setLatitude(String latitude) {
+    public void setLatitude(double latitude) {
         this.latitude = latitude;
     }
 
-    public String getLongitude() {
+    public double getLongitude() {
         return longitude;
     }
 
-    public void setLongitude(String longitude) {
+    public void setLongitude(double longitude) {
         this.longitude = longitude;
     }
 
@@ -135,7 +133,7 @@ public class BusStop implements Parcelable, Serializable, Comparable<BusStop> {
 
     @Override
     public int hashCode() {
-        return title.hashCode();
+        return title.hashCode() + id;
     }
 
     @Override
