@@ -97,36 +97,38 @@ public class DirectionsFragment extends Fragment implements NetworkCallFinishLis
                 BusStop destination = null;
 
                 BusStop[] busStops = RUDirectApplication.getBusData().getAllBusStops();
-                for (BusStop stop : busStops) {
-                    if (stop.getTitle().equalsIgnoreCase(originACTextView.getText().toString())) {
-                        origin = stop;
+                if (busStops != null) {
+                    for (BusStop stop : busStops) {
+                        if (stop.getTitle().equalsIgnoreCase(originACTextView.getText().toString())) {
+                            origin = stop;
+                        }
+                        if (stop.getTitle().equalsIgnoreCase(destACTextView.getText().toString())) {
+                            destination = stop;
+                        }
+                        if (origin != null && destination != null) break;
                     }
-                    if (stop.getTitle().equalsIgnoreCase(destACTextView.getText().toString())) {
-                        destination = stop;
+
+                    if (origin == null) {
+                        originACTextView.setError(getString(R.string.directions_textview_error));
                     }
-                    if (origin != null && destination != null) break;
-                }
+                    if (destination == null) {
+                        destACTextView.setError(getString(R.string.directions_textview_error));
+                    }
 
-                if (origin == null) {
-                    originACTextView.setError(getString(R.string.directions_textview_error));
-                }
-                if (destination == null) {
-                    destACTextView.setError(getString(R.string.directions_textview_error));
-                }
-
-                if (origin != null && destination != null) {
-                    Intent intent = new Intent(mainActivity, DirectionsActivity.class);
-                    intent.putExtra(getString(R.string.origin_text_message), (Parcelable) origin);
-                    intent.putExtra(getString(R.string.destination_text_message), (Parcelable) destination);
-                    startActivity(intent);
-                    mainActivity.overridePendingTransition(R.anim.abc_grow_fade_in_from_bottom, 0);
-                } else {
-                    relativeLayout.requestFocus();
-                    SpannableStringBuilder builder = new SpannableStringBuilder();
-                    builder.append(" ");
-                    builder.setSpan(new ImageSpan(mainActivity, android.R.drawable.stat_notify_error), 0, 1, 0);
-                    builder.append("\t\t").append(getString(R.string.directions_snackbar_error));
-                    Snackbar.make(relativeLayout, builder, Snackbar.LENGTH_SHORT).show();
+                    if (origin != null && destination != null) {
+                        Intent intent = new Intent(mainActivity, DirectionsActivity.class);
+                        intent.putExtra(getString(R.string.origin_text_message), (Parcelable) origin);
+                        intent.putExtra(getString(R.string.destination_text_message), (Parcelable) destination);
+                        startActivity(intent);
+                        mainActivity.overridePendingTransition(R.anim.abc_grow_fade_in_from_bottom, 0);
+                    } else {
+                        relativeLayout.requestFocus();
+                        SpannableStringBuilder builder = new SpannableStringBuilder();
+                        builder.append(" ");
+                        builder.setSpan(new ImageSpan(mainActivity, android.R.drawable.stat_notify_error), 0, 1, 0);
+                        builder.append("\t\t").append(getString(R.string.directions_snackbar_error));
+                        Snackbar.make(relativeLayout, builder, Snackbar.LENGTH_SHORT).show();
+                    }
                 }
             }
         });
@@ -197,7 +199,6 @@ public class DirectionsFragment extends Fragment implements NetworkCallFinishLis
                     .build());
 
             setOriginToNearestBusStop();
-            originACTextView.setError(null);
         }
     }
 
@@ -207,6 +208,7 @@ public class DirectionsFragment extends Fragment implements NetworkCallFinishLis
         if (location != null) {
             originACTextView.setText(RUDirectApplication.getBusData().getNearestStop(location).getTitle());
             originACTextView.dismissDropDown();
+            originACTextView.setError(null);
         }
     }
 

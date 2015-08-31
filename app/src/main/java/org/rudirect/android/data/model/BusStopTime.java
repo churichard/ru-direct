@@ -6,27 +6,27 @@ import android.os.Parcelable;
 public class BusStopTime implements Parcelable {
 
     private transient int minutes;
-    private transient int vehicleId;
+    private transient String vehicleId;
 
-    public BusStopTime(int minutes, int vehicleId) {
+    public BusStopTime(int minutes, String vehicleId) {
         this.minutes = minutes;
         this.vehicleId = vehicleId;
     }
 
     public BusStopTime(int minutes) {
         this.minutes = minutes;
-        this.vehicleId = -1;
+        this.vehicleId = null;
     }
 
     private BusStopTime(Parcel in) {
         minutes = in.readInt();
-        vehicleId = in.readInt();
+        vehicleId = in.readString();
     }
 
     @Override
     public void writeToParcel(Parcel out, int flags) {
         out.writeInt(minutes);
-        out.writeInt(vehicleId);
+        out.writeString(vehicleId);
     }
 
     @Override
@@ -52,11 +52,11 @@ public class BusStopTime implements Parcelable {
         this.minutes = minutes;
     }
 
-    public int getVehicleId() {
+    public String getVehicleId() {
         return vehicleId;
     }
 
-    public void setVehicleId(int vehicleId) {
+    public void setVehicleId(String vehicleId) {
         this.vehicleId = vehicleId;
     }
 }

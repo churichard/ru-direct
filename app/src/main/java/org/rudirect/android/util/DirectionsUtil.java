@@ -78,7 +78,7 @@ public class DirectionsUtil {
         BusRouteEdge edge = busStopsGraph.addEdge(stop1, stop2);
         ArrayList<BusStopTime> busStopTimes = stop2.getTimes();
         BusStopTime nextSmallestTime = null;
-        int vehicleId = prevTime.getVehicleId();
+        String vehicleId = prevTime.getVehicleId();
         edge.setRouteName(routeName);
 
         // Iterate through all the times for the bus stop to get the one with the correct vehicle id
@@ -97,7 +97,7 @@ public class DirectionsUtil {
             }
 
             // Staying on the same vehicle
-            if (vehicleId == time.getVehicleId()) {
+            if (vehicleId.equals(time.getVehicleId())) {
                 edge.setVehicleId(vehicleId);
                 busStopsGraph.setEdgeWeight(edge, time.getMinutes() - prevTime.getMinutes());
                 // Log.d(TAG, "Edge: " + stop1.getTitle() + " to " + stop2.getTitle());

@@ -81,6 +81,7 @@ public class NextBusAPI {
                 stop.setTimes(busStopTimes);
                 link.append("&stops=").append(route.getTag()).append("%7Cnull%7C").append(stop.getTag());
             }
+//            Log.d("NextBus API", link.toString());
 
             parseXML(link.toString(), new XMLBusTimesHandler(busStops));
         }

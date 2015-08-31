@@ -45,7 +45,7 @@ public class XMLBusTimesHandler extends DefaultHandler {
         if (inBusTag && qName.equalsIgnoreCase("prediction")) {
             // Add bus stop time
             BusStopTime time = new BusStopTime(Integer.parseInt(atts.getValue("minutes")),
-                    Integer.parseInt(atts.getValue("vehicle")));
+                    atts.getValue("vehicle"));
             times.add(time);
         }
     }
