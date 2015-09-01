@@ -93,8 +93,8 @@ public class NextBusAPI {
     }
 
     // Returns an array of the active routes
-    public static BusRoute[] getActiveRoutes() {
-        BusData.setActiveRoutes(new BusRoute[1]); // Default value if no Internet / no active buses
+    public static ArrayList<BusRoute> getActiveRoutes() {
+        BusData.setActiveRoutes(new ArrayList<BusRoute>()); // Default value if no Internet / no active buses
         updateActiveRoutes();
         return BusData.getActiveRoutes();
     }

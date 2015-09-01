@@ -25,6 +25,9 @@ import org.rudirect.android.data.model.BusRoute;
 import org.rudirect.android.ui.view.DividerItemDecoration;
 import org.rudirect.android.util.RUDirectUtil;
 
+import java.util.ArrayList;
+import java.util.Collections;
+
 public class ActiveRoutesFragment extends BaseRouteFragment {
 
     private RecyclerView activeBusesRecyclerView;
@@ -92,18 +95,18 @@ public class ActiveRoutesFragment extends BaseRouteFragment {
         new UpdateActiveRoutesTask().execute();
     }
 
-    private class UpdateActiveRoutesTask extends AsyncTask<Void, Void, BusRoute[]> {
+    private class UpdateActiveRoutesTask extends AsyncTask<Void, Void, ArrayList<BusRoute>> {
 
-        protected BusRoute[] doInBackground(Void... voids) {
+        protected ArrayList<BusRoute> doInBackground(Void... voids) {
             if (RUDirectApplication.getBusData().getBusTagsToBusRoutes() == null) {
                 NextBusAPI.saveBusRoutes();
             }
             return NextBusAPI.getActiveRoutes();
         }
 
-        protected void onPostExecute(BusRoute[] activeRoutes) {
+        protected void onPostExecute(ArrayList<BusRoute> activeRoutes) {
             BusRouteAdapter adapter = (BusRouteAdapter) activeBusesRecyclerView.getAdapter();
-            if (activeRoutes.length == 1 && activeRoutes[0] == null) {
+            if (activeRoutes == null) {
                 // Setup error message
                 errorView.setVisibility(View.VISIBLE);
                 adapter.setBusRoutes(null);
@@ -134,6 +137,10 @@ public class ActiveRoutesFragment extends BaseRouteFragment {
                     .setCategory(getString(R.string.active_routes_category))
                     .setAction(getString(R.string.view_action))
                     .build());
+            if (activeBusesRecyclerView != null) {
+                activeBusesRecyclerView.getAdapter().notifyDataSetChanged();
+                Collections.sort(((BusRouteAdapter) activeBusesRecyclerView.getAdapter()).getBusRoutes());
+            }
         }
     }
 }

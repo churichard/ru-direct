@@ -43,7 +43,7 @@ public class DirectionsAdapter extends RecyclerView.Adapter<DirectionsItemViewHo
         time += calcWaitTime((int) DirectionsUtil.getInitialWait());
         // Add origin bus stop and initial route
         items.add(new DirectionsOuterBusStop(busStopEdges.get(0).getSourceBusStop().getTitle(),
-                busStopEdges.get(0).getSourceBusStop().getTag(), getTimeInHHMM(time), R.drawable.bus_stop_circle));
+                busStopEdges.get(0).getSourceBusStop().getTag(), getTimeInHHMM(time), R.drawable.ic_bus_stop_circle));
         items.add(new DirectionsBusRoute(busStopEdges.get(0).getRouteName()
                 + " (Bus #" + busStopEdges.get(0).getVehicleId() + ")", R.drawable.ic_directions_bus));
 
@@ -58,7 +58,7 @@ public class DirectionsAdapter extends RecyclerView.Adapter<DirectionsItemViewHo
                         || busStopEdges.get(i).getVehicleId() != busStopEdges.get(i + 1).getVehicleId()) {
                     items.remove(items.get(items.size() - 1));
                     items.add(new DirectionsOuterBusStop(busStopEdges.get(i).getTargetBusStop().getTitle(),
-                            busStopEdges.get(i).getTargetBusStop().getTag(), getTimeInHHMM(time), R.drawable.bus_stop_circle));
+                            busStopEdges.get(i).getTargetBusStop().getTag(), getTimeInHHMM(time), R.drawable.ic_bus_stop_circle));
                     items.add(new DirectionsBusRoute(busStopEdges.get(i + 1).getRouteName()
                             + " (Bus #" + busStopEdges.get(i + 1).getVehicleId() + ")", R.drawable.ic_directions_bus));
                 }
@@ -73,7 +73,7 @@ public class DirectionsAdapter extends RecyclerView.Adapter<DirectionsItemViewHo
         // Add destination bus stop
         time += calcWaitTime((int) busStopEdges.get(busStopEdges.size() - 1).getTravelTime());
         items.add(new DirectionsOuterBusStop(busStopEdges.get(busStopEdges.size() - 1).getTargetBusStop().getTitle(),
-                busStopEdges.get(busStopEdges.size() - 1).getTargetBusStop().getTag(), getTimeInHHMM(time), R.drawable.bus_stop_circle));
+                busStopEdges.get(busStopEdges.size() - 1).getTargetBusStop().getTag(), getTimeInHHMM(time), R.drawable.ic_bus_stop_circle));
     }
 
     public DirectionsAdapter() {

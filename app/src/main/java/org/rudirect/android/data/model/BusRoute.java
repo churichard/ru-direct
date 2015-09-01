@@ -115,10 +115,15 @@ public class BusRoute implements Parcelable, Serializable, Comparable<BusRoute> 
     };
 
     @Override
-    public int compareTo(@NonNull BusRoute busRoute) {
-        if (this == busRoute) {
+    public int compareTo(@NonNull BusRoute other) {
+        if (this == other) {
             return 0;
+        } else if (isStarred() && !other.isStarred()) {
+            return -1;
+        } else if (!isStarred() && other.isStarred()) {
+            return 1;
+        } else {
+            return title.compareTo(other.getTitle());
         }
-        return title.compareTo(busRoute.getTitle());
     }
 }

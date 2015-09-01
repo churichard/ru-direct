@@ -5,8 +5,10 @@ import android.location.Location;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.TreeSet;
 
@@ -17,7 +19,7 @@ public class BusData {
     @DatabaseField(dataType = DataType.SERIALIZABLE)
     private HashMap<String, BusRoute> busTagsToBusRoutes;
 
-    private static BusRoute[] activeRoutes; // Active bus routes
+    private static ArrayList<BusRoute> activeRoutes; // Active bus routes
 
     public BusData() {
         // Needed for ormlite
@@ -35,11 +37,11 @@ public class BusData {
         this.busTagsToBusRoutes = busTagsToBusRoutes;
     }
 
-    public static BusRoute[] getActiveRoutes() {
+    public static ArrayList<BusRoute> getActiveRoutes() {
         return activeRoutes;
     }
 
-    public static void setActiveRoutes(BusRoute[] activeRoutes) {
+    public static void setActiveRoutes(ArrayList<BusRoute> activeRoutes) {
         BusData.activeRoutes = activeRoutes;
     }
 
@@ -47,7 +49,7 @@ public class BusData {
     public BusStop[] getAllBusStops() {
         // Create list of bus stops
         TreeSet<BusStop> busStops = new TreeSet<>();
-        BusRoute[] busRoutes = getBusRoutes();
+        ArrayList<BusRoute> busRoutes = getBusRoutes();
         if (busRoutes != null) {
             for (BusRoute route : busRoutes) {
                 busStops.addAll(Arrays.asList(route.getBusStops()));
@@ -59,11 +61,11 @@ public class BusData {
     }
 
     // Returns a list of the bus routes in sorted order
-    public BusRoute[] getBusRoutes() {
+    public ArrayList<BusRoute> getBusRoutes() {
         if (busTagsToBusRoutes != null) {
             Collection<BusRoute> routeCollection = busTagsToBusRoutes.values();
-            BusRoute[] busRoutes = routeCollection.toArray(new BusRoute[routeCollection.size()]);
-            Arrays.sort(busRoutes);
+            ArrayList<BusRoute> busRoutes = new ArrayList<>(routeCollection);
+            Collections.sort(busRoutes);
             return busRoutes;
         }
         return null;

@@ -5,6 +5,7 @@ import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,13 +19,17 @@ import org.rudirect.android.interfaces.ViewHolderClickListener;
 import org.rudirect.android.ui.holder.BusRouteViewHolder;
 import org.rudirect.android.util.ShowBusStopsHelper;
 
+import java.sql.SQLException;
+import java.util.ArrayList;
+
 public class BusRouteAdapter extends RecyclerView.Adapter<BusRouteViewHolder> {
 
-    private BusRoute[] busRoutes;
+    private static final String TAG = BusRouteAdapter.class.getSimpleName();
+    private ArrayList<BusRoute> busRoutes;
     private Activity activity;
     private Fragment fragment;
 
-    public BusRouteAdapter(BusRoute[] busRoutes, Activity activity, Fragment fragment) {
+    public BusRouteAdapter(ArrayList<BusRoute> busRoutes, Activity activity, Fragment fragment) {
         this.busRoutes = busRoutes;
         this.activity = activity;
         this.fragment = fragment;
@@ -46,7 +51,7 @@ public class BusRouteAdapter extends RecyclerView.Adapter<BusRouteViewHolder> {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_bus_routes, parent, false);
         return new BusRouteViewHolder(v, new ViewHolderClickListener() {
             public void onClick(View v, int position) {
-                BusRoute route = busRoutes[position]; // Get bus route
+                BusRoute route = busRoutes.get(position); // Get bus route
                 new ShowBusStopsHelper().execute(route, fragment); // Refresh bus times
 
                 // Setup intent
@@ -69,20 +74,70 @@ public class BusRouteAdapter extends RecyclerView.Adapter<BusRouteViewHolder> {
     // Replace the contents of a view
     @Override
     public void onBindViewHolder(final BusRouteViewHolder viewHolder, final int position) {
-        viewHolder.title.setText(busRoutes[position].getTitle());
+        viewHolder.title.setText(busRoutes.get(position).getTitle());
+        viewHolder.starImage.setActivated(busRoutes.get(position).isStarred());
+        viewHolder.starImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                BusRoute route = busRoutes.get(position);
+                boolean starred = !viewHolder.starImage.isActivated();
+                viewHolder.starImage.setActivated(starred);
+                route.setStarred(starred);
+                if (starred) {
+                    // Move bus route to top
+                    route.setStarred(true);
+                    busRoutes.remove(position);
+                    for (int i = 0; i < busRoutes.size(); i++) {
+                        if (!busRoutes.get(i).isStarred()
+                                || route.getTitle().compareToIgnoreCase(busRoutes.get(i).getTitle()) < 0) {
+                            busRoutes.add(i, route);
+                            notifyItemMoved(position, i);
+                            notifyItemRangeChanged(i, position - i + 1);
+                            break;
+                        }
+                    }
+                } else {
+                    // Move bus route back down
+                    route.setStarred(false);
+                    busRoutes.remove(position);
+                    for (int i = 0; i < busRoutes.size(); i++) {
+                        if (!busRoutes.get(i).isStarred()
+                                && route.getTitle().compareToIgnoreCase(busRoutes.get(i).getTitle()) < 0) {
+                            busRoutes.add(i, route);
+                            notifyItemMoved(position, i);
+                            notifyItemRangeChanged(position, i - position + 1);
+                            break;
+                        }
+                    }
+                }
+
+                // Update bus data
+                try {
+                    RUDirectApplication.getDatabaseHelper().getDao()
+                            .createOrUpdate(RUDirectApplication.getBusData());
+                } catch (SQLException e) {
+                    Log.e(TAG, e.toString(), e);
+                }
+            }
+        });
     }
 
     // Return the number of posts
     @Override
     public int getItemCount() {
         if (busRoutes != null) {
-            return busRoutes.length;
+            return busRoutes.size();
         }
         return 0;
     }
 
-    // Sets the bus routes
-    public void setBusRoutes(BusRoute[] busRoutes) {
+    // Returns the bus routes in the adapter
+    public ArrayList<BusRoute> getBusRoutes() {
+        return busRoutes;
+    }
+
+    // Sets the bus routes in the adapter
+    public void setBusRoutes(ArrayList<BusRoute> busRoutes) {
         this.busRoutes = busRoutes;
     }
 }

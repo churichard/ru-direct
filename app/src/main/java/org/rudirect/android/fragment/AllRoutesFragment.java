@@ -16,15 +16,17 @@ import android.widget.TextView;
 
 import com.google.android.gms.analytics.HitBuilders;
 
+import org.rudirect.android.R;
 import org.rudirect.android.activity.SettingsActivity;
+import org.rudirect.android.adapter.BusRouteAdapter;
 import org.rudirect.android.adapter.MainPagerAdapter;
+import org.rudirect.android.api.NextBusAPI;
 import org.rudirect.android.data.constants.RUDirectApplication;
 import org.rudirect.android.interfaces.NetworkCallFinishListener;
 import org.rudirect.android.ui.view.DividerItemDecoration;
-import org.rudirect.android.R;
-import org.rudirect.android.adapter.BusRouteAdapter;
-import org.rudirect.android.api.NextBusAPI;
 import org.rudirect.android.util.RUDirectUtil;
+
+import java.util.Collections;
 
 public class AllRoutesFragment extends BaseRouteFragment {
 
@@ -138,6 +140,10 @@ public class AllRoutesFragment extends BaseRouteFragment {
                     .setCategory(getString(R.string.all_routes_category))
                     .setAction(getString(R.string.view_action))
                     .build());
+            if (allBusesRecyclerView != null) {
+                allBusesRecyclerView.getAdapter().notifyDataSetChanged();
+                Collections.sort(((BusRouteAdapter) allBusesRecyclerView.getAdapter()).getBusRoutes());
+            }
         }
     }
 }

@@ -30,6 +30,8 @@ import org.rudirect.android.data.model.BusStop;
 import org.rudirect.android.util.DirectionsUtil;
 import org.rudirect.android.util.RUDirectUtil;
 
+import java.util.ArrayList;
+
 public class DirectionsActivity extends AppCompatActivity {
 
     private static final String TAG = DirectionsActivity.class.getSimpleName();
@@ -119,20 +121,20 @@ public class DirectionsActivity extends AppCompatActivity {
         overridePendingTransition(0, R.anim.abc_shrink_fade_out_from_bottom);
     }
 
-    private class GetDirections extends AsyncTask<BusStop, Void, BusRoute[]> {
+    private class GetDirections extends AsyncTask<BusStop, Void, ArrayList<BusRoute>> {
 
         private BusStop origin;
         private BusStop destination;
         private GraphPath<BusStop, BusRouteEdge> path;
 
-        protected BusRoute[] doInBackground(BusStop... stops) {
+        protected ArrayList<BusRoute> doInBackground(BusStop... stops) {
             origin = stops[0];
             destination = stops[1];
 
             if (RUDirectApplication.getBusData().getBusTagsToBusRoutes() == null) {
                 NextBusAPI.saveBusRoutes();
             }
-            BusRoute[] activeRoutes = NextBusAPI.getActiveRoutes();
+            ArrayList<BusRoute> activeRoutes = NextBusAPI.getActiveRoutes();
             for (BusRoute route : activeRoutes) {
                 NextBusAPI.saveBusStopTimes(route);
             }
@@ -144,8 +146,8 @@ public class DirectionsActivity extends AppCompatActivity {
             return activeRoutes;
         }
 
-        protected void onPostExecute(BusRoute[] activeRoutes) {
-            if (activeRoutes.length == 1 && activeRoutes[0] == null) {
+        protected void onPostExecute(ArrayList<BusRoute> activeRoutes) {
+            if (activeRoutes == null) {
                 if (RUDirectUtil.isNetworkAvailable()) {
                     pathTimeTextView.setText("There are no active buses right now!");
                     Snackbar.make(findViewById(R.id.directions_activity_layout),

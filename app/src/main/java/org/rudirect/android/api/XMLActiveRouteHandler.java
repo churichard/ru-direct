@@ -10,7 +10,6 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import java.sql.SQLException;
-import java.util.AbstractCollection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.TreeSet;
@@ -61,7 +60,7 @@ public class XMLActiveRouteHandler extends DefaultHandler {
     public void endDocument() throws SAXException {
         // Update active routes
         if (activeRoutes.size() > 0) {
-            BusData.setActiveRoutes(collectionToArray(activeRoutes));
+            BusData.setActiveRoutes(new ArrayList<>(activeRoutes));
         }
 
         // Update bus data
@@ -70,10 +69,5 @@ public class XMLActiveRouteHandler extends DefaultHandler {
         } catch (SQLException e) {
             Log.e(TAG, e.toString(), e);
         }
-    }
-
-    // Returns an array representation of the given collection
-    private BusRoute[] collectionToArray(AbstractCollection<BusRoute> arrayList) {
-        return arrayList.toArray(new BusRoute[arrayList.size()]);
     }
 }
