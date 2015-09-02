@@ -26,8 +26,6 @@ import org.rudirect.android.interfaces.NetworkCallFinishListener;
 import org.rudirect.android.ui.view.DividerItemDecoration;
 import org.rudirect.android.util.RUDirectUtil;
 
-import java.util.Collections;
-
 public class AllRoutesFragment extends BaseRouteFragment {
 
     private RecyclerView recyclerView;
@@ -145,10 +143,6 @@ public class AllRoutesFragment extends BaseRouteFragment {
                     .setCategory(getString(R.string.all_routes_category))
                     .setAction(getString(R.string.view_action))
                     .build());
-            if (recyclerView != null) {
-                recyclerView.getAdapter().notifyDataSetChanged();
-                Collections.sort(((BusRouteAdapter) recyclerView.getAdapter()).getBusRoutes());
-            }
         }
     }
 }

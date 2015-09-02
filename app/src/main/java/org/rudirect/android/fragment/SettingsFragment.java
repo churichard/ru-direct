@@ -3,6 +3,7 @@ package org.rudirect.android.fragment;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
@@ -23,12 +24,27 @@ public class SettingsFragment extends PreferenceFragment {
 
         addPreferencesFromResource(R.xml.preferences);
         setupContributors();
-        setupVersionInfo();
-        setupAttributions();
+        setupAbout();
     }
 
-    // Setup contributors
+    // Set up the Contributors section
     private void setupContributors() {
+        // Set up team info
+        Preference teamPref = findPreference(getString(R.string.team_key));
+        teamPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setTitle(R.string.pref_team_title)
+                        .setMessage(R.string.team_message)
+                        .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) { /* Do nothing */ }
+                        }).create().show();
+                return true;
+            }
+        });
+
+        // Set up contributors info
         Preference contributorsPref = findPreference(getString(R.string.contributors_key));
         contributorsPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
@@ -43,6 +59,7 @@ public class SettingsFragment extends PreferenceFragment {
             }
         });
 
+        // Set up special thanks info
         Preference specialThanksPref = findPreference(getString(R.string.special_thanks_key));
         specialThanksPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
@@ -58,16 +75,26 @@ public class SettingsFragment extends PreferenceFragment {
         });
     }
 
-    // Setup version information
-    private void setupVersionInfo() {
+    // Set up the About section
+    private void setupAbout() {
+        // Set up version info
         Preference versionPref = findPreference(getString(R.string.version_key));
         versionPref.setTitle("RU Direct v" + BuildConfig.VERSION_NAME);
-    }
 
-    // Setup open source software license text
-    private void setupAttributions() {
-        Preference openSourcePref = findPreference(getString(R.string.open_source_software_key));
+        // Set up open source info
+        Preference openSourcePref = findPreference(getString(R.string.open_source_key));
         openSourcePref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/churichard/ru-direct"));
+                startActivity(browserIntent);
+                return true;
+            }
+        });
+
+        // Set up attributions
+        Preference attributionsPref = findPreference(getString(R.string.attributions_key));
+        attributionsPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             public boolean onPreferenceClick(Preference preference) {
                 Intent intent = new Intent(settingsActivity, AttributionsActivity.class);
                 startActivity(intent);
