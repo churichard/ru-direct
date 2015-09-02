@@ -34,7 +34,7 @@ public class SettingsFragment extends PreferenceFragment {
         teamPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                AlertDialog.Builder builder = new AlertDialog.Builder(settingsActivity);
                 builder.setTitle(R.string.pref_team_title)
                         .setMessage(R.string.team_message)
                         .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
@@ -49,7 +49,7 @@ public class SettingsFragment extends PreferenceFragment {
         contributorsPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                AlertDialog.Builder builder = new AlertDialog.Builder(settingsActivity);
                 builder.setTitle(R.string.pref_contributors_title)
                         .setMessage(R.string.contributors_message)
                         .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
@@ -64,7 +64,7 @@ public class SettingsFragment extends PreferenceFragment {
         specialThanksPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                AlertDialog.Builder builder = new AlertDialog.Builder(settingsActivity);
                 builder.setTitle(R.string.pref_special_thanks_title)
                         .setMessage(R.string.special_thanks_message)
                         .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {

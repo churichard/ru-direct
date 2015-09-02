@@ -67,7 +67,7 @@ public class DirectionsUtil {
         Log.d(TAG, "Bus stops graph has been set up.");
     }
 
-    // Adds a weighted edge between two bus stops, giving preference to times with the same vehicle id
+    // Adds a weighted edge between two bus stops
     private static BusStopTime addEdge(String routeName, BusStop stop1, BusStop stop2, BusStopTime prevTime) {
         // Set previous time if it hasn't been set yet
         if (prevTime == null) {
@@ -77,23 +77,16 @@ public class DirectionsUtil {
         // Add edge between stop1 and stop2
         BusRouteEdge edge = busStopsGraph.addEdge(stop1, stop2);
         ArrayList<BusStopTime> busStopTimes = stop2.getTimes();
-        BusStopTime nextSmallestTime = null;
         String vehicleId = prevTime.getVehicleId();
         edge.setRouteName(routeName);
 
-        // Iterate through all the times for the bus stop to get the one with the correct vehicle id
+        // Iterate through all the times for the bus stop to get the lowest one
         for (int j = 0; j < busStopTimes.size(); j++) {
             BusStopTime time = busStopTimes.get(j);
 
             // Check to see that the time for this bus stop is greater than the time for the previous bus stop
             if (time.getMinutes() - prevTime.getMinutes() < 0) {
                 continue;
-            }
-
-            // Adds the next smallest time just in case the same vehicle from before doesn't go to this stop
-            if (nextSmallestTime == null && time.getMinutes() > prevTime.getMinutes()
-                    && time.getVehicleId() != prevTime.getVehicleId()) {
-                nextSmallestTime = time;
             }
 
             // Staying on the same vehicle
@@ -105,12 +98,12 @@ public class DirectionsUtil {
                 return time;
             }
             // Transfer to another vehicle
-            else if (nextSmallestTime != null && j == busStopTimes.size() - 1) {
+            else {
                 edge.setVehicleId(prevTime.getVehicleId());
                 busStopsGraph.setEdgeWeight(edge, time.getMinutes() - prevTime.getMinutes());
                 // Log.d(TAG, "Edge: " + stop1.getTitle() + " to " + stop2.getTitle());
                 // Log.d(TAG, "Vehicle ID: " + time.getVehicleId() + ", Time (vehicle transfer): " + (time.getMinutes() - prevTime.getMinutes()));
-                return nextSmallestTime;
+                return time;
             }
         }
 

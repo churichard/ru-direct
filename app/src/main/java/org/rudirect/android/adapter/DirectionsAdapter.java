@@ -55,7 +55,7 @@ public class DirectionsAdapter extends RecyclerView.Adapter<DirectionsItemViewHo
             // Handle vehicle transfers
             if (items.get(items.size() - 1).getTitle().equals(busStopEdges.get(i).getTargetBusStop().getTitle())) {
                 if (!busStopEdges.get(i).getRouteName().equals(busStopEdges.get(i + 1).getRouteName())
-                        || busStopEdges.get(i).getVehicleId() != busStopEdges.get(i + 1).getVehicleId()) {
+                        || !busStopEdges.get(i).getVehicleId().equals(busStopEdges.get(i + 1).getVehicleId())) {
                     items.remove(items.get(items.size() - 1));
                     items.add(new DirectionsOuterBusStop(busStopEdges.get(i).getTargetBusStop().getTitle(),
                             busStopEdges.get(i).getTargetBusStop().getTag(), getTimeInHHMM(time), R.drawable.ic_bus_stop_circle));
