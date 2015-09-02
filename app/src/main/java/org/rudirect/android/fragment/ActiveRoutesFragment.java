@@ -30,7 +30,7 @@ import java.util.Collections;
 
 public class ActiveRoutesFragment extends BaseRouteFragment {
 
-    private RecyclerView activeBusesRecyclerView;
+    private RecyclerView recyclerView;
     private ProgressBar progressBar;
 
     @Override
@@ -42,13 +42,13 @@ public class ActiveRoutesFragment extends BaseRouteFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        progressBar = (ProgressBar) mainActivity.findViewById(R.id.progress_spinner);
+        progressBar = (ProgressBar) mainActivity.findViewById(R.id.active_routes_progress_spinner);
         progressBar.setVisibility(View.VISIBLE);
 
         setupRecyclerView();
         setupSwipeRefreshLayout();
 
-        errorView = (TextView) mainActivity.findViewById(R.id.active_buses_error);
+        errorView = (TextView) mainActivity.findViewById(R.id.active_routes_error);
         updateActiveRoutes();
     }
 
@@ -68,19 +68,19 @@ public class ActiveRoutesFragment extends BaseRouteFragment {
     // Set up RecyclerView
     private void setupRecyclerView() {
         // Initialize recycler view
-        activeBusesRecyclerView = (RecyclerView) mainActivity.findViewById(R.id.active_buses_recyclerview);
+        recyclerView = (RecyclerView) mainActivity.findViewById(R.id.active_routes_recyclerview);
         // Set layout manager
         LinearLayoutManager layoutManager = new LinearLayoutManager(mainActivity);
-        activeBusesRecyclerView.setLayoutManager(layoutManager);
+        recyclerView.setLayoutManager(layoutManager);
         // Setup layout
-        activeBusesRecyclerView.addItemDecoration(new DividerItemDecoration(mainActivity, LinearLayoutManager.VERTICAL));
+        recyclerView.addItemDecoration(new DividerItemDecoration(mainActivity, LinearLayoutManager.VERTICAL));
         // Set adapter
-        activeBusesRecyclerView.setAdapter(new BusRouteAdapter(mainActivity, this));
+        recyclerView.setAdapter(new BusRouteAdapter(mainActivity, this));
     }
 
     // Set up SwipeRefreshLayout
     private void setupSwipeRefreshLayout() {
-        mSwipeRefreshLayout = (SwipeRefreshLayout) mainActivity.findViewById(R.id.active_buses_swipe_refresh_layout);
+        mSwipeRefreshLayout = (SwipeRefreshLayout) mainActivity.findViewById(R.id.active_routes_swipe_refresh_layout);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -88,6 +88,11 @@ public class ActiveRoutesFragment extends BaseRouteFragment {
             }
         });
         mSwipeRefreshLayout.setColorSchemeResources(R.color.primary_color);
+    }
+
+    // Returns the RecyclerView
+    public RecyclerView getRecyclerView() {
+        return recyclerView;
     }
 
     // Update active routes
@@ -105,7 +110,7 @@ public class ActiveRoutesFragment extends BaseRouteFragment {
         }
 
         protected void onPostExecute(ArrayList<BusRoute> activeRoutes) {
-            BusRouteAdapter adapter = (BusRouteAdapter) activeBusesRecyclerView.getAdapter();
+            BusRouteAdapter adapter = (BusRouteAdapter) recyclerView.getAdapter();
             if (activeRoutes == null) {
                 // Setup error message
                 errorView.setVisibility(View.VISIBLE);
@@ -137,9 +142,9 @@ public class ActiveRoutesFragment extends BaseRouteFragment {
                     .setCategory(getString(R.string.active_routes_category))
                     .setAction(getString(R.string.view_action))
                     .build());
-            if (activeBusesRecyclerView != null) {
-                activeBusesRecyclerView.getAdapter().notifyDataSetChanged();
-                Collections.sort(((BusRouteAdapter) activeBusesRecyclerView.getAdapter()).getBusRoutes());
+            if (recyclerView != null) {
+                recyclerView.getAdapter().notifyDataSetChanged();
+                Collections.sort(((BusRouteAdapter) recyclerView.getAdapter()).getBusRoutes());
             }
         }
     }

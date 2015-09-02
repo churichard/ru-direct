@@ -30,7 +30,7 @@ import java.util.Collections;
 
 public class AllRoutesFragment extends BaseRouteFragment {
 
-    private RecyclerView allBusesRecyclerView;
+    private RecyclerView recyclerView;
     private ProgressBar progressBar;
 
     @Override
@@ -42,12 +42,12 @@ public class AllRoutesFragment extends BaseRouteFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        progressBar = (ProgressBar) mainActivity.findViewById(R.id.progress_spinner);
+        progressBar = (ProgressBar) mainActivity.findViewById(R.id.all_routes_progress_spinner);
         progressBar.setVisibility(View.VISIBLE);
 
         setupRecyclerView();
         setupSwipeRefreshLayout();
-        errorView = (TextView) mainActivity.findViewById(R.id.all_buses_error);
+        errorView = (TextView) mainActivity.findViewById(R.id.all_routes_error);
         updateAllRoutes();
     }
 
@@ -67,19 +67,19 @@ public class AllRoutesFragment extends BaseRouteFragment {
     // Set up RecyclerView
     private void setupRecyclerView() {
         // Initialize recycler view
-        allBusesRecyclerView = (RecyclerView) mainActivity.findViewById(R.id.all_buses_recyclerview);
+        recyclerView = (RecyclerView) mainActivity.findViewById(R.id.all_routes_recyclerview);
         // Set layout manager
         LinearLayoutManager layoutManager = new LinearLayoutManager(mainActivity);
-        allBusesRecyclerView.setLayoutManager(layoutManager);
+        recyclerView.setLayoutManager(layoutManager);
         // Setup layout
-        allBusesRecyclerView.addItemDecoration(new DividerItemDecoration(mainActivity, LinearLayoutManager.VERTICAL));
+        recyclerView.addItemDecoration(new DividerItemDecoration(mainActivity, LinearLayoutManager.VERTICAL));
         // Set adapter
-        allBusesRecyclerView.setAdapter(new BusRouteAdapter(RUDirectApplication.getBusData().getBusRoutes(), mainActivity, this));
+        recyclerView.setAdapter(new BusRouteAdapter(RUDirectApplication.getBusData().getBusRoutes(), mainActivity, this));
     }
 
     // Set up SwipeRefreshLayout
     private void setupSwipeRefreshLayout() {
-        mSwipeRefreshLayout = (SwipeRefreshLayout) mainActivity.findViewById(R.id.all_buses_swipe_refresh_layout);
+        mSwipeRefreshLayout = (SwipeRefreshLayout) mainActivity.findViewById(R.id.all_routes_swipe_refresh_layout);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -87,6 +87,11 @@ public class AllRoutesFragment extends BaseRouteFragment {
             }
         });
         mSwipeRefreshLayout.setColorSchemeResources(R.color.primary_color);
+    }
+
+    // Returns the RecyclerView
+    public RecyclerView getRecyclerView() {
+        return recyclerView;
     }
 
     // Sets up the RecyclerView
@@ -112,11 +117,11 @@ public class AllRoutesFragment extends BaseRouteFragment {
         protected void onPostExecute(Void v) {
             if (RUDirectUtil.isNetworkAvailable()) {
                 errorView.setVisibility(View.GONE);
-                BusRouteAdapter adapter = ((BusRouteAdapter) allBusesRecyclerView.getAdapter());
+                BusRouteAdapter adapter = ((BusRouteAdapter) recyclerView.getAdapter());
                 adapter.setBusRoutes(RUDirectApplication.getBusData().getBusRoutes());
                 adapter.notifyDataSetChanged();
             } else {
-                if (allBusesRecyclerView.getAdapter().getItemCount() == 0) {
+                if (recyclerView.getAdapter().getItemCount() == 0) {
                     errorView.setVisibility(View.VISIBLE);
                     errorView.setText("Unable to get routes. Check your Internet connection and try again.");
                 }
@@ -140,9 +145,9 @@ public class AllRoutesFragment extends BaseRouteFragment {
                     .setCategory(getString(R.string.all_routes_category))
                     .setAction(getString(R.string.view_action))
                     .build());
-            if (allBusesRecyclerView != null) {
-                allBusesRecyclerView.getAdapter().notifyDataSetChanged();
-                Collections.sort(((BusRouteAdapter) allBusesRecyclerView.getAdapter()).getBusRoutes());
+            if (recyclerView != null) {
+                recyclerView.getAdapter().notifyDataSetChanged();
+                Collections.sort(((BusRouteAdapter) recyclerView.getAdapter()).getBusRoutes());
             }
         }
     }

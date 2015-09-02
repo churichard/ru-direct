@@ -54,7 +54,7 @@ public class BusTimesFragment extends Fragment implements AppBarLayout.OnOffsetC
         super.onViewCreated(view, savedInstanceState);
 
         appBarLayout = (AppBarLayout) busStopsActivity.findViewById(R.id.appbar);
-        progressBar = (ProgressBar) busStopsActivity.findViewById(R.id.progress_spinner);
+        progressBar = (ProgressBar) busStopsActivity.findViewById(R.id.active_routes_progress_spinner);
         progressBar.setVisibility(View.VISIBLE);
 
         setupRecyclerView();

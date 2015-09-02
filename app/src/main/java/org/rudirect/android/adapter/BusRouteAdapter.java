@@ -15,12 +15,13 @@ import org.rudirect.android.activity.BusStopsActivity;
 import org.rudirect.android.data.constants.RUDirectApplication;
 import org.rudirect.android.data.model.BusRoute;
 import org.rudirect.android.fragment.ActiveRoutesFragment;
+import org.rudirect.android.fragment.AllRoutesFragment;
 import org.rudirect.android.interfaces.ViewHolderClickListener;
 import org.rudirect.android.ui.holder.BusRouteViewHolder;
-import org.rudirect.android.util.ShowBusStopsHelper;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class BusRouteAdapter extends RecyclerView.Adapter<BusRouteViewHolder> {
 
@@ -52,7 +53,6 @@ public class BusRouteAdapter extends RecyclerView.Adapter<BusRouteViewHolder> {
         return new BusRouteViewHolder(v, new ViewHolderClickListener() {
             public void onClick(View v, int position) {
                 BusRoute route = busRoutes.get(position); // Get bus route
-                new ShowBusStopsHelper().execute(route, fragment); // Refresh bus times
 
                 // Setup intent
                 Intent intent = new Intent(activity, BusStopsActivity.class);
@@ -79,37 +79,12 @@ public class BusRouteAdapter extends RecyclerView.Adapter<BusRouteViewHolder> {
         viewHolder.starImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                BusRoute route = busRoutes.get(position);
+                // Update the star image
                 boolean starred = !viewHolder.starImage.isActivated();
                 viewHolder.starImage.setActivated(starred);
-                route.setStarred(starred);
-                if (starred) {
-                    // Move bus route to top
-                    route.setStarred(true);
-                    busRoutes.remove(position);
-                    for (int i = 0; i < busRoutes.size(); i++) {
-                        if (!busRoutes.get(i).isStarred()
-                                || route.getTitle().compareToIgnoreCase(busRoutes.get(i).getTitle()) < 0) {
-                            busRoutes.add(i, route);
-                            notifyItemMoved(position, i);
-                            notifyItemRangeChanged(i, position - i + 1);
-                            break;
-                        }
-                    }
-                } else {
-                    // Move bus route back down
-                    route.setStarred(false);
-                    busRoutes.remove(position);
-                    for (int i = 0; i < busRoutes.size(); i++) {
-                        if (!busRoutes.get(i).isStarred()
-                                && route.getTitle().compareToIgnoreCase(busRoutes.get(i).getTitle()) < 0) {
-                            busRoutes.add(i, route);
-                            notifyItemMoved(position, i);
-                            notifyItemRangeChanged(position, i - position + 1);
-                            break;
-                        }
-                    }
-                }
+
+                // Handle star click
+                handleStarClick(position, starred);
 
                 // Update bus data
                 try {
@@ -117,6 +92,18 @@ public class BusRouteAdapter extends RecyclerView.Adapter<BusRouteViewHolder> {
                             .createOrUpdate(RUDirectApplication.getBusData());
                 } catch (SQLException e) {
                     Log.e(TAG, e.toString(), e);
+                }
+
+                // Update recyclerview for the other bus routes tab
+                BusRouteAdapter adapter = null;
+                if (fragment instanceof ActiveRoutesFragment) {
+                    adapter = (BusRouteAdapter) ((AllRoutesFragment) MainPagerAdapter.getRegisteredFragment(2)).getRecyclerView().getAdapter();
+                } else if (fragment instanceof AllRoutesFragment) {
+                    adapter = (BusRouteAdapter) ((ActiveRoutesFragment) MainPagerAdapter.getRegisteredFragment(0)).getRecyclerView().getAdapter();
+                }
+                if (adapter != null) {
+                    adapter.notifyDataSetChanged();
+                    Collections.sort(adapter.getBusRoutes());
                 }
             }
         });
@@ -129,6 +116,44 @@ public class BusRouteAdapter extends RecyclerView.Adapter<BusRouteViewHolder> {
             return busRoutes.size();
         }
         return 0;
+    }
+
+    // Handles what happens when a star is clicked
+    private void handleStarClick(int position, boolean starred) {
+        BusRoute route = busRoutes.get(position);
+        route.setStarred(starred);
+        busRoutes.remove(position);
+
+        // Move bus route to the proper position
+        int size = busRoutes.size();
+        for (int i = 0; i <= size; i++) {
+            if (i == size
+                    || (starred && (!busRoutes.get(i).isStarred() ||
+                    route.getTitle().compareToIgnoreCase(busRoutes.get(i).getTitle()) < 0))
+                    || (!starred && !busRoutes.get(i).isStarred() &&
+                    route.getTitle().compareToIgnoreCase(busRoutes.get(i).getTitle()) < 0)) {
+                busRoutes.add(i, route);
+                notifyItemMoved(position, i);
+                notifyItemRangeChanged(Math.min(position, i), Math.abs(position - i) + 1);
+                break;
+            }
+        }
+
+        // Scroll to top
+        if (starred || position == 0) {
+            scrollToTop();
+        }
+    }
+
+    // Helper method that scrolls the RecyclerView to the first item
+    private void scrollToTop() {
+        if (fragment instanceof ActiveRoutesFragment) {
+            ActiveRoutesFragment activeRoutesFragment = (ActiveRoutesFragment) fragment;
+            activeRoutesFragment.getRecyclerView().scrollToPosition(0);
+        } else if (fragment instanceof AllRoutesFragment) {
+            AllRoutesFragment allRoutesFragment = (AllRoutesFragment) fragment;
+            allRoutesFragment.getRecyclerView().scrollToPosition(0);
+        }
     }
 
     // Returns the bus routes in the adapter

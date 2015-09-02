@@ -4,7 +4,7 @@
     android:layout_height="match_parent">
 
     <TextView
-        android:id="@+id/all_buses_error"
+        android:id="@+id/all_routes_error"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
@@ -16,16 +16,16 @@
         android:visibility="gone" />
 
     <include
-        android:id="@+id/progress_spinner"
+        android:id="@+id/all_routes_progress_spinner"
         layout="@layout/progress_spinner" />
 
     <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/all_buses_swipe_refresh_layout"
+        android:id="@+id/all_routes_swipe_refresh_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 
         <android.support.v7.widget.RecyclerView
-            android:id="@+id/all_buses_recyclerview"
+            android:id="@+id/all_routes_recyclerview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scrollbars="vertical" />

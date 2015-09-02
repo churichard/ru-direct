@@ -14,7 +14,7 @@
         android:visibility="gone" />
 
     <include
-        android:id="@+id/progress_spinner"
+        android:id="@+id/active_routes_progress_spinner"
         layout="@layout/progress_spinner" />
 
     <android.support.v4.widget.SwipeRefreshLayout

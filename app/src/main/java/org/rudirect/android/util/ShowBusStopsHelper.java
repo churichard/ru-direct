@@ -11,25 +11,23 @@ import org.rudirect.android.data.model.BusRoute;
 import org.rudirect.android.data.model.BusStop;
 import org.rudirect.android.fragment.BusTimesFragment;
 
-public class ShowBusStopsHelper extends AsyncTask<Object, Void, Void> {
+public class ShowBusStopsHelper extends AsyncTask<Object, Void, BusStop[]> {
 
     private Fragment fragment;
-    private BusStop[] busStops;
 
     @Override
-    protected Void doInBackground(Object... objects) {
+    protected BusStop[] doInBackground(Object... objects) {
         BusRoute route = (BusRoute) objects[0];
         fragment = (Fragment) objects[1];
 
         // Save bus stop times and get the bus stops
         NextBusAPI.saveBusStopTimes(route);
-        busStops = route.getBusStops();
 
-        return null;
+        return route.getBusStops();
     }
 
     @Override
-    protected void onPostExecute(Void v) {
+    protected void onPostExecute(BusStop[] busStops) {
         if (fragment instanceof BusTimesFragment) {
             // Update items in RecyclerView
             BusTimesFragment busTimesFragment = ((BusTimesFragment) fragment);

@@ -20,7 +20,7 @@
     </android.support.design.widget.AppBarLayout>
 
     <include
-        android:id="@+id/progress_spinner"
+        android:id="@+id/active_routes_progress_spinner"
         layout="@layout/progress_spinner"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
