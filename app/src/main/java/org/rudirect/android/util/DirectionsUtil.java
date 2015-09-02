@@ -36,13 +36,12 @@ public class DirectionsUtil {
         for (BusRoute activeRoute : BusData.getActiveRoutes()) {
             if (activeRoute != null) {
                 // Log.d(TAG, "Active bus tag: " + activeBusTag + "\n_");
-                String routeName = activeRoute.getTitle();
                 BusStop[] busStops = activeRoute.getBusStops();
                 BusStopTime prevTime = null;
 
                 // Add vertex if the first bus stop is active
                 if (busStops[0].isActive()) {
-                    addVertex(routeName, busStops[0]);
+                    addVertex(activeRoute, busStops[0]);
                     prevTime = busStops[0].getTimes().get(0);
                 }
 
@@ -50,17 +49,17 @@ public class DirectionsUtil {
                 for (int i = 1; i < busStops.length; i++) {
                     // Add vertex if this bus stop is active
                     if (busStops[i].isActive()) {
-                        addVertex(routeName, busStops[i]);
+                        addVertex(activeRoute, busStops[i]);
                         // Add edge between this bus stop and the previous bus stop if they are both active
                         if (busStops[i - 1].isActive()) {
-                            prevTime = addEdge(routeName, busStops[i - 1], busStops[i], prevTime);
+                            prevTime = addEdge(activeRoute, busStops[i - 1], busStops[i], prevTime);
                         }
                     }
                 }
 
                 // Add edge from last bus stop to first bus stop
                 if (busStops[busStops.length - 1].isActive() && busStops[0].isActive()) {
-                    addEdge(routeName, busStops[busStops.length - 1], busStops[0], prevTime);
+                    addEdge(activeRoute, busStops[busStops.length - 1], busStops[0], prevTime);
                 }
             }
         }
@@ -68,7 +67,7 @@ public class DirectionsUtil {
     }
 
     // Adds a weighted edge between two bus stops
-    private static BusStopTime addEdge(String routeName, BusStop stop1, BusStop stop2, BusStopTime prevTime) {
+    private static BusStopTime addEdge(BusRoute route, BusStop stop1, BusStop stop2, BusStopTime prevTime) {
         // Set previous time if it hasn't been set yet
         if (prevTime == null) {
             prevTime = stop2.getTimes().get(0);
@@ -78,7 +77,8 @@ public class DirectionsUtil {
         BusRouteEdge edge = busStopsGraph.addEdge(stop1, stop2);
         ArrayList<BusStopTime> busStopTimes = stop2.getTimes();
         String vehicleId = prevTime.getVehicleId();
-        edge.setRouteName(routeName);
+        edge.setRouteName(route.getTitle());
+        edge.setRouteTag(route.getTag());
 
         // Iterate through all the times for the bus stop to get the lowest one
         for (int j = 0; j < busStopTimes.size(); j++) {
@@ -113,7 +113,7 @@ public class DirectionsUtil {
     }
 
     // Adds the bus stop to the graph while also handling duplicate bus stops
-    private static void addVertex(String routeName, BusStop busStop) {
+    private static void addVertex(BusRoute route, BusStop busStop) {
         ArrayList<BusStop> stopsArrayList;
 
         // Reset the bus stop ID to 0 if it isn't 0
@@ -126,8 +126,8 @@ public class DirectionsUtil {
             busStop.setId(stopsArrayList.size());
             busStopsGraph.addVertex(busStop);
             for (BusStop stop : stopsArrayList) {
-                addEdge(routeName, busStop, stop, busStop.getTimes().get(0));
-                addEdge(routeName, stop, busStop, stop.getTimes().get(0));
+                addEdge(route, busStop, stop, busStop.getTimes().get(0));
+                addEdge(route, stop, busStop, stop.getTimes().get(0));
             }
             stopsArrayList.add(busStop);
         } else { // If the bus stop doesn't exist in the graph

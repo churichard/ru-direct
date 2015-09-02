@@ -160,7 +160,7 @@ public class DirectionsActivity extends AppCompatActivity {
             } else {
                 if (path != null) {
                     // Display path and total time
-                    directionsRecyclerView.setAdapter(new DirectionsAdapter(path));
+                    directionsRecyclerView.setAdapter(new DirectionsAdapter(DirectionsActivity.this, path));
                     pathTimeTextView.setText("Total time: " + (int) DirectionsUtil.getTotalPathTime() + " minutes");
                 } else {
                     // No path available
