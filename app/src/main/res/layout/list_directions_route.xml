@@ -3,40 +3,22 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_marginBottom="8dp"
-    android:background="?android:attr/selectableItemBackground"
     android:paddingLeft="@dimen/directions_margin"
     android:paddingRight="@dimen/directions_margin">
 
-    <TextView
-        android:id="@+id/directions_time"
+    <Button
+        android:id="@+id/directions_route_button"
         style="@style/TextViewStyle"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginEnd="15dp"
-        android:layout_marginRight="15dp"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textColor="@color/primary_color"
-        android:textStyle="bold"
-        android:visibility="gone" />
-
-    <ImageView
-        android:id="@+id/directions_icon"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_centerVertical="true"
-        android:layout_marginEnd="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_toLeftOf="@+id/directions_title"
-        android:layout_toStartOf="@+id/directions_title"
-        android:contentDescription="@null" />
-
-    <TextView
-        android:id="@+id/directions_title"
-        style="@style/TextViewStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        android:gravity="end"
+        android:drawableLeft="@drawable/ic_directions_bus"
+        android:drawablePadding="10dp"
+        android:drawableStart="@drawable/ic_directions_bus"
+        android:gravity="end|center_vertical"
+        android:padding="10dp"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="@color/primary_color"
         android:textStyle="bold" />

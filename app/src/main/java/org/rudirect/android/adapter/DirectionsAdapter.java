@@ -23,7 +23,8 @@ import org.rudirect.android.data.model.DirectionsInnerBusStop;
 import org.rudirect.android.data.model.DirectionsItem;
 import org.rudirect.android.data.model.DirectionsOuterBusStop;
 import org.rudirect.android.interfaces.ViewHolderClickListener;
-import org.rudirect.android.ui.holder.DirectionsItemViewHolder;
+import org.rudirect.android.ui.holder.DirectionsBusStopViewHolder;
+import org.rudirect.android.ui.holder.DirectionsRouteViewHolder;
 import org.rudirect.android.util.DirectionsUtil;
 import org.rudirect.android.util.RUDirectUtil;
 
@@ -32,7 +33,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class DirectionsAdapter extends RecyclerView.Adapter<DirectionsItemViewHolder> {
+public class DirectionsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private static final int INNER_BUS_STOP = 0, OUTER_BUS_STOP = 1, BUS_ROUTE = 2;
     private Activity activity;
@@ -50,7 +51,7 @@ public class DirectionsAdapter extends RecyclerView.Adapter<DirectionsItemViewHo
         items.add(new DirectionsOuterBusStop(busStopEdges.get(0).getSourceBusStop().getTitle(),
                 busStopEdges.get(0).getSourceBusStop().getTag(), getTimeInHHMM(time), R.drawable.ic_bus_stop_circle));
         items.add(new DirectionsBusRoute(busStopEdges.get(0).getRouteName()
-                + " (Bus #" + busStopEdges.get(0).getVehicleId() + ")", busStopEdges.get(0).getRouteTag(), R.drawable.ic_directions_bus));
+                + " (Bus #" + busStopEdges.get(0).getVehicleId() + ")", busStopEdges.get(0).getRouteTag()));
 
         // Iterate through all the edges
         for (int i = 0; i < busStopEdges.size() - 1; i++) {
@@ -65,7 +66,7 @@ public class DirectionsAdapter extends RecyclerView.Adapter<DirectionsItemViewHo
                     items.add(new DirectionsOuterBusStop(busStopEdges.get(i).getTargetBusStop().getTitle(),
                             busStopEdges.get(i).getTargetBusStop().getTag(), getTimeInHHMM(time), R.drawable.ic_bus_stop_circle));
                     items.add(new DirectionsBusRoute(busStopEdges.get(i + 1).getRouteName()
-                            + " (Bus #" + busStopEdges.get(i + 1).getVehicleId() + ")", busStopEdges.get(i + 1).getRouteTag(), R.drawable.ic_directions_bus));
+                            + " (Bus #" + busStopEdges.get(i + 1).getVehicleId() + ")", busStopEdges.get(i + 1).getRouteTag()));
                 }
                 continue;
             }
@@ -86,15 +87,57 @@ public class DirectionsAdapter extends RecyclerView.Adapter<DirectionsItemViewHo
     }
 
     @Override
-    public DirectionsItemViewHolder onCreateViewHolder(final ViewGroup parent, int viewType) {
+    public RecyclerView.ViewHolder onCreateViewHolder(final ViewGroup parent, int viewType) {
         View v;
-        DirectionsItemViewHolder viewHolder;
 
         // Set view and viewholder
         if (viewType == BUS_ROUTE) {
             v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_directions_route, parent, false);
-            viewHolder = new DirectionsItemViewHolder(v, new ViewHolderClickListener() {
-                public void onClick(View v, int position) {
+            return new DirectionsRouteViewHolder(v, new ViewHolderClickListener() {
+                public void onClick(View v, int position) { /* Do nothing */ }
+            });
+        } else {
+            v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_directions_bus_stop, parent, false);
+            DirectionsBusStopViewHolder viewHolder = new DirectionsBusStopViewHolder(v, new ViewHolderClickListener() {
+                public void onClick(View v, int position) { /* Do nothing */ }
+            });
+
+            // Stylize outer bus stop
+            if (viewType == OUTER_BUS_STOP) {
+                Resources resources = RUDirectApplication.getContext().getResources();
+                viewHolder.title.setTypeface(null, Typeface.BOLD);
+                viewHolder.title.setTextColor(resources.getColor(android.R.color.black));
+                viewHolder.title.setTextSize(20);
+                viewHolder.time.setTypeface(null, Typeface.BOLD);
+                viewHolder.time.setTextColor(resources.getColor(android.R.color.black));
+                viewHolder.time.setTextSize(20);
+            } else if (viewType == INNER_BUS_STOP) {
+                RelativeLayout layout = (RelativeLayout) v.findViewById(R.id.directions_bus_stop_layout);
+                RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+                        RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT
+                );
+                params.setMargins(0, RUDirectUtil.dpToPx(12), 0, 0);
+                layout.setLayoutParams(params);
+            }
+
+            return viewHolder;
+        }
+    }
+
+    @Override
+    public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, final int position) {
+        DirectionsItem item = items.get(position);
+        if (viewHolder instanceof DirectionsBusStopViewHolder) {
+            DirectionsBusStopViewHolder busStopViewHolder = (DirectionsBusStopViewHolder) viewHolder;
+            busStopViewHolder.title.setText(item.getTitle());
+            busStopViewHolder.icon.setImageResource(item.getIconId());
+            busStopViewHolder.time.setText(item.getTime());
+        } else if (viewHolder instanceof DirectionsRouteViewHolder) {
+            DirectionsRouteViewHolder routeViewHolder = (DirectionsRouteViewHolder) viewHolder;
+            routeViewHolder.route.setText(item.getTitle());
+            routeViewHolder.route.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
                     // Setup intent
                     Context context = RUDirectApplication.getContext();
                     Intent intent = new Intent(activity, BusStopsActivity.class);
@@ -107,40 +150,7 @@ public class DirectionsAdapter extends RecyclerView.Adapter<DirectionsItemViewHo
                     activity.overridePendingTransition(R.anim.abc_grow_fade_in_from_bottom, 0);
                 }
             });
-        } else {
-            v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_directions_bus_stop, parent, false);
-            viewHolder = new DirectionsItemViewHolder(v, new ViewHolderClickListener() {
-                public void onClick(View v, int position) { /* Do nothing */ }
-            });
         }
-
-        // Stylize outer bus stop
-        if (viewType == OUTER_BUS_STOP) {
-            Resources resources = RUDirectApplication.getContext().getResources();
-            viewHolder.title.setTypeface(null, Typeface.BOLD);
-            viewHolder.title.setTextColor(resources.getColor(android.R.color.black));
-            viewHolder.title.setTextSize(20);
-            viewHolder.time.setTypeface(null, Typeface.BOLD);
-            viewHolder.time.setTextColor(resources.getColor(android.R.color.black));
-            viewHolder.time.setTextSize(20);
-        } else if (viewType == INNER_BUS_STOP) {
-            RelativeLayout layout = (RelativeLayout) v.findViewById(R.id.directions_bus_stop_layout);
-            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
-                    RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT
-            );
-            params.setMargins(0, RUDirectUtil.dpToPx(12), 0, 0);
-            layout.setLayoutParams(params);
-        }
-
-        return viewHolder;
-    }
-
-    @Override
-    public void onBindViewHolder(DirectionsItemViewHolder viewHolder, int position) {
-        DirectionsItem item = items.get(position);
-        viewHolder.title.setText(item.getTitle());
-        viewHolder.icon.setImageResource(item.getIconId());
-        viewHolder.time.setText(item.getTime());
     }
 
     @Override

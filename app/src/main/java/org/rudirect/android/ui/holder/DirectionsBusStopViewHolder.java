@@ -8,14 +8,14 @@ import android.widget.TextView;
 import org.rudirect.android.interfaces.ViewHolderClickListener;
 import org.rudirect.android.R;
 
-public class DirectionsItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+public class DirectionsBusStopViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
     public ImageView icon;
     public TextView title;
     public TextView time;
     public ViewHolderClickListener mListener;
 
-    public DirectionsItemViewHolder(View v, ViewHolderClickListener listener) {
+    public DirectionsBusStopViewHolder(View v, ViewHolderClickListener listener) {
         super(v);
 
         icon = (ImageView) v.findViewById(R.id.directions_icon);
