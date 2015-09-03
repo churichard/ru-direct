@@ -1,7 +1,7 @@
 # RU Direct
 
 ## Description
-RU Direct is an Android app that provides an intuitive and responsive interface for locating information about Rutgers University buses. It displays what times buses are arriving at each bus stop, shows maps of each of the bus routes, and provides directions from one bus stop to another.
+RU Direct is a fast and intuitive Android app that helps you navigate the Rutgers University bus system. It displays what times buses are arriving at each bus stop, shows live-updating maps of each of the bus routes, and provides directions from one bus stop to another.
 
 #### Bus Route Times
 <img src="https://raw.githubusercontent.com/churichard/ru-direct/master/gifs/route_times.gif" width="320px" height="570px">

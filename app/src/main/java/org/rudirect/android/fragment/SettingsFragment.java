@@ -50,7 +50,7 @@ public class SettingsFragment extends PreferenceFragment {
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(settingsActivity);
-                builder.setTitle(R.string.pref_contributors_title)
+                builder.setTitle(R.string.pref_other_contributors_title)
                         .setMessage(R.string.contributors_message)
                         .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) { /* Do nothing */ }
