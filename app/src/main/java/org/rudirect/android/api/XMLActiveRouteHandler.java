@@ -29,7 +29,7 @@ public class XMLActiveRouteHandler extends DefaultHandler {
         }
 
         for (BusRoute route : busTagsToBusRoutes.values()) {
-            route.setActiveBusLocations(null);
+            route.setActiveBusLocations(new ArrayList<double[]>());
         }
 
         activeRoutes = new TreeSet<>();
@@ -48,9 +48,6 @@ public class XMLActiveRouteHandler extends DefaultHandler {
 
             // Add active bus location
             ArrayList<double[]> activeBusLocations = route.getActiveBusLocations();
-            if (activeBusLocations == null) {
-                activeBusLocations = new ArrayList<>();
-            }
             activeBusLocations.add(new double[]{Double.parseDouble(atts.getValue("lat")),
                     Double.parseDouble(atts.getValue("lon"))});
             route.setActiveBusLocations(activeBusLocations);
@@ -59,9 +56,7 @@ public class XMLActiveRouteHandler extends DefaultHandler {
 
     public void endDocument() throws SAXException {
         // Update active routes
-        if (activeRoutes.size() > 0) {
-            BusData.setActiveRoutes(new ArrayList<>(activeRoutes));
-        }
+        BusData.setActiveRoutes(new ArrayList<>(activeRoutes));
 
         // Update bus data
         try {

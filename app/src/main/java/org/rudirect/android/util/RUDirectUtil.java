@@ -4,11 +4,14 @@ import android.app.Activity;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.text.format.DateUtils;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
 import org.rudirect.android.data.constants.RUDirectApplication;
+
+import java.util.Calendar;
 
 public class RUDirectUtil {
 
@@ -31,5 +34,16 @@ public class RUDirectUtil {
         InputMethodManager inputMethodManager
                 = (InputMethodManager) RUDirectApplication.getContext().getSystemService(Activity.INPUT_METHOD_SERVICE);
         inputMethodManager.hideSoftInputFromWindow(v.getWindowToken(), 0);
+    }
+
+    // Returns the relative time difference between the current time and the argument otherTime
+    public static String getTimeDiff(long otherTime) {
+        long currentTime = Calendar.getInstance().getTimeInMillis();
+        String timeDiff = DateUtils.getRelativeTimeSpanString(otherTime, currentTime,
+                DateUtils.MINUTE_IN_MILLIS).toString();
+        if (timeDiff.equals("0 minutes ago")) {
+            return "<1 minute ago";
+        }
+        return timeDiff;
     }
 }

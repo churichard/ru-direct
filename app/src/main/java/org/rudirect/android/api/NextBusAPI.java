@@ -10,7 +10,6 @@ import org.rudirect.android.data.constants.AppData;
 import org.rudirect.android.data.model.BusData;
 import org.rudirect.android.data.model.BusRoute;
 import org.rudirect.android.data.model.BusStop;
-import org.rudirect.android.data.model.BusStopTime;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -73,17 +72,14 @@ public class NextBusAPI {
         BusStop[] busStops = route.getBusStops();
 
         if (busStops != null) {
-            // Set no Internet stop times and create predictions link
+            // Create predictions link
             StringBuilder link = new StringBuilder(AppData.PREDICTIONS_URL);
-            ArrayList<BusStopTime> busStopTimes = new ArrayList<>();
-            busStopTimes.add(new BusStopTime(-1));
             for (BusStop stop : busStops) {
-                stop.setTimes(busStopTimes);
                 link.append("&stops=").append(route.getTag()).append("%7Cnull%7C").append(stop.getTag());
             }
 //            Log.d("NextBus API", link.toString());
 
-            parseXML(link.toString(), new XMLBusTimesHandler(busStops));
+            parseXML(link.toString(), new XMLBusTimesHandler(route));
         }
     }
 
@@ -94,7 +90,6 @@ public class NextBusAPI {
 
     // Returns an array of the active routes
     public static ArrayList<BusRoute> getActiveRoutes() {
-        BusData.setActiveRoutes(new ArrayList<BusRoute>()); // Default value if no Internet / no active buses
         updateActiveRoutes();
         return BusData.getActiveRoutes();
     }

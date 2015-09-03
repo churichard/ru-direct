@@ -4,6 +4,16 @@
     android:layout_height="match_parent">
 
     <TextView
+        android:id="@+id/no_internet_textview"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:background="@color/dark_gray"
+        android:gravity="center"
+        android:text="@string/no_internet_text"
+        android:textColor="@android:color/white"
+        android:visibility="gone" />
+
+    <TextView
         android:id="@+id/active_routes_error"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -22,7 +32,8 @@
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/active_routes_swipe_refresh_layout"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_below="@id/no_internet_textview">
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/active_routes_recyclerview"

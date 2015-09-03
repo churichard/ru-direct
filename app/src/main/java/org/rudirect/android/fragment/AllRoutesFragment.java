@@ -113,12 +113,12 @@ public class AllRoutesFragment extends BaseRouteFragment {
 
         @Override
         protected void onPostExecute(Void v) {
-            if (RUDirectUtil.isNetworkAvailable()) {
+            if (RUDirectUtil.isNetworkAvailable()) { // If there's Internet, update the bus routes
                 errorView.setVisibility(View.GONE);
                 BusRouteAdapter adapter = ((BusRouteAdapter) recyclerView.getAdapter());
                 adapter.setBusRoutes(RUDirectApplication.getBusData().getBusRoutes());
                 adapter.notifyDataSetChanged();
-            } else {
+            } else { // If there isn't Internet, show an error
                 if (recyclerView.getAdapter().getItemCount() == 0) {
                     errorView.setVisibility(View.VISIBLE);
                     errorView.setText("Unable to get routes. Check your Internet connection and try again.");

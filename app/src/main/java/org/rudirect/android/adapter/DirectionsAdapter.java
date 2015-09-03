@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
+import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,7 +34,6 @@ import java.util.List;
 
 public class DirectionsAdapter extends RecyclerView.Adapter<DirectionsItemViewHolder> {
 
-    private static final int MILLIS_IN_ONE_MINUTE = 60000;
     private static final int INNER_BUS_STOP = 0, OUTER_BUS_STOP = 1, BUS_ROUTE = 2;
     private Activity activity;
     private ArrayList<DirectionsItem> items;
@@ -168,7 +168,7 @@ public class DirectionsAdapter extends RecyclerView.Adapter<DirectionsItemViewHo
         if (time == 0) { // Handle cases where the initial wait time is 0
             return 500;
         } else {
-            return time * MILLIS_IN_ONE_MINUTE;
+            return time * (int) DateUtils.MINUTE_IN_MILLIS;
         }
     }
 }

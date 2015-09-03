@@ -63,7 +63,7 @@
     <string name="click_action">Click</string>
 
     <!-- Error Messages -->
-    <string name="no_internet_text">No Internet Connection</string>
+    <string name="no_internet_text">No Internet connection</string>
 
     <!-- Google Play Services error messages -->
     <string name="common_google_play_services_update_text" msgid="448354684997260580">

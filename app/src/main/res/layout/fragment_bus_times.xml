@@ -9,7 +9,6 @@
         android:layout_height="30dp"
         android:background="@color/dark_gray"
         android:gravity="center"
-        android:text="@string/no_internet_text"
         android:textColor="@android:color/white"
         android:visibility="gone" />
 

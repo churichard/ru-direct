@@ -16,6 +16,7 @@ public class BusRoute implements Parcelable, Serializable, Comparable<BusRoute> 
     private BusStop[] busStops;
     private BusPathSegment[] busPathSegments;
     private transient ArrayList<double[]> activeBusLocations;
+    private transient long lastUpdatedTime;
 
     public BusRoute(String tag, String title) {
         this.tag = tag;
@@ -87,6 +88,14 @@ public class BusRoute implements Parcelable, Serializable, Comparable<BusRoute> 
 
     public void setActiveBusLocations(ArrayList<double[]> activeBusLocations) {
         this.activeBusLocations = activeBusLocations;
+    }
+
+    public long getLastUpdatedTime() {
+        return lastUpdatedTime;
+    }
+
+    public void setLastUpdatedTime(long lastUpdatedTime) {
+        this.lastUpdatedTime = lastUpdatedTime;
     }
 
     @Override

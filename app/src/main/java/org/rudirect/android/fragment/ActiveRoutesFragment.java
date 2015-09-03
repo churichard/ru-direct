@@ -31,6 +31,7 @@ public class ActiveRoutesFragment extends BaseRouteFragment {
 
     private RecyclerView recyclerView;
     private ProgressBar progressBar;
+    private TextView noInternetTextView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -48,6 +49,7 @@ public class ActiveRoutesFragment extends BaseRouteFragment {
         setupSwipeRefreshLayout();
 
         errorView = (TextView) mainActivity.findViewById(R.id.active_routes_error);
+        noInternetTextView = (TextView) mainActivity.findViewById(R.id.no_internet_textview);
         updateActiveRoutes();
     }
 
@@ -110,23 +112,28 @@ public class ActiveRoutesFragment extends BaseRouteFragment {
 
         protected void onPostExecute(ArrayList<BusRoute> activeRoutes) {
             BusRouteAdapter adapter = (BusRouteAdapter) recyclerView.getAdapter();
-            if (activeRoutes == null) {
-                // Setup error message
-                errorView.setVisibility(View.VISIBLE);
-                adapter.setBusRoutes(null);
-                adapter.notifyDataSetChanged();
-                if (RUDirectUtil.isNetworkAvailable()) {
+            if (RUDirectUtil.isNetworkAvailable()) {
+                noInternetTextView.setVisibility(View.GONE);
+                if (activeRoutes.size() == 0) {
+                    // Show error
+                    errorView.setVisibility(View.VISIBLE);
                     errorView.setText("No active buses.");
                 } else {
-                    errorView.setText("Unable to get active routes. Check your Internet connection and try again.");
-                    Snackbar.make(mainActivity.findViewById(R.id.active_routes_layout),
-                            "No Internet connection. Please try again later.", Snackbar.LENGTH_SHORT).show();
+                    // Show active buses
+                    errorView.setVisibility(View.GONE);
+                    adapter.setBusRoutes(activeRoutes);
+                    adapter.notifyDataSetChanged();
                 }
             } else {
-                // Show active buses
-                errorView.setVisibility(View.GONE);
-                adapter.setBusRoutes(activeRoutes);
-                adapter.notifyDataSetChanged();
+                // Show error
+                if (recyclerView.getAdapter().getItemCount() == 0) {
+                    errorView.setVisibility(View.VISIBLE);
+                    errorView.setText("Unable to get routes. Check your Internet connection and try again.");
+                    Snackbar.make(mainActivity.findViewById(R.id.active_routes_layout),
+                            "No Internet connection. Please try again later.", Snackbar.LENGTH_SHORT).show();
+                } else {
+                    noInternetTextView.setVisibility(View.VISIBLE);
+                }
             }
             progressBar.setVisibility(View.GONE);
             mSwipeRefreshLayout.setRefreshing(false);

@@ -4,6 +4,7 @@ import android.util.Log;
 
 import org.rudirect.android.data.constants.RUDirectApplication;
 import org.rudirect.android.data.model.BusData;
+import org.rudirect.android.data.model.BusRoute;
 import org.rudirect.android.data.model.BusStop;
 import org.rudirect.android.data.model.BusStopTime;
 import org.xml.sax.Attributes;
@@ -12,12 +13,14 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 
 public class XMLBusTimesHandler extends DefaultHandler {
 
     private static final String TAG = XMLBusTimesHandler.class.getSimpleName();
     private BusData busData;
+    private BusRoute route;
     private BusStop[] busStops;
     private HashMap<String, ArrayList<BusStopTime>> busStopTimes;
 
@@ -25,12 +28,14 @@ public class XMLBusTimesHandler extends DefaultHandler {
     private String stopTag;
     private boolean inBusTag;
 
-    public XMLBusTimesHandler(BusStop[] busStops) {
-        this.busStops = busStops;
+    public XMLBusTimesHandler(BusRoute route) {
+        this.route = route;
     }
 
     public void startDocument() throws SAXException {
         busData = RUDirectApplication.getBusData();
+        route.setLastUpdatedTime(Calendar.getInstance().getTimeInMillis());
+        busStops = route.getBusStops();
         busStopTimes = new HashMap<>();
         inBusTag = false;
     }
@@ -52,11 +57,7 @@ public class XMLBusTimesHandler extends DefaultHandler {
 
     public void endElement(String uri, String localName, String qName) throws SAXException {
         if (inBusTag && qName.equalsIgnoreCase("predictions")) {
-            if (times.size() == 0) {
-                times.add(new BusStopTime(-1)); // Offline bus
-            }
             busStopTimes.put(stopTag, times);
-
             inBusTag = false;
             stopTag = null;
         }
@@ -65,7 +66,10 @@ public class XMLBusTimesHandler extends DefaultHandler {
     public void endDocument() throws SAXException {
         // Update times
         for (BusStop stop : busStops) {
-            stop.setTimes(busStopTimes.get(stop.getTag()));
+            ArrayList<BusStopTime> times = busStopTimes.get(stop.getTag());
+            if (times.size() != 0) {
+                stop.setTimes(times);
+            }
         }
 
         // Update bus data

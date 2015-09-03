@@ -2,6 +2,7 @@ package org.rudirect.android.adapter;
 
 import android.content.res.Resources;
 import android.support.v7.widget.RecyclerView;
+import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +21,6 @@ import java.util.Date;
 
 public class BusStopAdapter extends RecyclerView.Adapter<BusStopViewHolder> {
 
-    private static final int MILLIS_IN_ONE_MINUTE = 60000;
     private static boolean expToggleRequest; // Whether or not the bus stop should be expanded/retracted
     private BusStop[] busStops;
 
@@ -73,7 +73,8 @@ public class BusStopAdapter extends RecyclerView.Adapter<BusStopViewHolder> {
         ArrayList<BusStopTime> times = busStop.getTimes();
         setTextColor(titleTextView, timesTextView, times);
 
-        if (expToggleRequest && busStop.isActive() && !busStop.isExpanded() || !expToggleRequest && busStop.isExpanded()) {
+        if (expToggleRequest && busStop.isActive() && !busStop.isExpanded()
+                || !expToggleRequest && busStop.isExpanded()) {
             expToggleRequest = false;
             busStop.setIsExpanded(true);
             return expandedTimes(times);
@@ -92,7 +93,7 @@ public class BusStopAdapter extends RecyclerView.Adapter<BusStopViewHolder> {
         StringBuilder builder = new StringBuilder();
         builder.append("Arriving at ");
         for (int i = 0; i < times.size(); i++) {
-            Date stopTime = new Date(currentTime + (times.get(i).getMinutes() * MILLIS_IN_ONE_MINUTE));
+            Date stopTime = new Date(currentTime + (times.get(i).getMinutes() * DateUtils.MINUTE_IN_MILLIS));
             String time = DateFormat.getTimeInstance(DateFormat.SHORT).format(stopTime);
             builder.append(time);
             if (i != times.size() - 1) {
@@ -107,7 +108,7 @@ public class BusStopAdapter extends RecyclerView.Adapter<BusStopViewHolder> {
     // Sets up the normal view of the bus stop times
     private String normalTimes(ArrayList<BusStopTime> times) {
         // Bus stop is offline
-        if (times.size() == 1 && times.get(0).getMinutes() == -1) {
+        if (times == null) {
             return "Offline";
         }
         // Format bus stop times
@@ -134,16 +135,18 @@ public class BusStopAdapter extends RecyclerView.Adapter<BusStopViewHolder> {
     private void setTextColor(TextView busStopName, TextView busStopTimes, ArrayList<BusStopTime> times) {
         Resources resources = RUDirectApplication.getContext().getResources();
         busStopName.setTextColor(resources.getColor(android.R.color.black));
-        int minutes = times.get(0).getMinutes();
-        if (minutes == -1) {
+        if (times == null) {
             busStopName.setTextColor(resources.getColor(R.color.medium_gray));
             busStopTimes.setTextColor(resources.getColor(R.color.medium_gray));
-        } else if (minutes == 0 || minutes == 1) {
-            busStopTimes.setTextColor(resources.getColor(R.color.primary_color));
-        } else if (minutes > 1 && minutes <= 5) {
-            busStopTimes.setTextColor(resources.getColor(R.color.orange));
         } else {
-            busStopTimes.setTextColor(resources.getColor(R.color.blue));
+            int minutes = times.get(0).getMinutes();
+            if (minutes == 0 || minutes == 1) {
+                busStopTimes.setTextColor(resources.getColor(R.color.primary_color));
+            } else if (minutes > 1 && minutes <= 5) {
+                busStopTimes.setTextColor(resources.getColor(R.color.orange));
+            } else {
+                busStopTimes.setTextColor(resources.getColor(R.color.blue));
+            }
         }
     }
 
