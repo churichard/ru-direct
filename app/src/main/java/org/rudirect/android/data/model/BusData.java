@@ -77,13 +77,15 @@ public class BusData {
         BusStop closestStop = null;
         double minDistSq = Double.MAX_VALUE;
 
-        for (BusStop stop : busStops) {
-            double lat = stop.getLatitude() - location.getLatitude();
-            double lon = stop.getLongitude() - location.getLongitude();
-            double distSq = lat * lat + lon * lon;
-            if (distSq < minDistSq) {
-                minDistSq = distSq;
-                closestStop = stop;
+        if (busStops != null) {
+            for (BusStop stop : busStops) {
+                double lat = stop.getLatitude() - location.getLatitude();
+                double lon = stop.getLongitude() - location.getLongitude();
+                double distSq = lat * lat + lon * lon;
+                if (distSq < minDistSq) {
+                    minDistSq = distSq;
+                    closestStop = stop;
+                }
             }
         }
 

@@ -206,9 +206,12 @@ public class DirectionsFragment extends Fragment implements NetworkCallFinishLis
     private void setOriginToNearestBusStop() {
         Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         if (location != null) {
-            originACTextView.setText(RUDirectApplication.getBusData().getNearestStop(location).getTitle());
-            originACTextView.dismissDropDown();
-            originACTextView.setError(null);
+            BusStop nearestStop = RUDirectApplication.getBusData().getNearestStop(location);
+            if (nearestStop != null) {
+                originACTextView.setText(nearestStop.getTitle());
+                originACTextView.dismissDropDown();
+                originACTextView.setError(null);
+            }
         }
     }
 
