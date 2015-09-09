@@ -8,6 +8,7 @@ import android.widget.TextView;
 import org.rudirect.android.R;
 import org.rudirect.android.adapter.BusStopAdapter;
 import org.rudirect.android.api.NextBusAPI;
+import org.rudirect.android.data.constants.RUDirectApplication;
 import org.rudirect.android.data.model.BusRoute;
 import org.rudirect.android.fragment.BusTimesFragment;
 
@@ -37,7 +38,7 @@ public class ShowBusStopsHelper extends AsyncTask<Object, Void, BusRoute> {
             busStopAdapter.setBusStops(route.getBusStops());
             busStopAdapter.notifyDataSetChanged();
         } else {
-            noInternetTextView.setText(busTimesFragment.getString(R.string.no_internet_text));
+            noInternetTextView.setText(RUDirectApplication.getContext().getString(R.string.no_internet_text));
             if (route.getLastUpdatedTime() != 0) {
                 noInternetTextView.append(" - last updated " + RUDirectUtil.getTimeDiff(route.getLastUpdatedTime()));
             }

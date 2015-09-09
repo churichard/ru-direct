@@ -114,7 +114,7 @@ public class ActiveRoutesFragment extends BaseRouteFragment {
             BusRouteAdapter adapter = (BusRouteAdapter) recyclerView.getAdapter();
             if (RUDirectUtil.isNetworkAvailable()) {
                 noInternetTextView.setVisibility(View.GONE);
-                if (activeRoutes.size() == 0) {
+                if (activeRoutes == null || activeRoutes.size() == 0) {
                     // Show error
                     errorView.setVisibility(View.VISIBLE);
                     errorView.setText("No active buses.");
