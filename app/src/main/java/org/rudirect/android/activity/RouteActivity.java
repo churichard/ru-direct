@@ -18,12 +18,12 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 
 import org.rudirect.android.R;
-import org.rudirect.android.adapter.BusStopsPagerAdapter;
+import org.rudirect.android.adapter.RoutePagerAdapter;
 import org.rudirect.android.data.constants.AppData;
 import org.rudirect.android.data.constants.RUDirectApplication;
 import org.rudirect.android.data.model.BusRoute;
 
-public class BusStopsActivity extends AppCompatActivity
+public class RouteActivity extends AppCompatActivity
         implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     private static final int REQUEST_RESOLVE_ERROR = 5001;
@@ -38,7 +38,7 @@ public class BusStopsActivity extends AppCompatActivity
     @SuppressWarnings("unchecked")
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_bus_stops);
+        setContentView(R.layout.activity_route);
 
         // Get intent extras
         Intent intent = getIntent();
@@ -73,14 +73,14 @@ public class BusStopsActivity extends AppCompatActivity
 
     // Setup viewpager and tab layout
     private void setupViewPagerAndTabLayout() {
-        final ViewPager viewPager = (ViewPager) findViewById(R.id.bus_stop_viewpager);
-        final TabLayout tabLayout = (TabLayout) findViewById(R.id.sliding_tabs);
+        final ViewPager viewPager = (ViewPager) findViewById(R.id.route_viewpager);
+        final TabLayout tabLayout = (TabLayout) findViewById(R.id.tablayout);
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
 
         // Setup tabs
-        for (int i = 0; i < BusStopsPagerAdapter.NUM_OF_ITEMS; i++) {
+        for (int i = 0; i < RoutePagerAdapter.NUM_OF_ITEMS; i++) {
             TabLayout.Tab tab = tabLayout.newTab();
-            tab.setText(BusStopsPagerAdapter.TITLES[i]);
+            tab.setText(RoutePagerAdapter.TITLES[i]);
             tabLayout.addTab(tab);
         }
 
@@ -104,11 +104,11 @@ public class BusStopsActivity extends AppCompatActivity
                 @Override
                 public void run() {
                     firstMapLoad = false;
-                    viewPager.setAdapter(new BusStopsPagerAdapter(getFragmentManager()));
+                    viewPager.setAdapter(new RoutePagerAdapter(getFragmentManager()));
                 }
             }, 100);
         } else {
-            viewPager.setAdapter(new BusStopsPagerAdapter(getFragmentManager()));
+            viewPager.setAdapter(new RoutePagerAdapter(getFragmentManager()));
         }
     }
 

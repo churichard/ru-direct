@@ -7,17 +7,15 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
-import android.widget.TextView;
 
 import org.rudirect.android.R;
 import org.rudirect.android.activity.MainActivity;
 
-public class BaseRouteFragment extends Fragment implements AppBarLayout.OnOffsetChangedListener {
+public class BaseMainFragment extends Fragment implements AppBarLayout.OnOffsetChangedListener {
 
     protected SwipeRefreshLayout mSwipeRefreshLayout;
     protected AppBarLayout appBarLayout;
     protected MainActivity mainActivity;
-    protected TextView errorView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

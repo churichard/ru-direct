@@ -14,16 +14,13 @@ import android.widget.RelativeLayout;
 
 import org.jgrapht.GraphPath;
 import org.rudirect.android.R;
-import org.rudirect.android.activity.BusStopsActivity;
+import org.rudirect.android.activity.RouteActivity;
 import org.rudirect.android.data.constants.RUDirectApplication;
 import org.rudirect.android.data.model.BusRouteEdge;
 import org.rudirect.android.data.model.BusStop;
-import org.rudirect.android.data.model.DirectionsBusRoute;
-import org.rudirect.android.data.model.DirectionsInnerBusStop;
 import org.rudirect.android.data.model.DirectionsItem;
-import org.rudirect.android.data.model.DirectionsOuterBusStop;
 import org.rudirect.android.interfaces.ViewHolderClickListener;
-import org.rudirect.android.ui.holder.DirectionsBusStopViewHolder;
+import org.rudirect.android.ui.holder.DirectionsStopViewHolder;
 import org.rudirect.android.ui.holder.DirectionsRouteViewHolder;
 import org.rudirect.android.util.DirectionsUtil;
 import org.rudirect.android.util.RUDirectUtil;
@@ -48,10 +45,10 @@ public class DirectionsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         // Set initial wait time
         time += calcWaitTime((int) DirectionsUtil.getInitialWait());
         // Add origin bus stop and initial route
-        items.add(new DirectionsOuterBusStop(busStopEdges.get(0).getSourceBusStop().getTitle(),
+        items.add(new DirectionsItem(OUTER_BUS_STOP, busStopEdges.get(0).getSourceBusStop().getTitle(),
                 busStopEdges.get(0).getSourceBusStop().getTag(), getTimeInHHMM(time), R.drawable.ic_bus_stop_circle));
-        items.add(new DirectionsBusRoute(busStopEdges.get(0).getRouteName()
-                + " (Bus #" + busStopEdges.get(0).getVehicleId() + ")", busStopEdges.get(0).getRouteTag()));
+        items.add(new DirectionsItem(BUS_ROUTE, busStopEdges.get(0).getRouteName()
+                + " (Bus #" + busStopEdges.get(0).getVehicleId() + ")", busStopEdges.get(0).getRouteTag(), null, 0));
 
         // Iterate through all the edges
         for (int i = 0; i < busStopEdges.size() - 1; i++) {
@@ -63,22 +60,22 @@ public class DirectionsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 if (!busStopEdges.get(i).getRouteName().equals(busStopEdges.get(i + 1).getRouteName())
                         || !busStopEdges.get(i).getVehicleId().equals(busStopEdges.get(i + 1).getVehicleId())) {
                     items.remove(items.get(items.size() - 1));
-                    items.add(new DirectionsOuterBusStop(busStopEdges.get(i).getTargetBusStop().getTitle(),
+                    items.add(new DirectionsItem(OUTER_BUS_STOP, busStopEdges.get(i).getTargetBusStop().getTitle(),
                             busStopEdges.get(i).getTargetBusStop().getTag(), getTimeInHHMM(time), R.drawable.ic_bus_stop_circle));
-                    items.add(new DirectionsBusRoute(busStopEdges.get(i + 1).getRouteName()
-                            + " (Bus #" + busStopEdges.get(i + 1).getVehicleId() + ")", busStopEdges.get(i + 1).getRouteTag()));
+                    items.add(new DirectionsItem(BUS_ROUTE, busStopEdges.get(i + 1).getRouteName()
+                            + " (Bus #" + busStopEdges.get(i + 1).getVehicleId() + ")", busStopEdges.get(i + 1).getRouteTag(), null, 0));
                 }
                 continue;
             }
 
             // Add inner bus stop
-            items.add(new DirectionsInnerBusStop(busStopEdges.get(i).getTargetBusStop().getTitle(),
+            items.add(new DirectionsItem(INNER_BUS_STOP, busStopEdges.get(i).getTargetBusStop().getTitle(),
                     busStopEdges.get(i).getTargetBusStop().getTag(), getTimeInHHMM(time), android.R.color.transparent));
         }
 
         // Add destination bus stop
         time += calcWaitTime((int) busStopEdges.get(busStopEdges.size() - 1).getTravelTime());
-        items.add(new DirectionsOuterBusStop(busStopEdges.get(busStopEdges.size() - 1).getTargetBusStop().getTitle(),
+        items.add(new DirectionsItem(OUTER_BUS_STOP, busStopEdges.get(busStopEdges.size() - 1).getTargetBusStop().getTitle(),
                 busStopEdges.get(busStopEdges.size() - 1).getTargetBusStop().getTag(), getTimeInHHMM(time), R.drawable.ic_bus_stop_circle));
     }
 
@@ -97,8 +94,8 @@ public class DirectionsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 public void onClick(View v, int position) { /* Do nothing */ }
             });
         } else {
-            v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_directions_bus_stop, parent, false);
-            DirectionsBusStopViewHolder viewHolder = new DirectionsBusStopViewHolder(v, new ViewHolderClickListener() {
+            v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_directions_stop, parent, false);
+            DirectionsStopViewHolder viewHolder = new DirectionsStopViewHolder(v, new ViewHolderClickListener() {
                 public void onClick(View v, int position) { /* Do nothing */ }
             });
 
@@ -127,8 +124,8 @@ public class DirectionsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, final int position) {
         DirectionsItem item = items.get(position);
-        if (viewHolder instanceof DirectionsBusStopViewHolder) {
-            DirectionsBusStopViewHolder busStopViewHolder = (DirectionsBusStopViewHolder) viewHolder;
+        if (viewHolder instanceof DirectionsStopViewHolder) {
+            DirectionsStopViewHolder busStopViewHolder = (DirectionsStopViewHolder) viewHolder;
             busStopViewHolder.title.setText(item.getTitle());
             busStopViewHolder.icon.setImageResource(item.getIconId());
             busStopViewHolder.time.setText(item.getTime());
@@ -140,7 +137,7 @@ public class DirectionsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 public void onClick(View v) {
                     // Setup intent
                     Context context = RUDirectApplication.getContext();
-                    Intent intent = new Intent(activity, BusStopsActivity.class);
+                    Intent intent = new Intent(activity, RouteActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     intent.putExtra(context.getString(R.string.bus_tag_message), items.get(position).getTag());
                     intent.putExtra(context.getString(R.string.page_clicked_from_message), "Directions Selector");
@@ -155,9 +152,7 @@ public class DirectionsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     @Override
     public int getItemViewType(int position) {
-        if (items.get(position) instanceof DirectionsInnerBusStop) return INNER_BUS_STOP;
-        else if (items.get(position) instanceof DirectionsOuterBusStop) return OUTER_BUS_STOP;
-        else return BUS_ROUTE;
+        return items.get(position).getItemType();
     }
 
     @Override

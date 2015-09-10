@@ -36,7 +36,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="org.rudirect.android.activity.BusStopsActivity"
+            android:name=".activity.RouteActivity"
             android:alwaysRetainTaskState="true"
             android:label="@string/bus_stops_activity_name"
             android:screenOrientation="portrait">

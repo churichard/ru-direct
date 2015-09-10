@@ -6,13 +6,12 @@ import android.support.v13.app.FragmentPagerAdapter;
 import android.util.SparseArray;
 import android.view.ViewGroup;
 
-import org.rudirect.android.fragment.ActiveRoutesFragment;
-import org.rudirect.android.fragment.AllRoutesFragment;
 import org.rudirect.android.fragment.DirectionsFragment;
+import org.rudirect.android.fragment.RoutesFragment;
 
 public class MainPagerAdapter extends FragmentPagerAdapter {
 
-    private static final String[] TITLES = {"Active", "Directions", "All"};
+    private static final String[] TITLES = {"Routes", "Directions"};
     private static final int NUM_OF_ITEMS = TITLES.length;
     private static SparseArray<Fragment> registeredFragments = new SparseArray<>();
 
@@ -29,11 +28,9 @@ public class MainPagerAdapter extends FragmentPagerAdapter {
     @Override
     public Fragment getItem(int position) {
         if (position == 0) {
-            return new ActiveRoutesFragment();
-        } else if (position == 1) {
-            return new DirectionsFragment();
+            return new RoutesFragment();
         } else {
-            return new AllRoutesFragment();
+            return new DirectionsFragment();
         }
     }
 

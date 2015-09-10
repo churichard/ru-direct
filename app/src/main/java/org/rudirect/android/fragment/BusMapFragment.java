@@ -22,7 +22,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import org.rudirect.android.R;
-import org.rudirect.android.activity.BusStopsActivity;
+import org.rudirect.android.activity.RouteActivity;
 import org.rudirect.android.api.NextBusAPI;
 import org.rudirect.android.data.constants.RUDirectApplication;
 import org.rudirect.android.data.model.BusPathSegment;
@@ -34,7 +34,7 @@ public class BusMapFragment extends MapFragment implements OnMapReadyCallback {
 
     private static final int ACTIVE_BUS_REFRESH_INTERVAL = 10000;
 
-    private BusStopsActivity busStopsActivity;
+    private RouteActivity routeActivity;
     private GoogleMap mMap;
     private Handler refreshHandler;
     private ArrayList<Marker> busStopMarkers;
@@ -46,9 +46,9 @@ public class BusMapFragment extends MapFragment implements OnMapReadyCallback {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        busStopsActivity = (BusStopsActivity) getActivity();
+        routeActivity = (RouteActivity) getActivity();
         setHasOptionsMenu(true);
-        connectedToPlayServices = GooglePlayServicesUtil.isGooglePlayServicesAvailable(busStopsActivity) == ConnectionResult.SUCCESS;
+        connectedToPlayServices = GooglePlayServicesUtil.isGooglePlayServicesAvailable(routeActivity) == ConnectionResult.SUCCESS;
     }
 
     @Override
@@ -58,7 +58,7 @@ public class BusMapFragment extends MapFragment implements OnMapReadyCallback {
         busStopMarkers = new ArrayList<>();
         isVisible = false;
         if (connectedToPlayServices) {
-            pathSegments = busStopsActivity.getRoute().getBusPathSegments();
+            pathSegments = routeActivity.getRoute().getBusPathSegments();
             getMapAsync(this);
         }
     }
@@ -68,7 +68,7 @@ public class BusMapFragment extends MapFragment implements OnMapReadyCallback {
         if (connectedToPlayServices) {
             mMap = map;
             mMap.getUiSettings().setMapToolbarEnabled(false);
-            BusStop stop = busStopsActivity.getRoute().getBusStops()[0];
+            BusStop stop = routeActivity.getRoute().getBusStops()[0];
             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
                     getLatLng(stop.getLatitude(), stop.getLongitude()), 13.0f));
             mMap.setMyLocationEnabled(true);
@@ -117,7 +117,7 @@ public class BusMapFragment extends MapFragment implements OnMapReadyCallback {
             RUDirectApplication.getTracker().send(new HitBuilders.EventBuilder()
                     .setCategory(getString(R.string.route_map_category))
                     .setAction(getString(R.string.view_action))
-                    .setLabel(busStopsActivity.getTitle().toString())
+                    .setLabel(routeActivity.getTitle().toString())
                     .build());
             if (connectedToPlayServices) new UpdateMarkers().execute();
         }
@@ -164,7 +164,7 @@ public class BusMapFragment extends MapFragment implements OnMapReadyCallback {
         @Override
         protected void onPostExecute(Void v) {
             // Update active bus locations
-            ArrayList<double[]> activeBusLocations = busStopsActivity.getRoute().getActiveBusLocations();
+            ArrayList<double[]> activeBusLocations = routeActivity.getRoute().getActiveBusLocations();
             if (activeBusLocations != null) {
                 // Clear map of active bus markers
                 for (int i = 0; i < activeBusMarkers.size(); i++) {
@@ -183,7 +183,7 @@ public class BusMapFragment extends MapFragment implements OnMapReadyCallback {
             }
 
             // Draw the bus stop markers
-            BusStop[] busStops = busStopsActivity.getRoute().getBusStops();
+            BusStop[] busStops = routeActivity.getRoute().getBusStops();
             if (busStopMarkers.isEmpty()) { // Create the markers
                 for (BusStop stop : busStops) {
                     MarkerOptions markerOptions = new MarkerOptions()

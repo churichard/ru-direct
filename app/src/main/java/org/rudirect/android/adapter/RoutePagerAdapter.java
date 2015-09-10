@@ -7,12 +7,12 @@ import android.support.v13.app.FragmentPagerAdapter;
 import org.rudirect.android.fragment.BusMapFragment;
 import org.rudirect.android.fragment.BusTimesFragment;
 
-public class BusStopsPagerAdapter extends FragmentPagerAdapter {
+public class RoutePagerAdapter extends FragmentPagerAdapter {
 
     public static final String[] TITLES = {"Route", "Map"};
     public static final int NUM_OF_ITEMS = TITLES.length;
 
-    public BusStopsPagerAdapter(FragmentManager fm) {
+    public RoutePagerAdapter(FragmentManager fm) {
         super(fm);
     }
 

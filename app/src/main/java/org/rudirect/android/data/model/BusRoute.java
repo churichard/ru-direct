@@ -21,10 +21,19 @@ public class BusRoute implements Parcelable, Serializable, Comparable<BusRoute> 
     public BusRoute(String tag, String title) {
         this.tag = tag;
         this.title = title;
-        starred = false;
-        busStops = null;
-        busPathSegments = null;
-        activeBusLocations = null;
+        this.starred = false;
+        this.busStops = null;
+        this.busPathSegments = null;
+        this.activeBusLocations = null;
+    }
+
+    public BusRoute(String title) {
+        this.title = title;
+        this.tag = null;
+        this.starred = false;
+        this.busStops = null;
+        this.busPathSegments = null;
+        this.activeBusLocations = null;
     }
 
     @SuppressWarnings("unchecked")

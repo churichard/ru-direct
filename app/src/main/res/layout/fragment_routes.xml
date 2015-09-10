@@ -1,5 +1,5 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/bus_times_layout"
+    android:id="@+id/routes_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -12,13 +12,13 @@
         layout="@layout/progress_spinner" />
 
     <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/bus_stops_swipe_refresh_layout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:id="@+id/routes_swipe_refresh_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_below="@id/no_internet_banner">
 
         <android.support.v7.widget.RecyclerView
-            android:id="@+id/bus_times_recyclerview"
+            android:id="@+id/routes_recyclerview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scrollbars="vertical" />

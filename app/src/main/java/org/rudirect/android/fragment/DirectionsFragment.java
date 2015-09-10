@@ -78,7 +78,7 @@ public class DirectionsFragment extends Fragment implements NetworkCallFinishLis
         destACTextView = (AutoCompleteTextView) mainActivity.findViewById(R.id.dest_ac_textview);
 
         // Hide the keyboard when the textviews are not in focus
-        relativeLayout = (RelativeLayout) mainActivity.findViewById(R.id.directions_relative_layout);
+        relativeLayout = (RelativeLayout) mainActivity.findViewById(R.id.directions_layout);
         relativeLayout.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -129,6 +129,9 @@ public class DirectionsFragment extends Fragment implements NetworkCallFinishLis
                         builder.append("\t\t").append(getString(R.string.directions_snackbar_error));
                         Snackbar.make(relativeLayout, builder, Snackbar.LENGTH_SHORT).show();
                     }
+                } else {
+                    Snackbar.make(mainActivity.findViewById(R.id.directions_layout),
+                            "Could not fetch bus stops. Please try again later.", Snackbar.LENGTH_SHORT).show();
                 }
             }
         });

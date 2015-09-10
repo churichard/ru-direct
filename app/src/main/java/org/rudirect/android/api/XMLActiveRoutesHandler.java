@@ -14,9 +14,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.TreeSet;
 
-public class XMLActiveRouteHandler extends DefaultHandler {
+public class XMLActiveRoutesHandler extends DefaultHandler {
 
-    private static final String TAG = XMLActiveRouteHandler.class.getSimpleName();
+    private static final String TAG = XMLActiveRoutesHandler.class.getSimpleName();
     private BusData busData;
     private HashMap<String, BusRoute> busTagsToBusRoutes;
     private TreeSet<BusRoute> activeRoutes;

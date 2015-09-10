@@ -44,7 +44,7 @@ public class DirectionsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_directions);
 
-        progressSpinner = (ProgressBar) findViewById(R.id.active_routes_progress_spinner);
+        progressSpinner = (ProgressBar) findViewById(R.id.routes_progress_spinner);
         pathTimeTextView = (TextView) findViewById(R.id.path_time_textview);
 
         // Get origin and destination

@@ -85,7 +85,7 @@ public class NextBusAPI {
 
     // Updates active routes
     public static void updateActiveRoutes() {
-        parseXML(AppData.VEHICLE_LOCATIONS_URL, new XMLActiveRouteHandler());
+        parseXML(AppData.VEHICLE_LOCATIONS_URL, new XMLActiveRoutesHandler());
     }
 
     // Returns an array of the active routes

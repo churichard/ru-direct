@@ -7,13 +7,13 @@ import android.widget.TextView;
 import org.rudirect.android.interfaces.ViewHolderClickListener;
 import org.rudirect.android.R;
 
-public class BusStopViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+public class BusTimesViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
     public TextView title;
     public TextView times;
     public ViewHolderClickListener mListener;
 
-    public BusStopViewHolder(View v, ViewHolderClickListener listener) {
+    public BusTimesViewHolder(View v, ViewHolderClickListener listener) {
         super(v);
 
         title = (TextView) v.findViewById(R.id.bus_stop_name);

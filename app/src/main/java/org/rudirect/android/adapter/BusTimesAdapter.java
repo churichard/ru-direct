@@ -13,30 +13,30 @@ import org.rudirect.android.data.model.BusStop;
 import org.rudirect.android.data.model.BusStopTime;
 import org.rudirect.android.interfaces.ViewHolderClickListener;
 import org.rudirect.android.R;
-import org.rudirect.android.ui.holder.BusStopViewHolder;
+import org.rudirect.android.ui.holder.BusTimesViewHolder;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class BusStopAdapter extends RecyclerView.Adapter<BusStopViewHolder> {
+public class BusTimesAdapter extends RecyclerView.Adapter<BusTimesViewHolder> {
 
     private static boolean expToggleRequest; // Whether or not the bus stop should be expanded/retracted
     private BusStop[] busStops;
 
-    public BusStopAdapter(BusStop[] busStops) {
+    public BusTimesAdapter(BusStop[] busStops) {
         this.busStops = busStops;
     }
 
-    public BusStopAdapter() {
+    public BusTimesAdapter() {
         this.busStops = null;
     }
 
     // Create new views
     @Override
-    public BusStopViewHolder onCreateViewHolder(final ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_bus_stops, parent, false);
-        return new BusStopViewHolder(v, new ViewHolderClickListener() {
+    public BusTimesViewHolder onCreateViewHolder(final ViewGroup parent, int viewType) {
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_bus_times, parent, false);
+        return new BusTimesViewHolder(v, new ViewHolderClickListener() {
             public void onClick(View v, int position) {
                 expToggleRequest = true;
 
@@ -50,7 +50,7 @@ public class BusStopAdapter extends RecyclerView.Adapter<BusStopViewHolder> {
 
     // Replace the contents of a view
     @Override
-    public void onBindViewHolder(BusStopViewHolder viewHolder, int position) {
+    public void onBindViewHolder(BusTimesViewHolder viewHolder, int position) {
         BusStop stop = busStops[position];
         TextView titleTextView = viewHolder.title;
         TextView timesTextView = viewHolder.times;
@@ -152,7 +152,7 @@ public class BusStopAdapter extends RecyclerView.Adapter<BusStopViewHolder> {
 
     // Sets expanded toggle request boolean
     public static void setExpToggleRequest(boolean expToggleRequest) {
-        BusStopAdapter.expToggleRequest = expToggleRequest;
+        BusTimesAdapter.expToggleRequest = expToggleRequest;
     }
 
     // Sets the bus stops
