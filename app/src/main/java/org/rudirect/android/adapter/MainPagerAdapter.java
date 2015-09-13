@@ -8,10 +8,11 @@ import android.view.ViewGroup;
 
 import org.rudirect.android.fragment.DirectionsFragment;
 import org.rudirect.android.fragment.RoutesFragment;
+import org.rudirect.android.fragment.StopsFragment;
 
 public class MainPagerAdapter extends FragmentPagerAdapter {
 
-    private static final String[] TITLES = {"Routes", "Directions"};
+    private static final String[] TITLES = {"Routes", "Stops", "Directions"};
     private static final int NUM_OF_ITEMS = TITLES.length;
     private static SparseArray<Fragment> registeredFragments = new SparseArray<>();
 
@@ -29,6 +30,8 @@ public class MainPagerAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
         if (position == 0) {
             return new RoutesFragment();
+        } else if (position == 1) {
+            return new StopsFragment();
         } else {
             return new DirectionsFragment();
         }

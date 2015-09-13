@@ -57,7 +57,7 @@ public class BusTimesFragment extends Fragment implements AppBarLayout.OnOffsetC
         super.onViewCreated(view, savedInstanceState);
 
         appBarLayout = (AppBarLayout) routeActivity.findViewById(R.id.appbar);
-        progressBar = (ProgressBar) routeActivity.findViewById(R.id.routes_progress_spinner);
+        progressBar = (ProgressBar) routeActivity.findViewById(R.id.bus_times_progress_spinner);
         progressBar.setVisibility(View.VISIBLE);
 
         noInternetBanner = (TextView) routeActivity.findViewById(R.id.no_internet_banner);
@@ -100,7 +100,7 @@ public class BusTimesFragment extends Fragment implements AppBarLayout.OnOffsetC
 
     // Set up swipe refresh layout
     private void setupSwipeRefreshLayout() {
-        mSwipeRefreshLayout = (SwipeRefreshLayout) routeActivity.findViewById(R.id.bus_stops_swipe_refresh_layout);
+        mSwipeRefreshLayout = (SwipeRefreshLayout) routeActivity.findViewById(R.id.bus_times_swipe_refresh_layout);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
