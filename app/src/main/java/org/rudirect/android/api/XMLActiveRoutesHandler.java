@@ -23,7 +23,7 @@ public class XMLActiveRoutesHandler extends DefaultHandler {
 
     public void startDocument() throws SAXException {
         busData = RUDirectApplication.getBusData();
-        busTagsToBusRoutes = busData.getBusTagsToBusRoutes();
+        busTagsToBusRoutes = busData.getRouteTagsToBusRoutes();
         if (busTagsToBusRoutes == null) {
             busTagsToBusRoutes = new HashMap<>();
         }

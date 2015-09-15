@@ -17,7 +17,9 @@ public class BusData {
     @DatabaseField(id = true)
     private final int ID = 9000;
     @DatabaseField(dataType = DataType.SERIALIZABLE)
-    private HashMap<String, BusRoute> busTagsToBusRoutes;
+    private HashMap<String, BusRoute> routeTagsToBusRoutes;
+    @DatabaseField(dataType = DataType.SERIALIZABLE)
+    private HashMap<String, BusStop> stopTagsToBusStops;
 
     private static ArrayList<BusRoute> activeRoutes; // Active bus routes
 
@@ -29,12 +31,20 @@ public class BusData {
         return ID;
     }
 
-    public HashMap<String, BusRoute> getBusTagsToBusRoutes() {
-        return busTagsToBusRoutes;
+    public HashMap<String, BusRoute> getRouteTagsToBusRoutes() {
+        return routeTagsToBusRoutes;
     }
 
-    public void setBusTagsToBusRoutes(HashMap<String, BusRoute> busTagsToBusRoutes) {
-        this.busTagsToBusRoutes = busTagsToBusRoutes;
+    public void setRouteTagsToBusRoutes(HashMap<String, BusRoute> routeTagsToBusRoutes) {
+        this.routeTagsToBusRoutes = routeTagsToBusRoutes;
+    }
+
+    public HashMap<String, BusStop> getStopTagsToBusStops() {
+        return stopTagsToBusStops;
+    }
+
+    public void setStopTagsToBusStops(HashMap<String, BusStop> stopTagsToBusStops) {
+        this.stopTagsToBusStops = stopTagsToBusStops;
     }
 
     public static ArrayList<BusRoute> getActiveRoutes() {
@@ -46,7 +56,7 @@ public class BusData {
     }
 
     // Returns a list of all bus stops in sorted order
-    public BusStop[] getAllBusStops() {
+    public ArrayList<BusStop> getAllBusStops() {
         // Create list of bus stops
         TreeSet<BusStop> busStops = new TreeSet<>();
         ArrayList<BusRoute> busRoutes = getBusRoutes();
@@ -54,7 +64,7 @@ public class BusData {
             for (BusRoute route : busRoutes) {
                 busStops.addAll(Arrays.asList(route.getBusStops()));
             }
-            return busStops.toArray(new BusStop[busStops.size()]);
+            return new ArrayList<>(busStops);
         } else {
             return null;
         }
@@ -62,8 +72,8 @@ public class BusData {
 
     // Returns a list of the bus routes in sorted order
     public ArrayList<BusRoute> getBusRoutes() {
-        if (busTagsToBusRoutes != null) {
-            Collection<BusRoute> routeCollection = busTagsToBusRoutes.values();
+        if (routeTagsToBusRoutes != null) {
+            Collection<BusRoute> routeCollection = routeTagsToBusRoutes.values();
             ArrayList<BusRoute> busRoutes = new ArrayList<>(routeCollection);
             Collections.sort(busRoutes);
             return busRoutes;
@@ -73,7 +83,7 @@ public class BusData {
 
     // Returns the bus stop nearest to the argument location
     public BusStop getNearestStop(Location location) {
-        BusStop[] busStops = getAllBusStops();
+        ArrayList<BusStop> busStops = getAllBusStops();
         BusStop closestStop = null;
         double minDistSq = Double.MAX_VALUE;
 

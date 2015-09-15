@@ -6,7 +6,7 @@
     android:paddingLeft="@dimen/recyclerview_horizontal_margin">
 
     <TextView
-        android:id="@+id/bus_route_name"
+        android:id="@+id/bus_item_name"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentLeft="true"

@@ -44,7 +44,7 @@ public class DirectionsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_directions);
 
-        progressSpinner = (ProgressBar) findViewById(R.id.routes_progress_spinner);
+        progressSpinner = (ProgressBar) findViewById(R.id.directions_progress_spinner);
         pathTimeTextView = (TextView) findViewById(R.id.path_time_textview);
 
         // Get origin and destination
@@ -131,7 +131,7 @@ public class DirectionsActivity extends AppCompatActivity {
             origin = stops[0];
             destination = stops[1];
 
-            if (RUDirectApplication.getBusData().getBusTagsToBusRoutes() == null) {
+            if (RUDirectApplication.getBusData().getRouteTagsToBusRoutes() == null) {
                 NextBusAPI.saveBusRoutes();
             }
             ArrayList<BusRoute> activeRoutes = NextBusAPI.getActiveRoutes();

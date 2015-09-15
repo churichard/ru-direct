@@ -18,11 +18,10 @@ import com.google.android.gms.analytics.HitBuilders;
 
 import org.rudirect.android.R;
 import org.rudirect.android.activity.SettingsActivity;
-import org.rudirect.android.adapter.BusRouteAdapter;
+import org.rudirect.android.adapter.BusRoutesAdapter;
 import org.rudirect.android.api.NextBusAPI;
 import org.rudirect.android.data.constants.RUDirectApplication;
 import org.rudirect.android.data.model.BusRoute;
-import org.rudirect.android.interfaces.NetworkCallFinishListener;
 import org.rudirect.android.ui.view.DividerItemDecoration;
 import org.rudirect.android.util.RUDirectUtil;
 
@@ -43,16 +42,13 @@ public class RoutesFragment extends BaseMainFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        noInternetBanner = (TextView) mainActivity.findViewById(R.id.no_internet_banner);
+        noInternetBanner = (TextView) mainActivity.findViewById(R.id.routes_no_internet_banner);
         progressBar = (ProgressBar) mainActivity.findViewById(R.id.routes_progress_spinner);
         progressBar.setVisibility(View.VISIBLE);
 
         setupRecyclerView();
         setupSwipeRefreshLayout();
 
-        // TODO Move this into Stops when it's completed
-//        DirectionsFragment directionsFragment = (DirectionsFragment) MainPagerAdapter.getRegisteredFragment(1);
-//        new UpdateBusRoutesTask().execute(directionsFragment);
         updateActiveRoutes();
     }
 
@@ -79,7 +75,7 @@ public class RoutesFragment extends BaseMainFragment {
         // Setup layout
         recyclerView.addItemDecoration(new DividerItemDecoration(mainActivity, LinearLayoutManager.VERTICAL));
         // Set adapter
-        recyclerView.setAdapter(new BusRouteAdapter(mainActivity, this));
+        recyclerView.setAdapter(new BusRoutesAdapter(mainActivity));
     }
 
     // Set up SwipeRefreshLayout
@@ -99,20 +95,6 @@ public class RoutesFragment extends BaseMainFragment {
         new UpdateActiveRoutesTask().execute();
     }
 
-    private class UpdateBusRoutesTask extends AsyncTask<NetworkCallFinishListener, Void, Void> {
-        private NetworkCallFinishListener listener;
-
-        protected Void doInBackground(NetworkCallFinishListener... listeners) {
-            listener = listeners[0];
-            NextBusAPI.saveBusRoutes();
-            return null;
-        }
-
-        protected void onPostExecute(Void v) {
-            listener.onBusStopsUpdated();
-        }
-    }
-
     private class UpdateActiveRoutesTask extends AsyncTask<Void, Void, ArrayList<BusRoute>> {
 
         protected ArrayList<BusRoute> doInBackground(Void... voids) {
@@ -123,7 +105,7 @@ public class RoutesFragment extends BaseMainFragment {
         }
 
         protected void onPostExecute(ArrayList<BusRoute> activeRoutes) {
-            BusRouteAdapter adapter = (BusRouteAdapter) recyclerView.getAdapter();
+            BusRoutesAdapter adapter = (BusRoutesAdapter) recyclerView.getAdapter();
             if (RUDirectUtil.isNetworkAvailable()) {
                 noInternetBanner.setVisibility(View.GONE);
                 if (activeRoutes == null || activeRoutes.size() == 0) {

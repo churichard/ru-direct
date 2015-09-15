@@ -18,6 +18,7 @@
 
     <!-- Intents -->
     <string name="bus_tag_message">Bus Tag</string>
+    <string name="stop_tag_message">Stop Tag</string>
     <string name="page_clicked_from_message">Page Clicked From</string>
     <string name="origin_text_message">Origin</string>
     <string name="destination_text_message">Destination</string>
@@ -48,14 +49,15 @@
     <string name="release_tracker_id">UA-66536908-2</string>
 
     <string name="main_screen">Main-Screen</string>
-    <string name="bus_stops_screen">Bus-Stops-Screen</string>
+    <string name="route_screen">Route-Screen</string>
+    <string name="stop_screen">Stop-Screen</string>
     <string name="directions_screen">Directions-Screen</string>
     <string name="settings_screen">Settings-Screen</string>
     <string name="attributions_screen">Attributions-Screen</string>
 
     <string name="active_routes_category">Active-Routes-Page</string>
+    <string name="bus_stops_category">Bus-Stops-Page</string>
     <string name="directions_selector_category">Directions-Selector-Page</string>
-    <string name="all_routes_category">All-Routes-Page</string>
     <string name="route_times_category">Route-Times-Page</string>
     <string name="route_map_category">Route-Map-Page</string>
 

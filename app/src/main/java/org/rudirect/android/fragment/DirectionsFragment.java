@@ -36,6 +36,8 @@ import org.rudirect.android.data.model.BusStop;
 import org.rudirect.android.interfaces.NetworkCallFinishListener;
 import org.rudirect.android.util.RUDirectUtil;
 
+import java.util.ArrayList;
+
 public class DirectionsFragment extends Fragment implements NetworkCallFinishListener,
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
@@ -96,7 +98,7 @@ public class DirectionsFragment extends Fragment implements NetworkCallFinishLis
                 BusStop origin = null;
                 BusStop destination = null;
 
-                BusStop[] busStops = RUDirectApplication.getBusData().getAllBusStops();
+                ArrayList<BusStop> busStops = RUDirectApplication.getBusData().getAllBusStops();
                 if (busStops != null) {
                     for (BusStop stop : busStops) {
                         if (stop.getTitle().equalsIgnoreCase(originACTextView.getText().toString())) {
@@ -141,9 +143,9 @@ public class DirectionsFragment extends Fragment implements NetworkCallFinishLis
 
     // Initialize the autocomplete textviews
     private void initACTextViews() {
-        BusStop[] busStopArray = RUDirectApplication.getBusData().getAllBusStops();
-        if (busStopArray != null) {
-            ArrayAdapter<BusStop> busStopArrayAdapter = new ArrayAdapter<>(mainActivity, R.layout.list_autocomplete_textview, busStopArray);
+        ArrayList<BusStop> busStops = RUDirectApplication.getBusData().getAllBusStops();
+        if (busStops != null) {
+            ArrayAdapter<BusStop> busStopArrayAdapter = new ArrayAdapter<>(mainActivity, R.layout.list_autocomplete_textview, busStops);
 
             // Setup the autocomplete textviews
             setupACTextView(originACTextView, busStopArrayAdapter);

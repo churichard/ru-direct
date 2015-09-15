@@ -43,7 +43,7 @@ public class RouteActivity extends AppCompatActivity
         // Get intent extras
         Intent intent = getIntent();
         String busTag = intent.getStringExtra(getString(R.string.bus_tag_message));
-        route = RUDirectApplication.getBusData().getBusTagsToBusRoutes().get(busTag);
+        route = RUDirectApplication.getBusData().getRouteTagsToBusRoutes().get(busTag);
         String pageClickedFrom = intent.getStringExtra(getString(R.string.page_clicked_from_message));
 
         setTitle(route.getTitle());
@@ -53,9 +53,9 @@ public class RouteActivity extends AppCompatActivity
         mGoogleApiClient = buildGoogleApiClient();
 
         // Log the screen
-        RUDirectApplication.getTracker().setScreenName(getString(R.string.bus_stops_screen));
+        RUDirectApplication.getTracker().setScreenName(getString(R.string.route_screen));
         RUDirectApplication.getTracker().send(new HitBuilders.ScreenViewBuilder()
-                .setCustomDimension(AppData.ROUTE_NAME_DIMEN, route.getTitle())
+                .setCustomDimension(AppData.ROUTE_OR_STOP_NAME_DIMEN, route.getTitle())
                 .setCustomDimension(AppData.PAGE_CLICKED_FROM_DIMEN, pageClickedFrom).build());
     }
 

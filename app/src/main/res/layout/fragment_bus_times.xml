@@ -4,7 +4,7 @@
     android:layout_height="match_parent">
 
     <include
-        android:id="@+id/no_internet_banner"
+        android:id="@+id/routes_no_internet_banner"
         layout="@layout/no_internet_banner" />
 
     <include
@@ -15,7 +15,7 @@
         android:id="@+id/bus_times_swipe_refresh_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/no_internet_banner">
+        android:layout_below="@id/routes_no_internet_banner">
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/bus_times_recyclerview"

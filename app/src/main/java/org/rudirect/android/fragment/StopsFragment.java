@@ -18,10 +18,11 @@ import com.google.android.gms.analytics.HitBuilders;
 
 import org.rudirect.android.R;
 import org.rudirect.android.activity.SettingsActivity;
-import org.rudirect.android.adapter.BusRouteAdapter;
+import org.rudirect.android.adapter.BusStopsAdapter;
+import org.rudirect.android.adapter.MainPagerAdapter;
 import org.rudirect.android.api.NextBusAPI;
 import org.rudirect.android.data.constants.RUDirectApplication;
-import org.rudirect.android.data.model.BusRoute;
+import org.rudirect.android.data.model.BusStop;
 import org.rudirect.android.interfaces.NetworkCallFinishListener;
 import org.rudirect.android.ui.view.DividerItemDecoration;
 import org.rudirect.android.util.RUDirectUtil;
@@ -36,24 +37,21 @@ public class StopsFragment extends BaseMainFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_routes, container, false);
+        return inflater.inflate(R.layout.fragment_stops, container, false);
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        noInternetBanner = (TextView) mainActivity.findViewById(R.id.no_internet_banner);
-        progressBar = (ProgressBar) mainActivity.findViewById(R.id.routes_progress_spinner);
+        noInternetBanner = (TextView) mainActivity.findViewById(R.id.stops_no_internet_banner);
+        progressBar = (ProgressBar) mainActivity.findViewById(R.id.stops_progress_spinner);
         progressBar.setVisibility(View.VISIBLE);
 
         setupRecyclerView();
         setupSwipeRefreshLayout();
 
-        // TODO Move this into Stops when it's completed
-//        DirectionsFragment directionsFragment = (DirectionsFragment) MainPagerAdapter.getRegisteredFragment(1);
-//        new UpdateBusRoutesTask().execute(directionsFragment);
-        updateActiveRoutes();
+        updateBusStops();
     }
 
     @Override
@@ -72,34 +70,41 @@ public class StopsFragment extends BaseMainFragment {
     // Set up RecyclerView
     private void setupRecyclerView() {
         // Initialize recycler view
-        recyclerView = (RecyclerView) mainActivity.findViewById(R.id.routes_recyclerview);
+        recyclerView = (RecyclerView) mainActivity.findViewById(R.id.stops_recyclerview);
         // Set layout manager
         LinearLayoutManager layoutManager = new LinearLayoutManager(mainActivity);
         recyclerView.setLayoutManager(layoutManager);
         // Setup layout
         recyclerView.addItemDecoration(new DividerItemDecoration(mainActivity, LinearLayoutManager.VERTICAL));
         // Set adapter
-        recyclerView.setAdapter(new BusRouteAdapter(mainActivity, this));
+        recyclerView.setAdapter(new BusStopsAdapter(mainActivity, this));
     }
 
     // Set up SwipeRefreshLayout
     private void setupSwipeRefreshLayout() {
-        mSwipeRefreshLayout = (SwipeRefreshLayout) mainActivity.findViewById(R.id.routes_swipe_refresh_layout);
+        mSwipeRefreshLayout = (SwipeRefreshLayout) mainActivity.findViewById(R.id.stops_swipe_refresh_layout);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                updateActiveRoutes();
+                updateBusStops();
             }
         });
         mSwipeRefreshLayout.setColorSchemeResources(R.color.primary_color);
     }
 
-    // Update active routes
-    public void updateActiveRoutes() {
-        new UpdateActiveRoutesTask().execute();
+    // Returns the recyclerview
+    public RecyclerView getRecyclerView() {
+        return recyclerView;
     }
 
-    private class UpdateBusRoutesTask extends AsyncTask<NetworkCallFinishListener, Void, Void> {
+    // Update bus stops
+    public void updateBusStops() {
+        DirectionsFragment directionsFragment = (DirectionsFragment) MainPagerAdapter.getRegisteredFragment(2);
+        new UpdateBusStops().execute(directionsFragment);
+    }
+
+    private class UpdateBusStops extends AsyncTask<NetworkCallFinishListener, Void, Void> {
+
         private NetworkCallFinishListener listener;
 
         protected Void doInBackground(NetworkCallFinishListener... listeners) {
@@ -109,44 +114,23 @@ public class StopsFragment extends BaseMainFragment {
         }
 
         protected void onPostExecute(Void v) {
-            listener.onBusStopsUpdated();
-        }
-    }
-
-    private class UpdateActiveRoutesTask extends AsyncTask<Void, Void, ArrayList<BusRoute>> {
-
-        protected ArrayList<BusRoute> doInBackground(Void... voids) {
-            if (RUDirectApplication.getBusData().getBusRoutes() == null) {
-                NextBusAPI.saveBusRoutes();
-            }
-            return NextBusAPI.getActiveRoutes();
-        }
-
-        protected void onPostExecute(ArrayList<BusRoute> activeRoutes) {
-            BusRouteAdapter adapter = (BusRouteAdapter) recyclerView.getAdapter();
+            ArrayList<BusStop> busStops = RUDirectApplication.getBusData().getAllBusStops();
+            BusStopsAdapter adapter = (BusStopsAdapter) recyclerView.getAdapter();
             if (RUDirectUtil.isNetworkAvailable()) {
                 noInternetBanner.setVisibility(View.GONE);
-                if (activeRoutes == null || activeRoutes.size() == 0) {
-                    activeRoutes = new ArrayList<>();
-                    activeRoutes.add(new BusRoute("No active routes."));
+                if (busStops == null || busStops.size() == 0) {
+                    busStops = new ArrayList<>();
+                    busStops.add(new BusStop("No bus stops."));
                 } else {
-                    // Set active and inactive routes
-                    adapter.setActiveRoutes(activeRoutes);
-                    ArrayList<BusRoute> inactiveRoutes = RUDirectApplication.getBusData().getBusRoutes();
-                    inactiveRoutes.removeAll(activeRoutes);
-                    if (inactiveRoutes.size() == 0) {
-                        inactiveRoutes.add(new BusRoute("No inactive routes."));
-                    }
-                    adapter.setInactiveRoutes(inactiveRoutes);
+                    adapter.setBusStops(busStops);
                     adapter.notifyDataSetChanged();
                 }
             } else {
                 // Show error
                 noInternetBanner.setVisibility(View.VISIBLE);
                 if (recyclerView.getAdapter().getItemCount() == 0) {
-                    ArrayList<BusRoute> allRoutes = RUDirectApplication.getBusData().getBusRoutes();
-                    if (allRoutes != null) {
-                        adapter.setActiveRoutes(allRoutes);
+                    if (busStops != null) {
+                        adapter.setBusStops(busStops);
                         adapter.notifyDataSetChanged();
                     } else {
                         Snackbar.make(mainActivity.findViewById(R.id.routes_layout),
@@ -156,6 +140,7 @@ public class StopsFragment extends BaseMainFragment {
             }
             progressBar.setVisibility(View.GONE);
             mSwipeRefreshLayout.setRefreshing(false);
+            listener.onBusStopsUpdated();
         }
     }
 
@@ -164,7 +149,7 @@ public class StopsFragment extends BaseMainFragment {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
             RUDirectApplication.getTracker().send(new HitBuilders.EventBuilder()
-                    .setCategory(getString(R.string.active_routes_category))
+                    .setCategory(getString(R.string.bus_stops_category))
                     .setAction(getString(R.string.view_action))
                     .build());
         }

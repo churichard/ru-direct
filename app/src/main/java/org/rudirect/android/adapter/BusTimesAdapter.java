@@ -24,10 +24,6 @@ public class BusTimesAdapter extends RecyclerView.Adapter<BusTimesViewHolder> {
     private static boolean expToggleRequest; // Whether or not the bus stop should be expanded/retracted
     private BusStop[] busStops;
 
-    public BusTimesAdapter(BusStop[] busStops) {
-        this.busStops = busStops;
-    }
-
     public BusTimesAdapter() {
         this.busStops = null;
     }

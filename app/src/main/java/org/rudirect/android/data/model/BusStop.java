@@ -15,6 +15,7 @@ public class BusStop implements Parcelable, Serializable, Comparable<BusStop> {
     private String title;
     private double latitude;
     private double longitude;
+    private boolean starred;
     private transient ArrayList<BusStopTime> times;
     private transient boolean isExpanded;
 
@@ -25,6 +26,16 @@ public class BusStop implements Parcelable, Serializable, Comparable<BusStop> {
         this.times = times;
         this.latitude = latitude;
         this.longitude = longitude;
+        this.isExpanded = false;
+    }
+
+    public BusStop(String title) {
+        this.id = 0;
+        this.tag = null;
+        this.title = title;
+        this.times = null;
+        this.latitude = -1;
+        this.longitude = -1;
         this.isExpanded = false;
     }
 
@@ -122,6 +133,14 @@ public class BusStop implements Parcelable, Serializable, Comparable<BusStop> {
         this.longitude = longitude;
     }
 
+    public boolean isStarred() {
+        return starred;
+    }
+
+    public void setStarred(boolean starred) {
+        this.starred = starred;
+    }
+
     public boolean isActive() {
         return (times != null) && !(times.size() == 1 && times.get(0).getMinutes() == -1);
     }
@@ -148,10 +167,15 @@ public class BusStop implements Parcelable, Serializable, Comparable<BusStop> {
     }
 
     @Override
-    public int compareTo(@NonNull BusStop busStop) {
-        if (this == busStop) {
+    public int compareTo(@NonNull BusStop other) {
+        if (this == other) {
             return 0;
+        } else if (isStarred() && !other.isStarred()) {
+            return -1;
+        } else if (!isStarred() && other.isStarred()) {
+            return 1;
+        } else {
+            return title.compareTo(other.getTitle());
         }
-        return title.compareTo(busStop.getTitle());
     }
 }

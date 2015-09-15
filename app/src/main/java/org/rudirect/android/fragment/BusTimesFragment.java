@@ -60,7 +60,7 @@ public class BusTimesFragment extends Fragment implements AppBarLayout.OnOffsetC
         progressBar = (ProgressBar) routeActivity.findViewById(R.id.bus_times_progress_spinner);
         progressBar.setVisibility(View.VISIBLE);
 
-        noInternetBanner = (TextView) routeActivity.findViewById(R.id.no_internet_banner);
+        noInternetBanner = (TextView) routeActivity.findViewById(R.id.routes_no_internet_banner);
         setupRecyclerView();
         setupSwipeRefreshLayout();
     }

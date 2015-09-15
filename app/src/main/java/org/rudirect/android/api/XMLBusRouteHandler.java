@@ -36,7 +36,7 @@ public class XMLBusRouteHandler extends DefaultHandler {
         busData = RUDirectApplication.getBusData();
 
         // Get bus tags to bus routes hash map
-        busTagsToBusRoutes = busData.getBusTagsToBusRoutes();
+        busTagsToBusRoutes = busData.getRouteTagsToBusRoutes();
         if (busTagsToBusRoutes == null) {
             busTagsToBusRoutes = new HashMap<>();
         }
@@ -129,7 +129,7 @@ public class XMLBusRouteHandler extends DefaultHandler {
 
     public void endDocument() throws SAXException {
         // Update bus tags to bus routes hash map
-        busData.setBusTagsToBusRoutes(busTagsToBusRoutes);
+        busData.setRouteTagsToBusRoutes(busTagsToBusRoutes);
 
         // Update bus data
         try {

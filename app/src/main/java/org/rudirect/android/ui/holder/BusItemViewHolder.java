@@ -8,16 +8,16 @@ import android.widget.TextView;
 import org.rudirect.android.R;
 import org.rudirect.android.interfaces.ViewHolderClickListener;
 
-public class BusRouteViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+public class BusItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
     public TextView title;
     public ImageView starImage;
     public ViewHolderClickListener mListener;
 
-    public BusRouteViewHolder(View v, ViewHolderClickListener listener) {
+    public BusItemViewHolder(View v, ViewHolderClickListener listener) {
         super(v);
 
-        title = (TextView) v.findViewById(R.id.bus_route_name);
+        title = (TextView) v.findViewById(R.id.bus_item_name);
         starImage = (ImageView) v.findViewById(R.id.star_image);
         mListener = listener;
 

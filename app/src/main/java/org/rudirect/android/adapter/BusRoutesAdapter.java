@@ -1,7 +1,6 @@
 package org.rudirect.android.adapter;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
@@ -15,36 +14,33 @@ import org.rudirect.android.activity.RouteActivity;
 import org.rudirect.android.data.constants.RUDirectApplication;
 import org.rudirect.android.data.model.BusData;
 import org.rudirect.android.data.model.BusRoute;
-import org.rudirect.android.fragment.RoutesFragment;
 import org.rudirect.android.interfaces.ViewHolderClickListener;
-import org.rudirect.android.ui.holder.BusRouteViewHolder;
+import org.rudirect.android.ui.holder.BusItemViewHolder;
 import org.rudirect.android.ui.holder.HeaderViewHolder;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-public class BusRouteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class BusRoutesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private static final String TAG = BusRouteAdapter.class.getSimpleName();
+    private static final String TAG = BusRoutesAdapter.class.getSimpleName();
     private static final int BUS_ROUTE = 0, HEADER = 1;
     private ArrayList<BusRoute> activeRoutes;
     private ArrayList<BusRoute> inactiveRoutes;
     private Activity activity;
-    private Fragment fragment;
 
-    public BusRouteAdapter(Activity activity, Fragment fragment) {
+    public BusRoutesAdapter(Activity activity) {
         this.activeRoutes = null;
         this.inactiveRoutes = null;
         this.activity = activity;
-        this.fragment = fragment;
     }
 
     // Create new views
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(final ViewGroup parent, int viewType) {
         if (viewType == BUS_ROUTE) {
-            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_bus_routes, parent, false);
-            return new BusRouteViewHolder(v, new ViewHolderClickListener() {
+            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_bus_items, parent, false);
+            return new BusItemViewHolder(v, new ViewHolderClickListener() {
                 public void onClick(View v, int position) {
                     BusRoute route = getRouteByPosition(position);
 
@@ -53,9 +49,7 @@ public class BusRouteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                         Intent intent = new Intent(activity, RouteActivity.class);
                         Context context = RUDirectApplication.getContext();
                         intent.putExtra(context.getString(R.string.bus_tag_message), route.getTag());
-                        if (fragment instanceof RoutesFragment) {
-                            intent.putExtra(context.getString(R.string.page_clicked_from_message), "Routes");
-                        }
+                        intent.putExtra(context.getString(R.string.page_clicked_from_message), "Routes");
 
                         // Start new activity to show bus stops
                         activity.startActivity(intent);
@@ -72,18 +66,18 @@ public class BusRouteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     // Replace the contents of a view
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, final int position) {
-        if (viewHolder instanceof BusRouteViewHolder) {
+        if (viewHolder instanceof BusItemViewHolder) {
             BusRoute route = getRouteByPosition(position);
             if (route != null) {
-                final BusRouteViewHolder busRouteViewHolder = (BusRouteViewHolder) viewHolder;
-                busRouteViewHolder.title.setText(route.getTitle());
-                busRouteViewHolder.starImage.setActivated(route.isStarred());
-                busRouteViewHolder.starImage.setOnClickListener(new View.OnClickListener() {
+                final BusItemViewHolder busItemViewHolder = (BusItemViewHolder) viewHolder;
+                busItemViewHolder.title.setText(route.getTitle());
+                busItemViewHolder.starImage.setActivated(route.isStarred());
+                busItemViewHolder.starImage.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         // Update the star image
-                        boolean starred = !busRouteViewHolder.starImage.isActivated();
-                        busRouteViewHolder.starImage.setActivated(starred);
+                        boolean starred = !busItemViewHolder.starImage.isActivated();
+                        busItemViewHolder.starImage.setActivated(starred);
 
                         // Handle star click
                         handleStarClick(position, starred);
