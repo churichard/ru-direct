@@ -13,11 +13,6 @@ public class BusTime implements Parcelable {
         this.vehicleId = vehicleId;
     }
 
-    public BusTime(int minutes) {
-        this.minutes = minutes;
-        this.vehicleId = null;
-    }
-
     private BusTime(Parcel in) {
         minutes = in.readInt();
         vehicleId = in.readString();

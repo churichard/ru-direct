@@ -15,35 +15,27 @@ public class BusRoute extends BusItem implements Parcelable, Serializable, Compa
     private transient ArrayList<double[]> activeBusLocations;
 
     public BusRoute(String tag, String title) {
-        this.tag = tag;
-        this.title = title;
-        this.starred = false;
+        super(tag, title);
         this.busStops = null;
         this.busPathSegments = null;
         this.activeBusLocations = null;
-        this.isExpanded = false;
     }
 
     public BusRoute(String title) {
-        this.title = title;
+        super(title);
         this.tag = null;
-        this.starred = false;
         this.busStops = null;
         this.busPathSegments = null;
         this.activeBusLocations = null;
-        this.isExpanded = false;
     }
 
     @SuppressWarnings("unchecked")
     private BusRoute(Parcel in) {
-        tag = in.readString();
-        title = in.readString();
-        starred = in.readByte() != 0;
+        super(in);
         busStops = in.createTypedArray(BusStop.CREATOR);
         busPathSegments = in.createTypedArray(BusPathSegment.CREATOR);
         activeBusLocations = new ArrayList<>();
         activeBusLocations = in.readArrayList(double[].class.getClassLoader());
-        isExpanded = false;
     }
 
     public BusRoute() {
@@ -129,9 +121,7 @@ public class BusRoute extends BusItem implements Parcelable, Serializable, Compa
 
     @Override
     public void writeToParcel(Parcel out, int flags) {
-        out.writeString(tag);
-        out.writeString(title);
-        out.writeByte((byte) (starred ? 1 : 0));
+        super.writeToParcel(out, flags);
         out.writeTypedArray(busStops, 0);
         out.writeTypedArray(busPathSegments, 0);
         out.writeList(activeBusLocations);

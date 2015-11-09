@@ -1,8 +1,12 @@
 package org.rudirect.android.data.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class BusItem {
+public abstract class BusItem implements Parcelable, Serializable {
 
     protected String tag;
     protected String title;
@@ -10,6 +14,51 @@ public class BusItem {
     protected transient ArrayList<BusTime> times;
     protected transient boolean isExpanded;
     protected transient long lastUpdatedTime;
+
+    protected BusItem(String tag, String title, ArrayList<BusTime> times) {
+        this.tag = tag;
+        this.title = title;
+        this.times = times;
+        this.starred = false;
+        this.isExpanded = false;
+    }
+
+    protected BusItem(String tag, String title) {
+        this.tag = tag;
+        this.title = title;
+        this.times = null;
+        this.starred = false;
+        this.isExpanded = false;
+    }
+
+    protected BusItem(String title) {
+        this.title = title;
+        this.tag = null;
+        this.times = null;
+        this.starred = false;
+        this.isExpanded = false;
+    }
+
+    protected BusItem(Parcel in) {
+        tag = in.readString();
+        title = in.readString();
+        starred = in.readByte() != 0;
+        isExpanded = false;
+    }
+
+    protected BusItem() {}
+
+    @Override
+    public void writeToParcel(Parcel out, int flags) {
+        out.writeString(tag);
+        out.writeString(title);
+        out.writeByte((byte) (starred ? 1 : 0));
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
 
     public String getTag() {
         return tag;

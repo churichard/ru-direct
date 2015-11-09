@@ -24,8 +24,8 @@ public class BusData {
     private HashMap<String, ArrayList<String>> stopTitleToRouteTags;
 
     private static ArrayList<BusRoute> activeRoutes; // Active bus routes
-    private transient ArrayList<BusRoute> busRoutes; // All bus routes
-    private transient ArrayList<BusStop> busStops; // All bus stops
+    private ArrayList<BusRoute> busRoutes; // All bus routes
+    private ArrayList<BusStop> busStops; // All bus stops
 
     public BusData() {
         // Needed for ormlite

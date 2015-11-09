@@ -16,33 +16,27 @@ public class BusStop extends BusItem implements Parcelable, Serializable, Compar
     private ArrayList<BusRoute> busRoutes;
 
     public BusStop(String tag, String title, ArrayList<BusTime> times, double latitude, double longitude) {
+        super(tag, title, times);
         this.id = 0;
-        this.tag = tag;
-        this.title = title;
-        this.times = times;
         this.latitude = latitude;
         this.longitude = longitude;
-        this.isExpanded = false;
     }
 
     public BusStop(String title) {
+        super(title);
         this.id = 0;
-        this.tag = null;
-        this.title = title;
-        this.times = null;
         this.latitude = -1;
         this.longitude = -1;
-        this.isExpanded = false;
     }
 
+    @SuppressWarnings("unchecked")
     private BusStop(Parcel in) {
+        super(in);
         id = 0;
-        tag = in.readString();
-        title = in.readString();
-        times = in.createTypedArrayList(BusTime.CREATOR);
         latitude = in.readDouble();
         longitude = in.readDouble();
-        isExpanded = false;
+        busRoutes = new ArrayList<>();
+        busRoutes = in.readArrayList(BusRoute.class.getClassLoader());
     }
 
     public BusStop() {
@@ -51,11 +45,10 @@ public class BusStop extends BusItem implements Parcelable, Serializable, Compar
 
     @Override
     public void writeToParcel(Parcel out, int flags) {
-        out.writeString(tag);
-        out.writeString(title);
-        out.writeTypedList(times);
+        super.writeToParcel(out, flags);
         out.writeDouble(latitude);
         out.writeDouble(longitude);
+        out.writeList(busRoutes);
     }
 
     @Override
