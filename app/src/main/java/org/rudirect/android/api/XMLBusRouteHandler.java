@@ -19,7 +19,9 @@ public class XMLBusRouteHandler extends DefaultHandler {
 
     private static final String TAG = XMLBusRouteHandler.class.getSimpleName();
     private BusData busData;
-    private HashMap<String, BusRoute> busTagsToBusRoutes;
+    private HashMap<String, BusRoute> routeTagsToBusRoutes;
+    private HashMap<String, BusStop> stopTagsToBusStops;
+    private HashMap<String, ArrayList<String>> stopTitleToRouteTags;
 
     private BusRoute currentRoute;
     private ArrayList<String> stopTitles;
@@ -35,10 +37,16 @@ public class XMLBusRouteHandler extends DefaultHandler {
     public void startDocument() throws SAXException {
         busData = RUDirectApplication.getBusData();
 
-        // Get bus tags to bus routes hash map
-        busTagsToBusRoutes = busData.getRouteTagsToBusRoutes();
-        if (busTagsToBusRoutes == null) {
-            busTagsToBusRoutes = new HashMap<>();
+        // Get route tags to bus routes hash map
+        routeTagsToBusRoutes = busData.getRouteTagsToBusRoutes();
+        if (routeTagsToBusRoutes == null) {
+            routeTagsToBusRoutes = new HashMap<>();
+        }
+
+        // Get stop tags to bus stops hash map
+        stopTagsToBusStops = busData.getStopTagsToBusStops();
+        if (stopTagsToBusStops == null) {
+            stopTagsToBusStops = new HashMap<>();
         }
 
         // Initialize helper variables
@@ -49,6 +57,7 @@ public class XMLBusRouteHandler extends DefaultHandler {
         pathLats = new ArrayList<>();
         pathLons = new ArrayList<>();
         busPathSegments = new ArrayList<>();
+        stopTitleToRouteTags = new HashMap<>();
         isGettingStops = false;
         inPath = false;
     }
@@ -62,10 +71,10 @@ public class XMLBusRouteHandler extends DefaultHandler {
             String routeTitle = atts.getValue("title");
 
             // Update route tag and title
-            currentRoute = busTagsToBusRoutes.get(routeTag);
+            currentRoute = routeTagsToBusRoutes.get(routeTag);
             if (currentRoute == null) {
                 currentRoute = new BusRoute(routeTag, routeTitle);
-                busTagsToBusRoutes.put(routeTag, currentRoute);
+                routeTagsToBusRoutes.put(routeTag, currentRoute);
             } else {
                 currentRoute.setTag(routeTag);
                 currentRoute.setTitle(routeTitle);
@@ -74,6 +83,16 @@ public class XMLBusRouteHandler extends DefaultHandler {
         if (isGettingStops && qName.equalsIgnoreCase("stop")) {
             String title = atts.getValue("title");
             String tag = atts.getValue("tag");
+
+            // Update bus stop to bus route hash map
+            ArrayList<String> routeTags = stopTitleToRouteTags.get(title);
+            if (routeTags != null && !routeTags.contains(currentRoute.getTag())) {
+                routeTags.add(currentRoute.getTag());
+            } else if (routeTags == null) {
+                routeTags = new ArrayList<>();
+                routeTags.add(currentRoute.getTag());
+                stopTitleToRouteTags.put(title, routeTags);
+            }
 
             // Update stop titles and stop tags
             stopTitles.add(title);
@@ -87,10 +106,24 @@ public class XMLBusRouteHandler extends DefaultHandler {
             isGettingStops = false;
 
             // Update bus tag to bus stops hash map
-            BusStop[] busStops = new BusStop[stopTitles.size()];
-            for (int i = 0; i < busStops.length; i++) {
-                busStops[i] = new BusStop(stopTags.get(i), stopTitles.get(i), null,
-                        latitudes.get(i), longitudes.get(i));
+            int length = stopTitles.size();
+            BusStop[] busStops = new BusStop[length];
+            for (int i = 0; i < length; i++) {
+                if (stopTagsToBusStops.get(stopTags.get(i)) == null) {
+                    stopTagsToBusStops.put(stopTags.get(i), new BusStop(stopTags.get(i), stopTitles.get(i), null,
+                            latitudes.get(i), longitudes.get(i)));
+                }
+                busStops[i] = stopTagsToBusStops.get(stopTags.get(i));
+
+                // Set bus routes in bus stop
+                ArrayList<BusRoute> busRoutes = busStops[i].getBusRoutes();
+                if (busRoutes == null) {
+                    busStops[i].setBusRoutes(new ArrayList<BusRoute>());
+                    busRoutes = busStops[i].getBusRoutes();
+                }
+                if (!busRoutes.contains(currentRoute)) {
+                    busRoutes.add(currentRoute);
+                }
             }
             currentRoute.setBusStops(busStops);
 
@@ -128,8 +161,12 @@ public class XMLBusRouteHandler extends DefaultHandler {
     }
 
     public void endDocument() throws SAXException {
-        // Update bus tags to bus routes hash map
-        busData.setRouteTagsToBusRoutes(busTagsToBusRoutes);
+        // Update route tags to bus routes hash map
+        busData.setRouteTagsToBusRoutes(routeTagsToBusRoutes);
+        // Update stop tags to bus stops hash map
+        busData.setStopTagsToBusStops(stopTagsToBusStops);
+        // Update stop title to route titles hash map
+        busData.setStopTitleToRouteTags(stopTitleToRouteTags);
 
         // Update bus data
         try {

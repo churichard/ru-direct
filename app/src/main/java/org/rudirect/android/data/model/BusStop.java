@@ -7,19 +7,15 @@ import android.support.annotation.NonNull;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-public class BusStop implements Parcelable, Serializable, Comparable<BusStop> {
+public class BusStop extends BusItem implements Parcelable, Serializable, Comparable<BusStop> {
 
     private static final long serialVersionUID = 1060767342449380984L;
     private transient int id;
-    private String tag;
-    private String title;
     private double latitude;
     private double longitude;
-    private boolean starred;
-    private transient ArrayList<BusStopTime> times;
-    private transient boolean isExpanded;
+    private ArrayList<BusRoute> busRoutes;
 
-    public BusStop(String tag, String title, ArrayList<BusStopTime> times, double latitude, double longitude) {
+    public BusStop(String tag, String title, ArrayList<BusTime> times, double latitude, double longitude) {
         this.id = 0;
         this.tag = tag;
         this.title = title;
@@ -43,7 +39,7 @@ public class BusStop implements Parcelable, Serializable, Comparable<BusStop> {
         id = 0;
         tag = in.readString();
         title = in.readString();
-        times = in.createTypedArrayList(BusStopTime.CREATOR);
+        times = in.createTypedArrayList(BusTime.CREATOR);
         latitude = in.readDouble();
         longitude = in.readDouble();
         isExpanded = false;
@@ -101,11 +97,19 @@ public class BusStop implements Parcelable, Serializable, Comparable<BusStop> {
         this.title = title;
     }
 
-    public ArrayList<BusStopTime> getTimes() {
+    public ArrayList<BusRoute> getBusRoutes() {
+        return busRoutes;
+    }
+
+    public void setBusRoutes(ArrayList<BusRoute> busRoutes) {
+        this.busRoutes = busRoutes;
+    }
+
+    public ArrayList<BusTime> getTimes() {
         return times;
     }
 
-    public void setTimes(ArrayList<BusStopTime> times) {
+    public void setTimes(ArrayList<BusTime> times) {
         this.times = times;
     }
 
@@ -141,8 +145,12 @@ public class BusStop implements Parcelable, Serializable, Comparable<BusStop> {
         this.starred = starred;
     }
 
-    public boolean isActive() {
-        return (times != null) && !(times.size() == 1 && times.get(0).getMinutes() == -1);
+    public long getLastUpdatedTime() {
+        return lastUpdatedTime;
+    }
+
+    public void setLastUpdatedTime(long lastUpdatedTime) {
+        this.lastUpdatedTime = lastUpdatedTime;
     }
 
     @Override

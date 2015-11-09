@@ -67,8 +67,8 @@ public class NextBusAPI {
         parseXML(AppData.ALL_ROUTES_URL, new XMLBusRouteHandler());
     }
 
-    // Saves the bus stop times to the database
-    public static void saveBusStopTimes(BusRoute route) {
+    // Saves the bus route times to the database
+    public static void saveBusRouteTimes(BusRoute route) {
         BusStop[] busStops = route.getBusStops();
 
         if (busStops != null) {
@@ -77,9 +77,25 @@ public class NextBusAPI {
             for (BusStop stop : busStops) {
                 link.append("&stops=").append(route.getTag()).append("%7Cnull%7C").append(stop.getTag());
             }
-//            Log.d("NextBus API", link.toString());
+            Log.d("NextBus: Route Times", link.toString());
 
-            parseXML(link.toString(), new XMLBusTimesHandler(route));
+            parseXML(link.toString(), new XMLRouteTimesHandler(route));
+        }
+    }
+
+    // Saves the bus stop times to the database
+    public static void saveBusStopTimes(BusStop stop) {
+        ArrayList<BusRoute> busRoutes = stop.getBusRoutes();
+
+        if (busRoutes != null) {
+            // Create predictions link
+            StringBuilder link = new StringBuilder(AppData.PREDICTIONS_URL);
+            for (BusRoute route : busRoutes) {
+                link.append("&stops=").append(route.getTag()).append("%7Cnull%7C").append(stop.getTag());
+            }
+            Log.d("NextBus: Stop Times", link.toString());
+
+            parseXML(link.toString(), new XMLStopTimesHandler(stop));
         }
     }
 

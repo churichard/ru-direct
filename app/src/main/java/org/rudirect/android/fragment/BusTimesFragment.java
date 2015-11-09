@@ -1,5 +1,6 @@
 package org.rudirect.android.fragment;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -21,18 +22,24 @@ import com.google.android.gms.analytics.HitBuilders;
 
 import org.rudirect.android.R;
 import org.rudirect.android.activity.RouteActivity;
+import org.rudirect.android.activity.StopActivity;
 import org.rudirect.android.adapter.BusTimesAdapter;
 import org.rudirect.android.api.NextBusAPI;
 import org.rudirect.android.data.constants.RUDirectApplication;
+import org.rudirect.android.data.model.BusItem;
 import org.rudirect.android.data.model.BusRoute;
+import org.rudirect.android.data.model.BusStop;
 import org.rudirect.android.ui.view.DividerItemDecoration;
 import org.rudirect.android.util.RUDirectUtil;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class BusTimesFragment extends Fragment implements AppBarLayout.OnOffsetChangedListener {
 
     private static final int REFRESH_INTERVAL = 60000;
 
-    private RouteActivity routeActivity;
+    private Activity activity;
     private Handler refreshHandler;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private RecyclerView busTimesRecyclerView;
@@ -43,7 +50,7 @@ public class BusTimesFragment extends Fragment implements AppBarLayout.OnOffsetC
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        routeActivity = (RouteActivity) getActivity();
+        activity = getActivity();
         setHasOptionsMenu(true);
     }
 
@@ -56,11 +63,11 @@ public class BusTimesFragment extends Fragment implements AppBarLayout.OnOffsetC
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        appBarLayout = (AppBarLayout) routeActivity.findViewById(R.id.appbar);
-        progressBar = (ProgressBar) routeActivity.findViewById(R.id.bus_times_progress_spinner);
+        appBarLayout = (AppBarLayout) activity.findViewById(R.id.appbar);
+        progressBar = (ProgressBar) activity.findViewById(R.id.bus_times_progress_spinner);
         progressBar.setVisibility(View.VISIBLE);
 
-        noInternetBanner = (TextView) routeActivity.findViewById(R.id.routes_no_internet_banner);
+        noInternetBanner = (TextView) activity.findViewById(R.id.routes_no_internet_banner);
         setupRecyclerView();
         setupSwipeRefreshLayout();
     }
@@ -100,7 +107,7 @@ public class BusTimesFragment extends Fragment implements AppBarLayout.OnOffsetC
 
     // Set up swipe refresh layout
     private void setupSwipeRefreshLayout() {
-        mSwipeRefreshLayout = (SwipeRefreshLayout) routeActivity.findViewById(R.id.bus_times_swipe_refresh_layout);
+        mSwipeRefreshLayout = (SwipeRefreshLayout) activity.findViewById(R.id.bus_times_swipe_refresh_layout);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -114,12 +121,12 @@ public class BusTimesFragment extends Fragment implements AppBarLayout.OnOffsetC
     // Set up RecyclerView
     private void setupRecyclerView() {
         // Initialize recycler view
-        busTimesRecyclerView = (RecyclerView) routeActivity.findViewById(R.id.bus_times_recyclerview);
+        busTimesRecyclerView = (RecyclerView) activity.findViewById(R.id.bus_times_recyclerview);
         // Set layout manager
-        LinearLayoutManager layoutManager = new LinearLayoutManager(routeActivity);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(activity);
         busTimesRecyclerView.setLayoutManager(layoutManager);
         // Setup layout
-        busTimesRecyclerView.addItemDecoration(new DividerItemDecoration(routeActivity, LinearLayoutManager.VERTICAL));
+        busTimesRecyclerView.addItemDecoration(new DividerItemDecoration(activity, LinearLayoutManager.VERTICAL));
         // Set adapter
         busTimesRecyclerView.setAdapter(new BusTimesAdapter());
     }
@@ -146,40 +153,49 @@ public class BusTimesFragment extends Fragment implements AppBarLayout.OnOffsetC
 
     @Override
     public void onOffsetChanged(AppBarLayout appBarLayout, int i) {
-        if (i == 0) {
-            mSwipeRefreshLayout.setEnabled(true);
-        } else {
-            mSwipeRefreshLayout.setEnabled(false);
-        }
+        mSwipeRefreshLayout.setEnabled(i == 0);
     }
 
-    private class UpdateBusTimes extends AsyncTask<Void, Void, BusRoute> {
+    private class UpdateBusTimes extends AsyncTask<Void, Void, BusItem> {
 
         @Override
-        protected BusRoute doInBackground(Void... voids) {
-            BusRoute route = routeActivity.getRoute();
-            NextBusAPI.saveBusStopTimes(route);
-            return route;
+        protected BusItem doInBackground(Void... voids) {
+            if (activity instanceof RouteActivity) {
+                BusRoute route = ((RouteActivity) activity).getRoute();
+                NextBusAPI.saveBusRouteTimes(route);
+                return route;
+            } else if (activity instanceof StopActivity) {
+                BusStop stop = ((StopActivity) activity).getStop();
+                NextBusAPI.saveBusStopTimes(stop);
+                return stop;
+            }
+            return null;
         }
 
         @Override
-        protected void onPostExecute(BusRoute route) {
+        protected void onPostExecute(BusItem item) {
             BusTimesAdapter busTimesAdapter = (BusTimesAdapter) busTimesRecyclerView.getAdapter();
+            ArrayList<BusItem> busItems = new ArrayList<>();
+            if (item instanceof BusRoute) {
+                busItems.addAll(Arrays.asList(((BusRoute) item).getBusStops()));
+            } else if (item instanceof BusStop) {
+                busItems.addAll(((BusStop) item).getBusRoutes());
+            }
 
             if (RUDirectUtil.isNetworkAvailable()) { // If there's Internet, update bus stops
                 noInternetBanner.setVisibility(View.GONE);
-                busTimesAdapter.setBusStops(route.getBusStops());
+                busTimesAdapter.setBusItems(busItems);
                 busTimesAdapter.notifyDataSetChanged();
             } else {
                 noInternetBanner.setText(RUDirectApplication.getContext().getString(R.string.no_internet_text));
-                if (route.getLastUpdatedTime() != 0) {
+                if (item.getLastUpdatedTime() != 0) {
                     noInternetBanner.append(" - last updated "
-                            + RUDirectUtil.getTimeDiff(route.getLastUpdatedTime()));
+                            + RUDirectUtil.getTimeDiff(item.getLastUpdatedTime()));
                 }
                 noInternetBanner.setVisibility(View.VISIBLE);
                 // If there's no bus stops shown, show them and set them as offline
                 if (busTimesRecyclerView.getAdapter().getItemCount() == 0) {
-                    busTimesAdapter.setBusStops(route.getBusStops());
+                    busTimesAdapter.setBusItems(busItems);
                     busTimesAdapter.notifyDataSetChanged();
                 }
             }
@@ -197,7 +213,7 @@ public class BusTimesFragment extends Fragment implements AppBarLayout.OnOffsetC
             RUDirectApplication.getTracker().send(new HitBuilders.EventBuilder()
                     .setCategory(getString(R.string.route_times_category))
                     .setAction(getString(R.string.view_action))
-                    .setLabel(routeActivity.getTitle().toString())
+                    .setLabel(activity.getTitle().toString())
                     .build());
         }
     }

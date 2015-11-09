@@ -7,16 +7,12 @@ import android.support.annotation.NonNull;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-public class BusRoute implements Parcelable, Serializable, Comparable<BusRoute> {
+public class BusRoute extends BusItem implements Parcelable, Serializable, Comparable<BusRoute> {
 
     private static final long serialVersionUID = 1632593783571404823L;
-    private String tag;
-    private String title;
-    private boolean starred;
     private BusStop[] busStops;
     private BusPathSegment[] busPathSegments;
     private transient ArrayList<double[]> activeBusLocations;
-    private transient long lastUpdatedTime;
 
     public BusRoute(String tag, String title) {
         this.tag = tag;
@@ -25,6 +21,7 @@ public class BusRoute implements Parcelable, Serializable, Comparable<BusRoute> 
         this.busStops = null;
         this.busPathSegments = null;
         this.activeBusLocations = null;
+        this.isExpanded = false;
     }
 
     public BusRoute(String title) {
@@ -34,6 +31,7 @@ public class BusRoute implements Parcelable, Serializable, Comparable<BusRoute> 
         this.busStops = null;
         this.busPathSegments = null;
         this.activeBusLocations = null;
+        this.isExpanded = false;
     }
 
     @SuppressWarnings("unchecked")
@@ -44,7 +42,8 @@ public class BusRoute implements Parcelable, Serializable, Comparable<BusRoute> 
         busStops = in.createTypedArray(BusStop.CREATOR);
         busPathSegments = in.createTypedArray(BusPathSegment.CREATOR);
         activeBusLocations = new ArrayList<>();
-        activeBusLocations = in.readArrayList(String.class.getClassLoader());
+        activeBusLocations = in.readArrayList(double[].class.getClassLoader());
+        isExpanded = false;
     }
 
     public BusRoute() {
@@ -91,12 +90,28 @@ public class BusRoute implements Parcelable, Serializable, Comparable<BusRoute> 
         this.busPathSegments = busPathSegments;
     }
 
+    public ArrayList<BusTime> getTimes() {
+        return times;
+    }
+
+    public void setTimes(ArrayList<BusTime> times) {
+        this.times = times;
+    }
+
     public ArrayList<double[]> getActiveBusLocations() {
         return activeBusLocations;
     }
 
     public void setActiveBusLocations(ArrayList<double[]> activeBusLocations) {
         this.activeBusLocations = activeBusLocations;
+    }
+
+    public boolean isExpanded() {
+        return isExpanded;
+    }
+
+    public void setIsExpanded(boolean isExpanded) {
+        this.isExpanded = isExpanded;
     }
 
     public long getLastUpdatedTime() {
@@ -131,6 +146,22 @@ public class BusRoute implements Parcelable, Serializable, Comparable<BusRoute> 
             return new BusRoute[size];
         }
     };
+
+    @Override
+    public int hashCode() {
+        return title.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        } else if (obj instanceof BusRoute) {
+            BusRoute other = (BusRoute) obj;
+            return title.equals(other.getTitle());
+        }
+        return false;
+    }
 
     @Override
     public int compareTo(@NonNull BusRoute other) {

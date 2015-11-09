@@ -6,7 +6,7 @@ import org.rudirect.android.data.constants.RUDirectApplication;
 import org.rudirect.android.data.model.BusData;
 import org.rudirect.android.data.model.BusRoute;
 import org.rudirect.android.data.model.BusStop;
-import org.rudirect.android.data.model.BusStopTime;
+import org.rudirect.android.data.model.BusTime;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -16,19 +16,19 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 
-public class XMLBusTimesHandler extends DefaultHandler {
+public class XMLRouteTimesHandler extends DefaultHandler {
 
-    private static final String TAG = XMLBusTimesHandler.class.getSimpleName();
+    private static final String TAG = XMLRouteTimesHandler.class.getSimpleName();
     private BusData busData;
     private BusRoute route;
     private BusStop[] busStops;
-    private HashMap<String, ArrayList<BusStopTime>> busStopTimes;
+    private HashMap<String, ArrayList<BusTime>> routeTimes;
 
-    private ArrayList<BusStopTime> times;
+    private ArrayList<BusTime> times;
     private String stopTag;
     private boolean inBusTag;
 
-    public XMLBusTimesHandler(BusRoute route) {
+    public XMLRouteTimesHandler(BusRoute route) {
         this.route = route;
     }
 
@@ -36,7 +36,7 @@ public class XMLBusTimesHandler extends DefaultHandler {
         busData = RUDirectApplication.getBusData();
         route.setLastUpdatedTime(Calendar.getInstance().getTimeInMillis());
         busStops = route.getBusStops();
-        busStopTimes = new HashMap<>();
+        routeTimes = new HashMap<>();
         inBusTag = false;
     }
 
@@ -49,7 +49,7 @@ public class XMLBusTimesHandler extends DefaultHandler {
         }
         if (inBusTag && qName.equalsIgnoreCase("prediction")) {
             // Add bus stop time
-            BusStopTime time = new BusStopTime(Integer.parseInt(atts.getValue("minutes")),
+            BusTime time = new BusTime(Integer.parseInt(atts.getValue("minutes")),
                     atts.getValue("vehicle"));
             times.add(time);
         }
@@ -57,7 +57,7 @@ public class XMLBusTimesHandler extends DefaultHandler {
 
     public void endElement(String uri, String localName, String qName) throws SAXException {
         if (inBusTag && qName.equalsIgnoreCase("predictions")) {
-            busStopTimes.put(stopTag, times);
+            routeTimes.put(stopTag, times);
             inBusTag = false;
             stopTag = null;
         }
@@ -66,7 +66,7 @@ public class XMLBusTimesHandler extends DefaultHandler {
     public void endDocument() throws SAXException {
         // Update times
         for (BusStop stop : busStops) {
-            ArrayList<BusStopTime> times = busStopTimes.get(stop.getTag());
+            ArrayList<BusTime> times = routeTimes.get(stop.getTag());
             if (times.size() != 0) {
                 stop.setTimes(times);
             }

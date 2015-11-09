@@ -9,7 +9,7 @@ import org.rudirect.android.data.model.BusData;
 import org.rudirect.android.data.model.BusRoute;
 import org.rudirect.android.data.model.BusRouteEdge;
 import org.rudirect.android.data.model.BusStop;
-import org.rudirect.android.data.model.BusStopTime;
+import org.rudirect.android.data.model.BusTime;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,7 +37,7 @@ public class DirectionsUtil {
             if (activeRoute != null) {
                 // Log.d(TAG, "Active bus tag: " + activeBusTag + "\n_");
                 BusStop[] busStops = activeRoute.getBusStops();
-                BusStopTime prevTime = null;
+                BusTime prevTime = null;
 
                 // Add vertex if the first bus stop is active
                 if (busStops[0].isActive()) {
@@ -67,7 +67,7 @@ public class DirectionsUtil {
     }
 
     // Adds a weighted edge between two bus stops
-    private static BusStopTime addEdge(BusRoute route, BusStop stop1, BusStop stop2, BusStopTime prevTime) {
+    private static BusTime addEdge(BusRoute route, BusStop stop1, BusStop stop2, BusTime prevTime) {
         // Set previous time if it hasn't been set yet
         if (prevTime == null) {
             prevTime = stop2.getTimes().get(0);
@@ -75,14 +75,14 @@ public class DirectionsUtil {
 
         // Add edge between stop1 and stop2
         BusRouteEdge edge = busStopsGraph.addEdge(stop1, stop2);
-        ArrayList<BusStopTime> busStopTimes = stop2.getTimes();
+        ArrayList<BusTime> busTimes = stop2.getTimes();
         String vehicleId = prevTime.getVehicleId();
         edge.setRouteName(route.getTitle());
         edge.setRouteTag(route.getTag());
 
         // Iterate through all the times for the bus stop to get the lowest one
-        for (int j = 0; j < busStopTimes.size(); j++) {
-            BusStopTime time = busStopTimes.get(j);
+        for (int j = 0; j < busTimes.size(); j++) {
+            BusTime time = busTimes.get(j);
 
             // Check to see that the time for this bus stop is greater than the time for the previous bus stop
             if (time.getMinutes() - prevTime.getMinutes() < 0) {

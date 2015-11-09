@@ -1,7 +1,8 @@
 <resources>
     <!-- App -->
     <string name="app_name">RU Direct</string>
-    <string name="bus_stops_activity_name">Bus Stops</string>
+    <string name="route_activity_name">Routes</string>
+    <string name="stop_activity_name">Stop</string>
     <string name="directions_activity_name">Directions</string>
     <string name="attributions_activity_name">Open Source Licenses</string>
     <string name="settings_name">Settings</string>

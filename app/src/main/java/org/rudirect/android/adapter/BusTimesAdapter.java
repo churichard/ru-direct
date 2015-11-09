@@ -8,11 +8,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import org.rudirect.android.data.constants.RUDirectApplication;
-import org.rudirect.android.data.model.BusStop;
-import org.rudirect.android.data.model.BusStopTime;
-import org.rudirect.android.interfaces.ViewHolderClickListener;
 import org.rudirect.android.R;
+import org.rudirect.android.data.constants.RUDirectApplication;
+import org.rudirect.android.data.model.BusItem;
+import org.rudirect.android.data.model.BusTime;
+import org.rudirect.android.interfaces.ViewHolderClickListener;
 import org.rudirect.android.ui.holder.BusTimesViewHolder;
 
 import java.text.DateFormat;
@@ -22,10 +22,10 @@ import java.util.Date;
 public class BusTimesAdapter extends RecyclerView.Adapter<BusTimesViewHolder> {
 
     private static boolean expToggleRequest; // Whether or not the bus stop should be expanded/retracted
-    private BusStop[] busStops;
+    private ArrayList<BusItem> busItems;
 
     public BusTimesAdapter() {
-        this.busStops = null;
+        this.busItems = null;
     }
 
     // Create new views
@@ -36,7 +36,7 @@ public class BusTimesAdapter extends RecyclerView.Adapter<BusTimesViewHolder> {
             public void onClick(View v, int position) {
                 expToggleRequest = true;
 
-                BusStop stop = busStops[position];
+                BusItem stop = busItems.get(position);
                 TextView titleTextView = (TextView) v.findViewById(R.id.bus_stop_name);
                 TextView timesTextView = (TextView) v.findViewById(R.id.bus_stop_times);
                 timesTextView.setText(getBusStopTimes(stop, titleTextView, timesTextView));
@@ -47,7 +47,7 @@ public class BusTimesAdapter extends RecyclerView.Adapter<BusTimesViewHolder> {
     // Replace the contents of a view
     @Override
     public void onBindViewHolder(BusTimesViewHolder viewHolder, int position) {
-        BusStop stop = busStops[position];
+        BusItem stop = busItems.get(position);
         TextView titleTextView = viewHolder.title;
         TextView timesTextView = viewHolder.times;
 
@@ -58,31 +58,31 @@ public class BusTimesAdapter extends RecyclerView.Adapter<BusTimesViewHolder> {
     // Return the number of posts
     @Override
     public int getItemCount() {
-        if (busStops != null) {
-            return busStops.length;
+        if (busItems != null) {
+            return busItems.size();
         }
         return 0;
     }
 
     // Return the bus stop times
-    private String getBusStopTimes(BusStop busStop, TextView titleTextView, TextView timesTextView) {
-        ArrayList<BusStopTime> times = busStop.getTimes();
+    private String getBusStopTimes(BusItem busItem, TextView titleTextView, TextView timesTextView) {
+        ArrayList<BusTime> times = busItem.getTimes();
         setTextColor(titleTextView, timesTextView, times);
 
-        if (expToggleRequest && busStop.isActive() && !busStop.isExpanded()
-                || !expToggleRequest && busStop.isExpanded()) {
+        if (expToggleRequest && busItem.isActive() && !busItem.isExpanded()
+                || !expToggleRequest && busItem.isExpanded()) {
             expToggleRequest = false;
-            busStop.setIsExpanded(true);
+            busItem.setIsExpanded(true);
             return expandedTimes(times);
         } else {
             expToggleRequest = false;
-            busStop.setIsExpanded(false);
+            busItem.setIsExpanded(false);
             return normalTimes(times);
         }
     }
 
     // Sets up the expanded view of the bus stop times
-    private String expandedTimes(ArrayList<BusStopTime> times) {
+    private String expandedTimes(ArrayList<BusTime> times) {
         long currentTime = new Date().getTime();
 
         // Build string of times
@@ -102,7 +102,7 @@ public class BusTimesAdapter extends RecyclerView.Adapter<BusTimesViewHolder> {
     }
 
     // Sets up the normal view of the bus stop times
-    private String normalTimes(ArrayList<BusStopTime> times) {
+    private String normalTimes(ArrayList<BusTime> times) {
         // Bus stop is offline
         if (times == null) {
             return "Offline";
@@ -128,7 +128,7 @@ public class BusTimesAdapter extends RecyclerView.Adapter<BusTimesViewHolder> {
     }
 
     // Change text color of the ListView items
-    private void setTextColor(TextView busStopName, TextView busStopTimes, ArrayList<BusStopTime> times) {
+    private void setTextColor(TextView busStopName, TextView busStopTimes, ArrayList<BusTime> times) {
         Resources resources = RUDirectApplication.getContext().getResources();
         busStopName.setTextColor(resources.getColor(android.R.color.black));
         if (times == null) {
@@ -152,7 +152,7 @@ public class BusTimesAdapter extends RecyclerView.Adapter<BusTimesViewHolder> {
     }
 
     // Sets the bus stops
-    public void setBusStops(BusStop[] busStops) {
-        this.busStops = busStops;
+    public void setBusItems(ArrayList<BusItem> busItems) {
+        this.busItems = busItems;
     }
 }

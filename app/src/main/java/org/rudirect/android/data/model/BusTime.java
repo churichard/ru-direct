@@ -3,22 +3,22 @@ package org.rudirect.android.data.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class BusStopTime implements Parcelable {
+public class BusTime implements Parcelable {
 
     private transient int minutes;
     private transient String vehicleId;
 
-    public BusStopTime(int minutes, String vehicleId) {
+    public BusTime(int minutes, String vehicleId) {
         this.minutes = minutes;
         this.vehicleId = vehicleId;
     }
 
-    public BusStopTime(int minutes) {
+    public BusTime(int minutes) {
         this.minutes = minutes;
         this.vehicleId = null;
     }
 
-    private BusStopTime(Parcel in) {
+    private BusTime(Parcel in) {
         minutes = in.readInt();
         vehicleId = in.readString();
     }
@@ -34,13 +34,13 @@ public class BusStopTime implements Parcelable {
         return 0;
     }
 
-    public static Parcelable.Creator<BusStopTime> CREATOR = new Parcelable.Creator<BusStopTime>() {
-        public BusStopTime createFromParcel(Parcel in) {
-            return new BusStopTime(in);
+    public static Parcelable.Creator<BusTime> CREATOR = new Parcelable.Creator<BusTime>() {
+        public BusTime createFromParcel(Parcel in) {
+            return new BusTime(in);
         }
 
-        public BusStopTime[] newArray(int size) {
-            return new BusStopTime[size];
+        public BusTime[] newArray(int size) {
+            return new BusTime[size];
         }
     };
 

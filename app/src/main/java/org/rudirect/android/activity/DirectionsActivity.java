@@ -136,7 +136,7 @@ public class DirectionsActivity extends AppCompatActivity {
             }
             ArrayList<BusRoute> activeRoutes = NextBusAPI.getActiveRoutes();
             for (BusRoute route : activeRoutes) {
-                NextBusAPI.saveBusStopTimes(route);
+                NextBusAPI.saveBusRouteTimes(route);
             }
 
             // Build the bus stops graph and compute the shortest path
