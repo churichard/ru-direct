@@ -3,6 +3,7 @@ package org.rudirect.android.fragment;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -67,6 +68,12 @@ public class BusMapFragment extends MapFragment implements OnMapReadyCallback {
     public void onMapReady(final GoogleMap map) {
         if (connectedToPlayServices) {
             mMap = map;
+
+            // Get height of screen and set padding of Google logo based on that
+            DisplayMetrics displayMetrics = RUDirectApplication.getContext().getResources().getDisplayMetrics();
+            int height = displayMetrics.heightPixels;
+            mMap.setPadding(0, 0, 0, height/10);
+
             mMap.getUiSettings().setMapToolbarEnabled(false);
             BusStop stop = routeActivity.getRoute().getBusStops()[0];
             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
