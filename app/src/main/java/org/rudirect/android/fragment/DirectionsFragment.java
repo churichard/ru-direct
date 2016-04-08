@@ -89,52 +89,54 @@ public class DirectionsFragment extends Fragment implements NetworkCallFinishLis
 
         // Set up find route button
         Button findRouteButton = (Button) mainActivity.findViewById(R.id.find_route_button);
-        findRouteButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                RUDirectUtil.hideKeyboard(view);
-                BusStop origin = null;
-                BusStop destination = null;
+        if (findRouteButton != null) {
+            findRouteButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    RUDirectUtil.hideKeyboard(view);
+                    BusStop origin = null;
+                    BusStop destination = null;
 
-                BusStop[] busStops = RUDirectApplication.getBusData().getAllBusStops();
-                if (busStops != null) {
-                    for (BusStop stop : busStops) {
-                        if (stop.getTitle().equalsIgnoreCase(originACTextView.getText().toString())) {
-                            origin = stop;
+                    BusStop[] busStops = RUDirectApplication.getBusData().getAllBusStops();
+                    if (busStops != null) {
+                        for (BusStop stop : busStops) {
+                            if (stop.getTitle().equalsIgnoreCase(originACTextView.getText().toString())) {
+                                origin = stop;
+                            }
+                            if (stop.getTitle().equalsIgnoreCase(destACTextView.getText().toString())) {
+                                destination = stop;
+                            }
+                            if (origin != null && destination != null) break;
                         }
-                        if (stop.getTitle().equalsIgnoreCase(destACTextView.getText().toString())) {
-                            destination = stop;
+
+                        if (origin == null) {
+                            originACTextView.setError(getString(R.string.directions_textview_error));
                         }
-                        if (origin != null && destination != null) break;
-                    }
+                        if (destination == null) {
+                            destACTextView.setError(getString(R.string.directions_textview_error));
+                        }
 
-                    if (origin == null) {
-                        originACTextView.setError(getString(R.string.directions_textview_error));
-                    }
-                    if (destination == null) {
-                        destACTextView.setError(getString(R.string.directions_textview_error));
-                    }
-
-                    if (origin != null && destination != null) {
-                        Intent intent = new Intent(mainActivity, DirectionsActivity.class);
-                        intent.putExtra(getString(R.string.origin_text_message), (Parcelable) origin);
-                        intent.putExtra(getString(R.string.destination_text_message), (Parcelable) destination);
-                        startActivity(intent);
-                        mainActivity.overridePendingTransition(R.anim.abc_grow_fade_in_from_bottom, 0);
+                        if (origin != null && destination != null) {
+                            Intent intent = new Intent(mainActivity, DirectionsActivity.class);
+                            intent.putExtra(getString(R.string.origin_text_message), (Parcelable) origin);
+                            intent.putExtra(getString(R.string.destination_text_message), (Parcelable) destination);
+                            startActivity(intent);
+                            mainActivity.overridePendingTransition(R.anim.abc_grow_fade_in_from_bottom, 0);
+                        } else {
+                            relativeLayout.requestFocus();
+                            SpannableStringBuilder builder = new SpannableStringBuilder();
+                            builder.append(" ");
+                            builder.setSpan(new ImageSpan(mainActivity, android.R.drawable.stat_notify_error), 0, 1, 0);
+                            builder.append("\t\t").append(getString(R.string.directions_snackbar_error));
+                            Snackbar.make(relativeLayout, builder, Snackbar.LENGTH_SHORT).show();
+                        }
                     } else {
-                        relativeLayout.requestFocus();
-                        SpannableStringBuilder builder = new SpannableStringBuilder();
-                        builder.append(" ");
-                        builder.setSpan(new ImageSpan(mainActivity, android.R.drawable.stat_notify_error), 0, 1, 0);
-                        builder.append("\t\t").append(getString(R.string.directions_snackbar_error));
-                        Snackbar.make(relativeLayout, builder, Snackbar.LENGTH_SHORT).show();
+                        Snackbar.make(mainActivity.findViewById(R.id.directions_layout),
+                                "Could not fetch bus stops. Please try again later.", Snackbar.LENGTH_SHORT).show();
                     }
-                } else {
-                    Snackbar.make(mainActivity.findViewById(R.id.directions_layout),
-                            "Could not fetch bus stops. Please try again later.", Snackbar.LENGTH_SHORT).show();
                 }
-            }
-        });
+            });
+        }
 
         initACTextViews();
     }
