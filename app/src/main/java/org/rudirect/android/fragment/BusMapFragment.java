@@ -191,22 +191,24 @@ public class BusMapFragment extends MapFragment implements OnMapReadyCallback {
 
             // Draw the bus stop markers
             BusStop[] busStops = routeActivity.getRoute().getBusStops();
-            if (busStopMarkers.isEmpty()) { // Create the markers
-                for (BusStop stop : busStops) {
-                    MarkerOptions markerOptions = new MarkerOptions()
-                            .position(getLatLng(stop.getLatitude(), stop.getLongitude()))
-                            .title(stop.getTitle());
-                    if (!stop.isActive()) {
-                        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
+            if (busStops != null) {
+                if (busStopMarkers.isEmpty()) { // Create the markers
+                    for (BusStop stop : busStops) {
+                        MarkerOptions markerOptions = new MarkerOptions()
+                                .position(getLatLng(stop.getLatitude(), stop.getLongitude()))
+                                .title(stop.getTitle());
+                        if (!stop.isActive()) {
+                            markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
+                        }
+                        busStopMarkers.add(mMap.addMarker(markerOptions));
                     }
-                    busStopMarkers.add(mMap.addMarker(markerOptions));
-                }
-            } else { // Change the color if necessary
-                for (int i = 0; i < busStops.length; i++) {
-                    if (!busStops[i].isActive()) {
-                        busStopMarkers.get(i).setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
-                    } else {
-                        busStopMarkers.get(i).setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+                } else { // Change the color if necessary
+                    for (int i = 0; i < busStops.length; i++) {
+                        if (!busStops[i].isActive()) {
+                            busStopMarkers.get(i).setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
+                        } else {
+                            busStopMarkers.get(i).setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+                        }
                     }
                 }
             }
