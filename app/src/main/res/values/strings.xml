@@ -14,7 +14,6 @@
     <string name="find_route">Find route</string>
     <string name="directions_textview_error">This is not a valid bus stop!</string>
     <string name="directions_snackbar_error">Please enter a valid bus stop!</string>
-    <string name="directions_caution_text">Directions are still in beta! Use with caution!</string>
 
     <!-- Intents -->
     <string name="bus_tag_message">Bus Tag</string>

@@ -3,11 +3,11 @@
     android:id="@+id/recyclerview_header"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@color/dark_gray"
     android:gravity="center"
     android:paddingBottom="10dp"
     android:paddingLeft="@dimen/recyclerview_horizontal_margin"
     android:paddingRight="@dimen/recyclerview_horizontal_margin"
     android:paddingTop="10dp"
     android:textAppearance="?android:attr/textAppearanceLarge"
-    android:textColor="@color/primary_color"
-    android:textStyle="bold" />
+    android:textColor="@android:color/white" />

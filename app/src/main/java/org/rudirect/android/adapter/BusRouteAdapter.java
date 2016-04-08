@@ -102,12 +102,12 @@ public class BusRouteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             HeaderViewHolder headerViewHolder = (HeaderViewHolder) viewHolder;
             if (position == 0) {
                 if (inactiveRoutes == null) {
-                    headerViewHolder.title.setText("All Routes");
+                    headerViewHolder.title.setText("All");
                 } else {
-                    headerViewHolder.title.setText("Active Routes");
+                    headerViewHolder.title.setText("Active");
                 }
             } else {
-                headerViewHolder.title.setText("Inactive Routes");
+                headerViewHolder.title.setText("Inactive");
             }
         }
     }

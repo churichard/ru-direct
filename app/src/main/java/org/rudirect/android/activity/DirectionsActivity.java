@@ -135,6 +135,12 @@ public class DirectionsActivity extends AppCompatActivity {
                 NextBusAPI.saveBusRoutes();
             }
             ArrayList<BusRoute> activeRoutes = NextBusAPI.getActiveRoutes();
+
+            // Check that there is Internet connection and active routes is not null
+            if (activeRoutes == null) {
+                return null;
+            }
+
             for (BusRoute route : activeRoutes) {
                 NextBusAPI.saveBusStopTimes(route);
             }

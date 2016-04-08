@@ -27,24 +27,11 @@
         android:layout_centerInParent="true" />
 
     <TextView
-        android:id="@+id/directions_caution"
-        style="@style/TextViewStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/appbar"
-        android:layout_marginBottom="5dp"
-        android:layout_marginLeft="@dimen/directions_margin"
-        android:layout_marginRight="@dimen/directions_margin"
-        android:layout_marginTop="@dimen/directions_margin"
-        android:text="@string/directions_caution_text"
-        android:textColor="@android:color/holo_red_dark"
-        android:textStyle="bold" />
-
-    <TextView
         android:id="@+id/path_time_textview"
         style="@style/TextViewStyle"
-        android:layout_below="@id/directions_caution"
+        android:layout_below="@id/appbar"
         android:layout_marginBottom="5dp"
+        android:layout_marginTop="@dimen/directions_margin"
         android:layout_marginLeft="@dimen/directions_margin"
         android:layout_marginRight="@dimen/directions_margin"
         android:textStyle="bold" />

@@ -3,33 +3,29 @@
     android:layout_height="?android:attr/listPreferredItemHeight"
     android:background="?android:attr/selectableItemBackground"
     android:gravity="center_vertical"
-    android:paddingLeft="@dimen/recyclerview_horizontal_margin">
+    android:paddingLeft="@dimen/recyclerview_horizontal_margin"
+    android:paddingRight="@dimen/recyclerview_horizontal_margin">
 
     <TextView
         android:id="@+id/bus_route_name"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_gravity="center_vertical"
         android:layout_marginEnd="5dp"
         android:layout_marginRight="5dp"
         android:layout_toLeftOf="@+id/star_image"
         android:layout_toStartOf="@+id/star_image"
-        android:gravity="center_vertical"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="@android:color/black" />
 
     <ImageView
         android:id="@+id/star_image"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:layout_gravity="center_vertical"
         android:contentDescription="@null"
-        android:gravity="center_vertical"
-        android:paddingRight="@dimen/recyclerview_horizontal_margin"
         android:src="@drawable/star_image_selector" />
 
 </RelativeLayout>
