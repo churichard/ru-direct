@@ -42,7 +42,8 @@ public class AttributionsActivity extends AppCompatActivity {
         }
 
         // Build attributions text and set it to the textview text
-        ((TextView) findViewById(R.id.attributions_textview)).setText(getAttributionsMessage());
+        TextView attrTextView = (TextView) findViewById(R.id.attributions_textview);
+        if (attrTextView != null) attrTextView.setText(getAttributionsMessage());
 
         // Log the screen
         RUDirectApplication.getTracker().setScreenName(getString(R.string.attributions_screen));

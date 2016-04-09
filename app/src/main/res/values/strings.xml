@@ -8,12 +8,23 @@
     <string name="refresh">Refresh</string>
     <string name="ok">OK</string>
 
+    <!-- Routes -->
+    <string name="all_text">All</string>
+    <string name="active_text">Active</string>
+    <string name="inactive_text">Inactive</string>
+
     <!-- Directions -->
     <string name="origin_text">Starting bus stop:</string>
     <string name="destination_text">Destination bus stop:</string>
-    <string name="find_route">Find route</string>
+    <string name="find_route_text">Find route</string>
+    <string name="total_time_text">Total time: %1$d minutes</string>
     <string name="directions_textview_error">This is not a valid bus stop!</string>
     <string name="directions_snackbar_error">Please enter a valid bus stop!</string>
+    <string name="unable_to_fetch_bus_stops_error">Could not fetch bus stops. Please try again later.</string>
+    <string name="same_origin_dest_error">You\'re already at your destination!</string>
+    <string name="no_active_buses_error">There are no active buses right now!</string>
+    <string name="no_path_error">There isn\'t a path from %1$s to %2$s right now!</string>
+    <string name="no_internet_error">No Internet connection. Please try again later.</string>
 
     <!-- Intents -->
     <string name="bus_tag_message">Bus Tag</string>

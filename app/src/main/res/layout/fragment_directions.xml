@@ -49,7 +49,7 @@
         android:background="@color/primary_color"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
-        android:text="@string/find_route"
+        android:text="@string/find_route_text"
         android:textColor="@android:color/white" />
 
 </RelativeLayout>

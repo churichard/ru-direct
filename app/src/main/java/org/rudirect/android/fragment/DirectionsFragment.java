@@ -1,12 +1,17 @@
 package org.rudirect.android.fragment;
 
+import android.Manifest;
 import android.app.Fragment;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.text.SpannableStringBuilder;
 import android.text.style.ImageSpan;
 import android.view.LayoutInflater;
@@ -131,8 +136,10 @@ public class DirectionsFragment extends Fragment implements NetworkCallFinishLis
                             Snackbar.make(relativeLayout, builder, Snackbar.LENGTH_SHORT).show();
                         }
                     } else {
-                        Snackbar.make(mainActivity.findViewById(R.id.directions_layout),
-                                "Could not fetch bus stops. Please try again later.", Snackbar.LENGTH_SHORT).show();
+                        View layout = mainActivity.findViewById(R.id.directions_layout);
+                        if (layout != null)
+                            Snackbar.make(layout, getString(R.string.unable_to_fetch_bus_stops_error),
+                                    Snackbar.LENGTH_SHORT).show();
                     }
                 }
             });
@@ -209,7 +216,15 @@ public class DirectionsFragment extends Fragment implements NetworkCallFinishLis
 
     // Sets the origin autocomplete textview to the nearest bus stop
     private void setOriginToNearestBusStop() {
-        Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+        Location location = null;
+        if (ContextCompat.checkSelfPermission(mainActivity,
+                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+        } else {
+            ActivityCompat.requestPermissions(mainActivity,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 0);
+        }
+
         if (location != null) {
             BusStop nearestStop = RUDirectApplication.getBusData().getNearestStop(location);
             if (nearestStop != null) {
@@ -239,7 +254,7 @@ public class DirectionsFragment extends Fragment implements NetworkCallFinishLis
 
     // Connection to Google Play Services failed
     @Override
-    public void onConnectionFailed(ConnectionResult result) {
+    public void onConnectionFailed(@NonNull ConnectionResult result) {
         if (!mResolvingError && result.hasResolution()) {
             try {
                 mResolvingError = true;

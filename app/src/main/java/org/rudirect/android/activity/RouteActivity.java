@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.view.ViewPager;
@@ -75,6 +76,8 @@ public class RouteActivity extends AppCompatActivity
     private void setupViewPagerAndTabLayout() {
         final ViewPager viewPager = (ViewPager) findViewById(R.id.route_viewpager);
         final TabLayout tabLayout = (TabLayout) findViewById(R.id.tablayout);
+        if (viewPager == null || tabLayout == null) return;
+
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
 
         // Setup tabs
@@ -99,6 +102,7 @@ public class RouteActivity extends AppCompatActivity
             public void onTabReselected(TabLayout.Tab tab) { /* Do nothing */ }
         });
 
+        // This is to avoid the delay when opening a route for the first time
         if (firstMapLoad) {
             new Handler().postDelayed(new Runnable() {
                 @Override
@@ -161,7 +165,7 @@ public class RouteActivity extends AppCompatActivity
 
     // Connection to Google Play Services failed
     @Override
-    public void onConnectionFailed(ConnectionResult result) {
+    public void onConnectionFailed(@NonNull ConnectionResult result) {
         if (!mResolvingError && result.hasResolution()) {
             try {
                 mResolvingError = true;

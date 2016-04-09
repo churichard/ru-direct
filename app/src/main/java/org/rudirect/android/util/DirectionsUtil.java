@@ -207,7 +207,7 @@ public class DirectionsUtil {
         return totalPathTime;
     }
 
-    // Print out the vertices of the bus stops graph and their corresponding edges
+    // For debugging: print out the vertices of the bus stops graph and their corresponding edges
     public static void printBusStopsGraph() {
         for (BusStop stop : busStopsGraph.vertexSet()) {
             Log.d(stop.toString(), busStopsGraph.outgoingEdgesOf(stop).toString());

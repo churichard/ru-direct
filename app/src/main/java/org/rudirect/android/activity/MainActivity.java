@@ -28,12 +28,14 @@ public class MainActivity extends AppCompatActivity {
 
         // Set up viewpager
         ViewPager viewPager = (ViewPager) findViewById(R.id.main_viewpager);
-        viewPager.setAdapter(new MainPagerAdapter(getFragmentManager()));
-        viewPager.setOffscreenPageLimit(2);
+        if (viewPager != null) {
+            viewPager.setAdapter(new MainPagerAdapter(getFragmentManager()));
+            viewPager.setOffscreenPageLimit(2);
+        }
 
         // Set up tab layout
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tablayout);
-        tabLayout.setupWithViewPager(viewPager);
+        if (tabLayout != null) tabLayout.setupWithViewPager(viewPager);
 
         // Log the screen
         RUDirectApplication.getTracker().setScreenName(getString(R.string.main_screen));

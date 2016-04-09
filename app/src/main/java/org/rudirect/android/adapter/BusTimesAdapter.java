@@ -1,6 +1,7 @@
 package org.rudirect.android.adapter;
 
-import android.content.res.Resources;
+import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
@@ -8,11 +9,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import org.rudirect.android.R;
 import org.rudirect.android.data.constants.RUDirectApplication;
 import org.rudirect.android.data.model.BusStop;
 import org.rudirect.android.data.model.BusStopTime;
 import org.rudirect.android.interfaces.ViewHolderClickListener;
-import org.rudirect.android.R;
 import org.rudirect.android.ui.holder.BusTimesViewHolder;
 
 import java.text.DateFormat;
@@ -133,19 +134,19 @@ public class BusTimesAdapter extends RecyclerView.Adapter<BusTimesViewHolder> {
 
     // Change text color of the ListView items
     private void setTextColor(TextView busStopName, TextView busStopTimes, ArrayList<BusStopTime> times) {
-        Resources resources = RUDirectApplication.getContext().getResources();
-        busStopName.setTextColor(resources.getColor(android.R.color.black));
+        Context context = RUDirectApplication.getContext();
+        busStopName.setTextColor(ContextCompat.getColor(context, android.R.color.black));
         if (times == null) {
-            busStopName.setTextColor(resources.getColor(R.color.medium_gray));
-            busStopTimes.setTextColor(resources.getColor(R.color.medium_gray));
+            busStopName.setTextColor(ContextCompat.getColor(context, R.color.medium_gray));
+            busStopTimes.setTextColor(ContextCompat.getColor(context, R.color.medium_gray));
         } else {
             int minutes = times.get(0).getMinutes();
             if (minutes == 0 || minutes == 1) {
-                busStopTimes.setTextColor(resources.getColor(R.color.primary_color));
+                busStopTimes.setTextColor(ContextCompat.getColor(context, R.color.primary_color));
             } else if (minutes > 1 && minutes <= 5) {
-                busStopTimes.setTextColor(resources.getColor(R.color.orange));
+                busStopTimes.setTextColor(ContextCompat.getColor(context, R.color.orange));
             } else {
-                busStopTimes.setTextColor(resources.getColor(R.color.blue));
+                busStopTimes.setTextColor(ContextCompat.getColor(context, R.color.blue));
             }
         }
     }

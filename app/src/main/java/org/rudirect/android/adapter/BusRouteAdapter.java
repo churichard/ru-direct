@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -71,7 +72,7 @@ public class BusRouteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     // Replace the contents of a view
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, final int position) {
+    public void onBindViewHolder(final RecyclerView.ViewHolder viewHolder, int position) {
         if (viewHolder instanceof BusRouteViewHolder) {
             BusRoute route = getRouteByPosition(position);
             if (route != null) {
@@ -86,7 +87,7 @@ public class BusRouteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                         busRouteViewHolder.starImage.setActivated(starred);
 
                         // Handle star click
-                        handleStarClick(position, starred);
+                        handleStarClick(viewHolder.getLayoutPosition(), starred);
 
                         // Update bus data
                         try {
@@ -100,14 +101,15 @@ public class BusRouteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             }
         } else {
             HeaderViewHolder headerViewHolder = (HeaderViewHolder) viewHolder;
+            Resources resources = RUDirectApplication.getContext().getResources();
             if (position == 0) {
                 if (inactiveRoutes == null) {
-                    headerViewHolder.title.setText("All");
+                    headerViewHolder.title.setText(resources.getString(R.string.all_text));
                 } else {
-                    headerViewHolder.title.setText("Active");
+                    headerViewHolder.title.setText(resources.getString(R.string.active_text));
                 }
             } else {
-                headerViewHolder.title.setText("Inactive");
+                headerViewHolder.title.setText(resources.getString(R.string.inactive_text));
             }
         }
     }

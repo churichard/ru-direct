@@ -67,7 +67,7 @@ public class DirectionsActivity extends AppCompatActivity {
 
         // Check to see if the origin is equal to the destination
         if (origin.getTitle().equals(destination.getTitle())) {
-            pathTimeTextView.setText("You're already at your destination!");
+            pathTimeTextView.setText(getString(R.string.same_origin_dest_error));
         } else {
             progressSpinner.setVisibility(View.VISIBLE);
             new GetDirections().execute(origin, destination);
@@ -137,9 +137,7 @@ public class DirectionsActivity extends AppCompatActivity {
             ArrayList<BusRoute> activeRoutes = NextBusAPI.getActiveRoutes();
 
             // Check that there is Internet connection and active routes is not null
-            if (activeRoutes == null) {
-                return null;
-            }
+            if (activeRoutes == null) return null;
 
             for (BusRoute route : activeRoutes) {
                 NextBusAPI.saveBusStopTimes(route);
@@ -154,24 +152,26 @@ public class DirectionsActivity extends AppCompatActivity {
 
         protected void onPostExecute(ArrayList<BusRoute> activeRoutes) {
             if (activeRoutes == null) {
+                View layout = findViewById(R.id.directions_activity_layout);
                 if (RUDirectUtil.isNetworkAvailable()) {
-                    pathTimeTextView.setText("There are no active buses right now!");
-                    Snackbar.make(findViewById(R.id.directions_activity_layout),
-                            "There are no active buses right now!", Snackbar.LENGTH_LONG).show();
+                    String error = getString(R.string.no_active_buses_error);
+                    pathTimeTextView.setText(error);
+                    if (layout != null) Snackbar.make(layout, error, Snackbar.LENGTH_LONG).show();
                 } else {
-                    pathTimeTextView.setText("No Internet connection. Please try again later.");
-                    Snackbar.make(findViewById(R.id.directions_activity_layout),
-                            "No Internet connection. Please try again later.", Snackbar.LENGTH_LONG).show();
+                    String error = getString(R.string.no_internet_error);
+                    pathTimeTextView.setText(error);
+                    if (layout != null) Snackbar.make(layout, error, Snackbar.LENGTH_LONG).show();
                 }
             } else {
                 if (path != null) {
                     // Display path and total time
                     directionsRecyclerView.setAdapter(new DirectionsAdapter(DirectionsActivity.this, path));
-                    pathTimeTextView.setText("Total time: " + (int) DirectionsUtil.getTotalPathTime() + " minutes");
+                    String text = String.format(getString(R.string.total_time_text), (int) DirectionsUtil.getTotalPathTime());
+                    pathTimeTextView.setText(text);
                 } else {
                     // No path available
-                    pathTimeTextView.setText("There isn't a path from " + origin.toString() + " to "
-                            + destination.toString() + " right now!");
+                    String text = String.format(getString(R.string.no_path_error), origin.toString(), destination.toString());
+                    pathTimeTextView.setText(text);
                 }
             }
             progressSpinner.setVisibility(View.GONE);

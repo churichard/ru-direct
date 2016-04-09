@@ -3,8 +3,8 @@ package org.rudirect.android.adapter;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.graphics.Typeface;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
@@ -20,8 +20,8 @@ import org.rudirect.android.data.model.BusRouteEdge;
 import org.rudirect.android.data.model.BusStop;
 import org.rudirect.android.data.model.DirectionsItem;
 import org.rudirect.android.interfaces.ViewHolderClickListener;
-import org.rudirect.android.ui.holder.DirectionsStopViewHolder;
 import org.rudirect.android.ui.holder.DirectionsRouteViewHolder;
+import org.rudirect.android.ui.holder.DirectionsStopViewHolder;
 import org.rudirect.android.util.DirectionsUtil;
 import org.rudirect.android.util.RUDirectUtil;
 
@@ -101,12 +101,12 @@ public class DirectionsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
             // Stylize outer bus stop
             if (viewType == OUTER_BUS_STOP) {
-                Resources resources = RUDirectApplication.getContext().getResources();
+                Context context = RUDirectApplication.getContext();
                 viewHolder.title.setTypeface(null, Typeface.BOLD);
-                viewHolder.title.setTextColor(resources.getColor(android.R.color.black));
+                viewHolder.title.setTextColor(ContextCompat.getColor(context, android.R.color.black));
                 viewHolder.title.setTextSize(20);
                 viewHolder.time.setTypeface(null, Typeface.BOLD);
-                viewHolder.time.setTextColor(resources.getColor(android.R.color.black));
+                viewHolder.time.setTextColor(ContextCompat.getColor(context, android.R.color.black));
                 viewHolder.time.setTextSize(20);
             } else if (viewType == INNER_BUS_STOP) {
                 RelativeLayout layout = (RelativeLayout) v.findViewById(R.id.directions_bus_stop_layout);
@@ -122,7 +122,7 @@ public class DirectionsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, final int position) {
+    public void onBindViewHolder(final RecyclerView.ViewHolder viewHolder, int position) {
         DirectionsItem item = items.get(position);
         if (viewHolder instanceof DirectionsStopViewHolder) {
             DirectionsStopViewHolder busStopViewHolder = (DirectionsStopViewHolder) viewHolder;
@@ -139,7 +139,7 @@ public class DirectionsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                     Context context = RUDirectApplication.getContext();
                     Intent intent = new Intent(activity, RouteActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    intent.putExtra(context.getString(R.string.bus_tag_message), items.get(position).getTag());
+                    intent.putExtra(context.getString(R.string.bus_tag_message), items.get(viewHolder.getLayoutPosition()).getTag());
                     intent.putExtra(context.getString(R.string.page_clicked_from_message), "Directions Selector");
 
                     // Start new activity to show bus stops

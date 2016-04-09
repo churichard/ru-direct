@@ -45,7 +45,7 @@ public class RoutesFragment extends BaseMainFragment {
 
         noInternetBanner = (TextView) mainActivity.findViewById(R.id.no_internet_banner);
         progressBar = (ProgressBar) mainActivity.findViewById(R.id.routes_progress_spinner);
-        progressBar.setVisibility(View.VISIBLE);
+        if (progressBar != null) progressBar.setVisibility(View.VISIBLE);
 
         setupRecyclerView();
         setupSwipeRefreshLayout();
@@ -149,8 +149,9 @@ public class RoutesFragment extends BaseMainFragment {
                         adapter.setActiveRoutes(allRoutes);
                         adapter.notifyDataSetChanged();
                     } else {
-                        Snackbar.make(mainActivity.findViewById(R.id.routes_layout),
-                                "No Internet connection. Please try again later.", Snackbar.LENGTH_SHORT).show();
+                        View layout = mainActivity.findViewById(R.id.routes_layout);
+                        if (layout != null)
+                            Snackbar.make(layout, getString(R.string.no_internet_error), Snackbar.LENGTH_SHORT).show();
                     }
                 }
             }

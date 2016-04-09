@@ -1,8 +1,13 @@
 package org.rudirect.android.fragment;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.content.res.TypedArray;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -11,7 +16,7 @@ import android.view.View;
 
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
@@ -49,7 +54,8 @@ public class BusMapFragment extends MapFragment implements OnMapReadyCallback {
         super.onCreate(savedInstanceState);
         routeActivity = (RouteActivity) getActivity();
         setHasOptionsMenu(true);
-        connectedToPlayServices = GooglePlayServicesUtil.isGooglePlayServicesAvailable(routeActivity) == ConnectionResult.SUCCESS;
+        connectedToPlayServices = GoogleApiAvailability.getInstance()
+                .isGooglePlayServicesAvailable(routeActivity) == ConnectionResult.SUCCESS;
     }
 
     @Override
@@ -69,16 +75,32 @@ public class BusMapFragment extends MapFragment implements OnMapReadyCallback {
         if (connectedToPlayServices) {
             mMap = map;
 
-            // Get height of screen and set padding of Google logo based on that
+            // Move Google logo up so that it's visible
             DisplayMetrics displayMetrics = RUDirectApplication.getContext().getResources().getDisplayMetrics();
-            int height = displayMetrics.heightPixels;
-            mMap.setPadding(0, 0, 0, height/10);
+            int screenHeight = displayMetrics.heightPixels;
 
+            final TypedArray styledAttributes = RUDirectApplication.getContext().getTheme().obtainStyledAttributes(
+                    new int[] { android.R.attr.actionBarSize });
+            int actionBarHeight = (int) styledAttributes.getDimension(0, 0);
+            styledAttributes.recycle();
+
+            mMap.setPadding(0, 0, 0, screenHeight - 2 * actionBarHeight);
+
+            // Change map settings
             mMap.getUiSettings().setMapToolbarEnabled(false);
             BusStop stop = routeActivity.getRoute().getBusStops()[0];
             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
                     getLatLng(stop.getLatitude(), stop.getLongitude()), 13.0f));
-            mMap.setMyLocationEnabled(true);
+
+            // Show current location on map
+            if (ContextCompat.checkSelfPermission(routeActivity,
+                    Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                mMap.setMyLocationEnabled(true);
+            } else {
+                ActivityCompat.requestPermissions(routeActivity,
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 0);
+            }
+
             drawRoute();
         }
     }
@@ -136,7 +158,7 @@ public class BusMapFragment extends MapFragment implements OnMapReadyCallback {
         new UpdateMarkers().execute();
 
         // Draws the bus route
-        int polyLineColor = getResources().getColor(R.color.polyline_color);
+        int polyLineColor = ContextCompat.getColor(RUDirectApplication.getContext(), R.color.polyline_color);
         for (BusPathSegment pathSegment : pathSegments) {
             PolylineOptions polylineOptions = new PolylineOptions();
             polylineOptions.color(polyLineColor);
