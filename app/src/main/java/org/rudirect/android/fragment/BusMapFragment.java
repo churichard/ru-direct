@@ -75,6 +75,12 @@ public class BusMapFragment extends MapFragment implements OnMapReadyCallback {
         if (connectedToPlayServices) {
             mMap = map;
 
+            // Change map settings and set center location
+            mMap.getUiSettings().setMapToolbarEnabled(false);
+            BusStop stop = routeActivity.getRoute().getBusStops()[0];
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
+                    getLatLng(stop.getLatitude(), stop.getLongitude()), 13.0f));
+
             // Move Google logo up so that it's visible
             DisplayMetrics displayMetrics = RUDirectApplication.getContext().getResources().getDisplayMetrics();
             int screenHeight = displayMetrics.heightPixels;
@@ -84,13 +90,8 @@ public class BusMapFragment extends MapFragment implements OnMapReadyCallback {
             int actionBarHeight = (int) styledAttributes.getDimension(0, 0);
             styledAttributes.recycle();
 
-            mMap.setPadding(0, 0, 0, screenHeight - 2 * actionBarHeight);
-
-            // Change map settings
-            mMap.getUiSettings().setMapToolbarEnabled(false);
-            BusStop stop = routeActivity.getRoute().getBusStops()[0];
-            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
-                    getLatLng(stop.getLatitude(), stop.getLongitude()), 13.0f));
+            int bottomPadding = screenHeight - 2 * actionBarHeight;
+            mMap.setPadding(0, 0, 0, bottomPadding);
 
             // Show current location on map
             if (ContextCompat.checkSelfPermission(routeActivity,

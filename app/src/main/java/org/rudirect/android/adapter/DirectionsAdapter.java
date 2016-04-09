@@ -10,7 +10,6 @@ import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RelativeLayout;
 
 import org.jgrapht.GraphPath;
 import org.rudirect.android.R;
@@ -23,7 +22,6 @@ import org.rudirect.android.interfaces.ViewHolderClickListener;
 import org.rudirect.android.ui.holder.DirectionsRouteViewHolder;
 import org.rudirect.android.ui.holder.DirectionsStopViewHolder;
 import org.rudirect.android.util.DirectionsUtil;
-import org.rudirect.android.util.RUDirectUtil;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
@@ -108,13 +106,6 @@ public class DirectionsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 viewHolder.time.setTypeface(null, Typeface.BOLD);
                 viewHolder.time.setTextColor(ContextCompat.getColor(context, android.R.color.black));
                 viewHolder.time.setTextSize(20);
-            } else if (viewType == INNER_BUS_STOP) {
-                RelativeLayout layout = (RelativeLayout) v.findViewById(R.id.directions_bus_stop_layout);
-                RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
-                        RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT
-                );
-                params.setMargins(0, RUDirectUtil.dpToPx(12), 0, 0);
-                layout.setLayoutParams(params);
             }
 
             return viewHolder;
