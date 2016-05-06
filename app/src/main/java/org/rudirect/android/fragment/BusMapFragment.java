@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -82,16 +81,11 @@ public class BusMapFragment extends MapFragment implements OnMapReadyCallback {
                     getLatLng(stop.getLatitude(), stop.getLongitude()), 13.0f));
 
             // Move Google logo up so that it's visible
-            DisplayMetrics displayMetrics = RUDirectApplication.getContext().getResources().getDisplayMetrics();
-            int screenHeight = displayMetrics.heightPixels;
-
             final TypedArray styledAttributes = RUDirectApplication.getContext().getTheme().obtainStyledAttributes(
                     new int[] { android.R.attr.actionBarSize });
             int actionBarHeight = (int) styledAttributes.getDimension(0, 0);
             styledAttributes.recycle();
-
-            int bottomPadding = screenHeight - 2 * actionBarHeight;
-            mMap.setPadding(0, 0, 0, bottomPadding);
+            mMap.setPadding(0, 0, 0, actionBarHeight);
 
             // Show current location on map
             if (ContextCompat.checkSelfPermission(routeActivity,
