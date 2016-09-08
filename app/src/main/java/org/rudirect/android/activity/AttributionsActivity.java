@@ -53,9 +53,10 @@ public class AttributionsActivity extends AppCompatActivity {
     // Builds the attributions message and returns it
     private SpannableStringBuilder getAttributionsMessage() {
         try {
+            String googlePlayLicense = GoogleApiAvailability.getInstance().getOpenSourceSoftwareLicenseInfo(this);
             return new SpannableStringBuilder(Html.fromHtml("<h4>Google Play Services</h4>"))
-                    .append(GoogleApiAvailability.getInstance().getOpenSourceSoftwareLicenseInfo(this))
-                    .append("\n").append(Html.fromHtml(convertStreamToString(getAssets().open("open_source_software.html"))));
+                    .append(googlePlayLicense).append("\n")
+                    .append(Html.fromHtml(convertStreamToString(getAssets().open("open_source_software.html"))));
         } catch (IOException e) {
             Log.e(TAG, e.toString(), e);
             return null;
