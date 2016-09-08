@@ -1,10 +1,13 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="?android:attr/listPreferredItemHeight"
+    android:layout_height="wrap_content"
     android:background="?android:attr/selectableItemBackground"
     android:gravity="center_vertical"
+    android:minHeight="@dimen/recyclerview_min_height"
+    android:paddingBottom="@dimen/recyclerview_vertical_margin"
     android:paddingLeft="@dimen/recyclerview_horizontal_margin"
-    android:paddingRight="@dimen/recyclerview_horizontal_margin">
+    android:paddingRight="@dimen/recyclerview_horizontal_margin"
+    android:paddingTop="@dimen/recyclerview_vertical_margin">
 
     <TextView
         android:id="@+id/bus_route_name"

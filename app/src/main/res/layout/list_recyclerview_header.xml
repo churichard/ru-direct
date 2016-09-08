@@ -5,9 +5,10 @@
     android:layout_height="wrap_content"
     android:background="@color/dark_gray"
     android:gravity="center"
-    android:paddingBottom="10dp"
+    android:minHeight="@dimen/recyclerview_header_min_height"
+    android:paddingBottom="@dimen/recyclerview_vertical_margin"
     android:paddingLeft="@dimen/recyclerview_horizontal_margin"
     android:paddingRight="@dimen/recyclerview_horizontal_margin"
-    android:paddingTop="10dp"
+    android:paddingTop="@dimen/recyclerview_vertical_margin"
     android:textAppearance="?android:attr/textAppearanceLarge"
     android:textColor="@android:color/white" />

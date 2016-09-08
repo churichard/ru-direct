@@ -1,4 +1,6 @@
 <resources>
+    <dimen name="recyclerview_min_height">54dp</dimen>
+    <dimen name="recyclerview_header_min_height">42dp</dimen>
     <dimen name="recyclerview_horizontal_margin">18dp</dimen>
     <dimen name="recyclerview_vertical_margin">2dp</dimen>
     <dimen name="directions_margin">15dp</dimen>
