@@ -67,7 +67,7 @@ public class XMLBusTimesHandler extends DefaultHandler {
         // Update times
         for (BusStop stop : busStops) {
             ArrayList<BusStopTime> times = busStopTimes.get(stop.getTag());
-            if (times.size() != 0) {
+            if (times != null && times.size() != 0) {
                 stop.setTimes(times);
             }
         }
