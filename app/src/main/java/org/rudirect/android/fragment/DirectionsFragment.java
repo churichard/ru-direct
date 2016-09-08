@@ -204,7 +204,7 @@ public class DirectionsFragment extends Fragment implements NetworkCallFinishLis
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
-        if (isVisibleToUser) {
+        if (isVisibleToUser && isAdded()) {
             RUDirectApplication.getTracker().send(new HitBuilders.EventBuilder()
                     .setCategory(getString(R.string.directions_selector_category))
                     .setAction(getString(R.string.view_action))

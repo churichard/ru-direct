@@ -163,7 +163,7 @@ public class RoutesFragment extends BaseMainFragment {
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
-        if (isVisibleToUser) {
+        if (isVisibleToUser && isAdded()) {
             RUDirectApplication.getTracker().send(new HitBuilders.EventBuilder()
                     .setCategory(getString(R.string.active_routes_category))
                     .setAction(getString(R.string.view_action))

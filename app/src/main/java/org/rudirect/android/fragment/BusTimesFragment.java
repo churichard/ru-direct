@@ -193,7 +193,7 @@ public class BusTimesFragment extends Fragment implements AppBarLayout.OnOffsetC
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
-        if (isVisibleToUser) {
+        if (isVisibleToUser && isAdded()) {
             RUDirectApplication.getTracker().send(new HitBuilders.EventBuilder()
                     .setCategory(getString(R.string.route_times_category))
                     .setAction(getString(R.string.view_action))

@@ -137,7 +137,7 @@ public class BusMapFragment extends MapFragment implements OnMapReadyCallback {
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         isVisible = isVisibleToUser;
-        if (isVisible) {
+        if (isVisible && isAdded()) {
             RUDirectApplication.getTracker().send(new HitBuilders.EventBuilder()
                     .setCategory(getString(R.string.route_map_category))
                     .setAction(getString(R.string.view_action))

@@ -68,6 +68,7 @@
     <string name="all_routes_category">All-Routes-Page</string>
     <string name="route_times_category">Route-Times-Page</string>
     <string name="route_map_category">Route-Map-Page</string>
+    <string name="settings_category">Settings-Page</string>
 
     <string name="view_action">View</string>
     <string name="click_action">Click</string>

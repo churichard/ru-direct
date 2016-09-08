@@ -8,10 +8,13 @@ import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 
+import com.google.android.gms.analytics.HitBuilders;
+
 import org.rudirect.android.BuildConfig;
 import org.rudirect.android.R;
 import org.rudirect.android.activity.AttributionsActivity;
 import org.rudirect.android.activity.SettingsActivity;
+import org.rudirect.android.data.constants.RUDirectApplication;
 
 public class SettingsFragment extends PreferenceFragment {
 
@@ -101,5 +104,16 @@ public class SettingsFragment extends PreferenceFragment {
                 return true;
             }
         });
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser && isAdded()) {
+            RUDirectApplication.getTracker().send(new HitBuilders.EventBuilder()
+                    .setCategory(getString(R.string.settings_category))
+                    .setAction(getString(R.string.view_action))
+                    .build());
+        }
     }
 }
