@@ -3,7 +3,7 @@ apply plugin: 'com.google.gms.google-services'
 
 android {
     compileSdkVersion 24
-    buildToolsVersion "22.0.1"
+    buildToolsVersion "23.0.3"
 
     defaultConfig {
         applicationId "org.rudirect.android"
@@ -35,6 +35,6 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:24.2.0' // RecyclerView
     compile 'org.jgrapht:jgrapht-core:0.9.1' // JGraphT
     compile 'com.squareup.okhttp:okhttp:2.4.0' // OkHttp
-    compile files('libs/ormlite-core-4.48.jar') // Ormlite Core
-    compile files('libs/ormlite-android-4.48.jar') // Ormlite Android
+    compile 'com.j256.ormlite:ormlite-core:5.0' // Ormlite Core
+    compile 'com.j256.ormlite:ormlite-android:5.0' // Ormlite Android
 }
