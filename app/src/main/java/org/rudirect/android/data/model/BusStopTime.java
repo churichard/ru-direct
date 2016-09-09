@@ -59,4 +59,9 @@ public class BusStopTime implements Parcelable {
     public void setVehicleId(String vehicleId) {
         this.vehicleId = vehicleId;
     }
+
+    @Override
+    public String toString() {
+        return "Minutes: " + minutes + ", Vehicle ID: " + vehicleId;
+    }
 }

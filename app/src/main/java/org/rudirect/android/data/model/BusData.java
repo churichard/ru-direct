@@ -18,6 +18,8 @@ public class BusData {
     private final int ID = 9000;
     @DatabaseField(dataType = DataType.SERIALIZABLE)
     private HashMap<String, BusRoute> busTagsToBusRoutes;
+    @DatabaseField(dataType = DataType.LONG)
+    private long dateInMillis;
 
     private static ArrayList<BusRoute> activeRoutes; // Active bus routes
 
@@ -27,6 +29,14 @@ public class BusData {
 
     public int getID() {
         return ID;
+    }
+
+    public long getDateInMillis() {
+        return dateInMillis;
+    }
+
+    public void setDateInMillis(long dateInMillis) {
+        this.dateInMillis = dateInMillis;
     }
 
     public HashMap<String, BusRoute> getBusTagsToBusRoutes() {
