@@ -32,9 +32,19 @@
  } 
 
 -keepattributes *Annotation*
+-keepattributes Signature
 
 -keep class org.rudirect.android.data.model.**
 -keepclassmembers class org.rudirect.android.data.model.** { *; }
+
+-dontwarn org.slf4j.**
+-dontwarn org.apache.log4j.**
+-dontwarn org.apache.commons.logging.**
+-dontwarn org.apache.commons.codec.binary.**
+-dontwarn javax.persistence.**
+-dontwarn javax.lang.**
+-dontwarn javax.annotation.**
+-dontwarn javax.tools.**
 
 # Design library components
 -keep public class * extends android.support.design.widget.CoordinatorLayout.Behavior { *; }
