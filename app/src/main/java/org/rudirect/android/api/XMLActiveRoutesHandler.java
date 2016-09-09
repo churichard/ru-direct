@@ -5,6 +5,7 @@ import android.util.Log;
 import org.rudirect.android.data.constants.RUDirectApplication;
 import org.rudirect.android.data.model.BusData;
 import org.rudirect.android.data.model.BusRoute;
+import org.rudirect.android.data.model.BusVehicle;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -29,7 +30,7 @@ public class XMLActiveRoutesHandler extends DefaultHandler {
         }
 
         for (BusRoute route : busTagsToBusRoutes.values()) {
-            route.setActiveBusLocations(new ArrayList<double[]>());
+            route.setActiveBuses(new ArrayList<BusVehicle>());
         }
 
         activeRoutes = new TreeSet<>();
@@ -47,10 +48,12 @@ public class XMLActiveRoutesHandler extends DefaultHandler {
             activeRoutes.add(route);
 
             // Add active bus location
-            ArrayList<double[]> activeBusLocations = route.getActiveBusLocations();
-            activeBusLocations.add(new double[]{Double.parseDouble(atts.getValue("lat")),
-                    Double.parseDouble(atts.getValue("lon"))});
-            route.setActiveBusLocations(activeBusLocations);
+            ArrayList<BusVehicle> activeBuses = route.getActiveBuses();
+            BusVehicle vehicle = new BusVehicle();
+            vehicle.setLocation(Double.parseDouble(atts.getValue("lat")), Double.parseDouble(atts.getValue("lon")));
+            vehicle.setVehicleId(atts.getValue("id"));
+            activeBuses.add(vehicle);
+            route.setActiveBuses(activeBuses);
         }
     }
 

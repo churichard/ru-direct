@@ -32,6 +32,7 @@ import org.rudirect.android.api.NextBusAPI;
 import org.rudirect.android.data.constants.RUDirectApplication;
 import org.rudirect.android.data.model.BusPathSegment;
 import org.rudirect.android.data.model.BusStop;
+import org.rudirect.android.data.model.BusVehicle;
 
 import java.util.ArrayList;
 
@@ -188,8 +189,8 @@ public class BusMapFragment extends MapFragment implements OnMapReadyCallback {
         @Override
         protected void onPostExecute(Void v) {
             // Update active bus locations
-            ArrayList<double[]> activeBusLocations = routeActivity.getRoute().getActiveBusLocations();
-            if (activeBusLocations != null) {
+            ArrayList<BusVehicle> activeBuses = routeActivity.getRoute().getActiveBuses();
+            if (activeBuses != null) {
                 // Clear map of active bus markers
                 for (int i = 0; i < activeBusMarkers.size(); i++) {
                     activeBusMarkers.get(i).remove();
@@ -197,10 +198,11 @@ public class BusMapFragment extends MapFragment implements OnMapReadyCallback {
                 activeBusMarkers.clear();
 
                 // Add active bus markers
-                for (int i = 0; i < activeBusLocations.size(); i++) {
+                for (int i = 0; i < activeBuses.size(); i++) {
+                    double[] location = activeBuses.get(i).getLocation();
                     MarkerOptions markerOptions = new MarkerOptions()
-                            .position(getLatLng(activeBusLocations.get(i)[0], activeBusLocations.get(i)[1]))
-                            .title("Active Bus")
+                            .position(getLatLng(location[0], location[1]))
+                            .title("Vehicle ID: " + activeBuses.get(i).getVehicleId())
                             .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_bus));
                     activeBusMarkers.add(mMap.addMarker(markerOptions));
                 }

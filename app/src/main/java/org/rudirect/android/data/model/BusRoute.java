@@ -15,7 +15,7 @@ public class BusRoute implements Parcelable, Serializable, Comparable<BusRoute> 
     private boolean starred;
     private BusStop[] busStops;
     private BusPathSegment[] busPathSegments;
-    private transient ArrayList<double[]> activeBusLocations;
+    private transient ArrayList<BusVehicle> activeBuses;
     private transient long lastUpdatedTime;
 
     public BusRoute(String tag, String title) {
@@ -24,7 +24,7 @@ public class BusRoute implements Parcelable, Serializable, Comparable<BusRoute> 
         this.starred = false;
         this.busStops = null;
         this.busPathSegments = null;
-        this.activeBusLocations = null;
+        this.activeBuses = null;
     }
 
     public BusRoute(String title) {
@@ -33,7 +33,7 @@ public class BusRoute implements Parcelable, Serializable, Comparable<BusRoute> 
         this.starred = false;
         this.busStops = null;
         this.busPathSegments = null;
-        this.activeBusLocations = null;
+        this.activeBuses = null;
     }
 
     @SuppressWarnings("unchecked")
@@ -43,8 +43,7 @@ public class BusRoute implements Parcelable, Serializable, Comparable<BusRoute> 
         starred = in.readByte() != 0;
         busStops = in.createTypedArray(BusStop.CREATOR);
         busPathSegments = in.createTypedArray(BusPathSegment.CREATOR);
-        activeBusLocations = new ArrayList<>();
-        activeBusLocations = in.readArrayList(String.class.getClassLoader());
+        activeBuses = in.createTypedArrayList(BusVehicle.CREATOR);
     }
 
     public BusRoute() {
@@ -91,12 +90,12 @@ public class BusRoute implements Parcelable, Serializable, Comparable<BusRoute> 
         this.busPathSegments = busPathSegments;
     }
 
-    public ArrayList<double[]> getActiveBusLocations() {
-        return activeBusLocations;
+    public ArrayList<BusVehicle> getActiveBuses() {
+        return activeBuses;
     }
 
-    public void setActiveBusLocations(ArrayList<double[]> activeBusLocations) {
-        this.activeBusLocations = activeBusLocations;
+    public void setActiveBuses(ArrayList<BusVehicle> activeBusLocations) {
+        this.activeBuses = activeBusLocations;
     }
 
     public long getLastUpdatedTime() {
@@ -119,7 +118,7 @@ public class BusRoute implements Parcelable, Serializable, Comparable<BusRoute> 
         out.writeByte((byte) (starred ? 1 : 0));
         out.writeTypedArray(busStops, 0);
         out.writeTypedArray(busPathSegments, 0);
-        out.writeList(activeBusLocations);
+        out.writeTypedList(activeBuses);
     }
 
     public static Parcelable.Creator<BusRoute> CREATOR = new Parcelable.Creator<BusRoute>() {
