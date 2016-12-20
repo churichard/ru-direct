@@ -19,9 +19,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Setup database
-        setupDatabase();
-
         // Setup the toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -40,10 +37,5 @@ public class MainActivity extends AppCompatActivity {
         // Log the screen
         RUDirectApplication.getTracker().setScreenName(getString(R.string.main_screen));
         RUDirectApplication.getTracker().send(new HitBuilders.ScreenViewBuilder().build());
-    }
-
-    // Initialize database helper and database
-    private void setupDatabase() {
-        RUDirectApplication.getBusData();
     }
 }

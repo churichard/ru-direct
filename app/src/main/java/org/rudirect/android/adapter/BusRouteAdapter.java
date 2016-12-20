@@ -135,7 +135,6 @@ public class BusRouteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
     // Handles what happens when a star is clicked
-
     private void handleStarClick(int position, boolean starred) {
         BusRoute route = getRouteByPosition(position);
         if (route != null) {

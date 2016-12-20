@@ -14,6 +14,7 @@ import org.rudirect.android.data.model.BusData;
 import org.rudirect.android.database.DatabaseHelper;
 
 import java.sql.SQLException;
+import java.util.List;
 
 public class RUDirectApplication extends Application {
 
@@ -45,13 +46,13 @@ public class RUDirectApplication extends Application {
         if (busData == null) {
             try {
                 // Query database first
-                for (BusData data : getDatabaseHelper().getDao()) {
-                    busData = data;
+                List<BusData> data = getDatabaseHelper().getDao().queryForAll();
+                if (data.size() > 0) {
+                    busData = data.get(0);
                 }
-                // Create a new object in the database if it is nonexistent or older than 24 hours
-                if (busData == null || (System.currentTimeMillis() - busData.getDateInMillis() >= 24*60*60*1000)) {
+                else {
+                    // Create a new object in the database if it is nonexistent
                     busData = new BusData();
-                    busData.setDateInMillis(System.currentTimeMillis());
                     getDatabaseHelper().getDao().create(busData);
                 }
             } catch (SQLException e) {

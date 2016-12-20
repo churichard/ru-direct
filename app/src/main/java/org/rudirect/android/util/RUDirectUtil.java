@@ -37,6 +37,7 @@ public class RUDirectUtil {
     }
 
     // Returns the relative time difference between the current time and the argument otherTime
+    // This is for displaying bus times
     public static String getTimeDiff(long otherTime) {
         long currentTime = Calendar.getInstance().getTimeInMillis();
         String timeDiff = DateUtils.getRelativeTimeSpanString(otherTime, currentTime,

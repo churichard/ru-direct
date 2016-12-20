@@ -22,7 +22,6 @@ import org.rudirect.android.adapter.BusRouteAdapter;
 import org.rudirect.android.api.NextBusAPI;
 import org.rudirect.android.data.constants.RUDirectApplication;
 import org.rudirect.android.data.model.BusRoute;
-import org.rudirect.android.interfaces.NetworkCallFinishListener;
 import org.rudirect.android.ui.view.DividerItemDecoration;
 import org.rudirect.android.util.RUDirectUtil;
 
@@ -30,6 +29,7 @@ import java.util.ArrayList;
 
 public class RoutesFragment extends BaseMainFragment {
 
+    private static final int MILLIS_IN_DAY = 86400000;
     private RecyclerView recyclerView;
     private ProgressBar progressBar;
     private TextView noInternetBanner;
@@ -96,28 +96,31 @@ public class RoutesFragment extends BaseMainFragment {
 
     // Update active routes
     public void updateActiveRoutes() {
-        new UpdateActiveRoutesTask().execute();
+        new UpdateRoutesTask().execute();
     }
 
-    private class UpdateBusRoutesTask extends AsyncTask<NetworkCallFinishListener, Void, Void> {
-        private NetworkCallFinishListener listener;
+//    private class UpdateBusRoutesTask extends AsyncTask<NetworkCallFinishListener, Void, Void> {
+//        private NetworkCallFinishListener listener;
+//
+//        protected Void doInBackground(NetworkCallFinishListener... listeners) {
+//            listener = listeners[0];
+//            NextBusAPI.saveBusRoutes();
+//            return null;
+//        }
+//
+//        protected void onPostExecute(Void v) {
+//            listener.onBusStopsUpdated();
+//        }
+//    }
 
-        protected Void doInBackground(NetworkCallFinishListener... listeners) {
-            listener = listeners[0];
-            NextBusAPI.saveBusRoutes();
-            return null;
-        }
-
-        protected void onPostExecute(Void v) {
-            listener.onBusStopsUpdated();
-        }
-    }
-
-    private class UpdateActiveRoutesTask extends AsyncTask<Void, Void, ArrayList<BusRoute>> {
+    private class UpdateRoutesTask extends AsyncTask<Void, Void, ArrayList<BusRoute>> {
 
         protected ArrayList<BusRoute> doInBackground(Void... voids) {
-            if (RUDirectApplication.getBusData().getBusRoutes() == null) {
+            // Update the bus routes if more than a day has passed since it has been updated
+            long busDataDate = RUDirectApplication.getBusData().getDateInMillis();
+            if (busDataDate == 0 || System.currentTimeMillis() - busDataDate >= MILLIS_IN_DAY) {
                 NextBusAPI.saveBusRoutes();
+                RUDirectApplication.getBusData().setDateInMillis(System.currentTimeMillis());
             }
             return NextBusAPI.getActiveRoutes();
         }
