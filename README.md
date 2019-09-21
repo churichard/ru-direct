@@ -1,6 +1,6 @@
 # RU Direct
 
-**RU Direct is no longer in active development. If you would like to take over RU Direct as its lead and update it to use the TransLoc API instead of the NextBus API, please contact us.**
+**RU Direct is no longer in active development. If you would like to take over RU Direct as its lead and update it to use the TransLoc API for bus information instead of the deprecated NextBus API, please open an issue or contact us directly.**
 
 ## Description
 RU Direct is a fast and intuitive Android app that helps you navigate the Rutgers University bus system. It displays what times buses are arriving at each bus stop, shows live-updating maps of each of the bus routes, and provides directions from one bus stop to another.
@@ -13,9 +13,6 @@ RU Direct is a fast and intuitive Android app that helps you navigate the Rutger
 
 #### Directions
 <img src="https://raw.githubusercontent.com/churichard/ru-direct/master/gifs/directions.gif" width="320px" height="570px">
-
-## Play Store
-[Click here to download RU Direct on the Play Store!](https://play.google.com/store/apps/details?id=org.rudirect.android)
 
 ## Contributors
 RU Direct was developed by Richard Chu, Kenneth Li, James Paik, and Carin Yao.
